@@ -1,0 +1,11 @@
+{
+  "name": "super-cash",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "cd backend && npm install && cd ../frontend && npm install && npm run build",
+    "vercel-build": "cd backend && npm install && cd ../frontend && npm install && npm run build"
+  },
+  "engines": {
+    "node": "18.x"
+  }
+}
