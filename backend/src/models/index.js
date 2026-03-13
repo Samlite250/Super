@@ -1,9 +1,10 @@
 const { Sequelize, DataTypes } = require('sequelize');
-
+const pg = require('pg');
 let sequelize;
 if (process.env.DATABASE_URL) {
   sequelize = new Sequelize(process.env.DATABASE_URL, {
     dialect: 'postgres',
+    dialectModule: pg,
     logging: false,
     dialectOptions: {
       ssl: {
@@ -21,11 +22,12 @@ if (process.env.DATABASE_URL) {
       host: process.env.DB_HOST,
       port: process.env.DB_PORT || 5432,
       dialect: 'postgres',
+      dialectModule: pg,
       logging: false,
       dialectOptions: {
         ssl: {
           require: true,
-          rejectUnauthorized: false // Supabase requires this often
+          rejectUnauthorized: false
         }
       }
     }
