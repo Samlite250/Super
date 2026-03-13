@@ -61,6 +61,17 @@ app.use('/api/cron', cronRoutes);
 // health
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 
+// Temp setup route to sync database on Vercel
+app.get('/api/setup-db', async (req, res) => {
+  try {
+    await sequelize.sync({ alter: true });
+    res.json({ message: 'Supabase Database Synchronized Successfully!' });
+  } catch (err) {
+    console.error('Sync Error:', err);
+    res.status(500).json({ error: err.message, stack: err.stack });
+  }
+});
+
 
 
 const port = process.env.PORT || 5000;
