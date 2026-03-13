@@ -1,4 +1,7 @@
 // Vercel Serverless Function entry point
-// Loads dotenv and then imports the Express app
+// Forces inclusion of postgres drivers for Sequelize
+require('pg');
+require('pg-hstore');
 require('dotenv').config();
+
 module.exports = require('../backend/src/index.js');
