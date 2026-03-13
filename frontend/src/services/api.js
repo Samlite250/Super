@@ -1,6 +1,17 @@
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+// If REACT_APP_API_URL is set, use it. 
+// Otherwise, on Vercel (where window exists and origin isn't localhost), use the current domain.
+// Fallback to localhost for local development.
+const getApiUrl = () => {
+  if (process.env.REACT_APP_API_URL) return process.env.REACT_APP_API_URL;
+  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+    return `${window.location.origin}/api`;
+  }
+  return 'http://localhost:5000/api';
+};
+
+const API_URL = getApiUrl();
 const IMAGE_BASE_URL = API_URL.replace(/\/api\/?$/, '');
 
 const api = axios.create({
