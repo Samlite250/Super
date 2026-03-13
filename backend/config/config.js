@@ -1,63 +1,29 @@
-'use strict';
-
-// Sequelize CLI will load this file when running migrations.
-// It reads DB connection info from environment variables, fallback to defaults.
-
-module.exports = {
-  development: {
-    username: process.env.DB_USER || 'root',
-    password: process.env.DB_PASS || null,
-    database: process.env.DB_NAME || 'super_development',
-    host: process.env.DB_HOST || '127.0.0.1',
-    port: process.env.DB_PORT || 3306,
-    dialect: 'mysql'
-  },
-  test: {
-    username: process.env.DB_USER || 'root',
-    password: process.env.DB_PASS || null,
-    database: process.env.DB_NAME || 'super_test',
-    host: process.env.DB_HOST || '127.0.0.1',
-    port: process.env.DB_PORT || 3306,
-    dialect: 'mysql'
-  },
-  production: {
-    username: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME,
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    dialect: 'mysql'
-  }
-};
 require('dotenv').config();
 
-module.exports = {
-  development: {
-    username: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME,
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    dialect: 'mysql',
-    logging: false,
-  },
-  test: {
-    username: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME,
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    dialect: 'mysql',
-    logging: false,
-  },
-  production: {
-    username: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME,
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    dialect: 'mysql',
-    logging: false,
-  },
+const baseConfig = {
+  dialect: 'postgres',
+  logging: false,
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false
+    }
+  }
 };
-
+
+// If DATABASE_URL is provided, use it. Otherwise, construct from params.
+if (process.env.DATABASE_URL) {
+  baseConfig.url = process.env.DATABASE_URL;
+} else {
+  baseConfig.username = process.env.DB_USER || 'postgres';
+  baseConfig.password = process.env.DB_PASS || 'postgres';
+  baseConfig.database = process.env.DB_NAME || 'supercash';
+  baseConfig.host = process.env.DB_HOST || '127.0.0.1';
+  baseConfig.port = process.env.DB_PORT || 5432;
+}
+
+module.exports = {
+  development: { ...baseConfig },
+  test: { ...baseConfig },
+  production: { ...baseConfig }
+};
