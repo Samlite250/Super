@@ -12,6 +12,7 @@ const withdrawalRoutes = require('./routes/withdrawals');
 const referralRoutes = require('./routes/referrals');
 const settingsRoutes = require('./routes/settings');
 const investmentRoutes = require('./routes/investments');
+const cronRoutes = require('./routes/cron');
 const { startCron, calculateDailyReturns } = require('./utils/cron');
 
 const app = express();
@@ -55,6 +56,7 @@ app.use('/api/withdrawals', withdrawalRoutes);
 app.use('/api/referrals', referralRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/investments', investmentRoutes);
+app.use('/api/cron', cronRoutes);
 
 // health
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
@@ -63,15 +65,21 @@ app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 
 const port = process.env.PORT || 5000;
 
-sequelize.sync().then(() => {
-  app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-    // Start ROI Scheduler
-    startCron();
-    // Initial check on boot
-    calculateDailyReturns();
+// Export the Express API for Vercel
+module.exports = app;
+
+// Only start the server if we are not in a Vercel Serverless environment
+if (!process.env.VERCEL) {
+  sequelize.sync().then(() => {
+    app.listen(port, () => {
+      console.log(`Server running on port ${port}`);
+      // Start ROI Scheduler
+      startCron();
+      // Initial check on boot
+      calculateDailyReturns();
+    });
   });
-});
+}
 
 
 
