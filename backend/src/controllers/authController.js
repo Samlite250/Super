@@ -66,18 +66,29 @@ exports.register = async (req, res) => {
         description: `Referral commission for ${user.fullName} registration`
       });
 
-      // Send commission email to referrer
-      sendReferralCommissionEmail(referrerRecord.email, referrerRecord.fullName, bonus, referrerRecord.currency);
+      // Send commission email to referrer - Safe call
+      try {
+        sendReferralCommissionEmail(referrerRecord.email, referrerRecord.fullName, bonus, referrerRecord.currency);
+      } catch (e) {
+        console.warn('Referral Email failed:', e.message);
+      }
     }
 
-    // Send Welcome Email
-    sendWelcomeEmail(user.email, user.fullName);
+    // Send Welcome Email - Safe call
+    try {
+      sendWelcomeEmail(user.email, user.fullName);
+    } catch (e) {
+      console.warn('Welcome Email failed:', e.message);
+    }
 
-    res.json({ message: 'Institutional Account Registered! Please login to proceed.' });
+    return res.json({ message: 'Institutional Account Registered! Please login to proceed.' });
 
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Registration Error:', err);
+    return res.status(500).json({ 
+      message: 'Registration failed. Check network or email format.',
+      error: err.message 
+    });
   }
 };
 
