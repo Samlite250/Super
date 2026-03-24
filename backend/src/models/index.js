@@ -1,8 +1,8 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const pg = require('pg');
 let sequelize;
-if (process.env.DATABASE_URL) {
-  sequelize = new Sequelize(process.env.DATABASE_URL, {
+if (process.env.DATABASE_URL || process.env.VERCEL) {
+  sequelize = new Sequelize(process.env.DATABASE_URL || "", {
     dialect: 'postgres',
     dialectModule: pg,
     logging: false,
@@ -14,6 +14,7 @@ if (process.env.DATABASE_URL) {
     }
   });
 } else {
+  // Local development fallback
   sequelize = new Sequelize(
     process.env.DB_NAME || 'supercash',
     process.env.DB_USER || 'root',
