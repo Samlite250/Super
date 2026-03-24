@@ -2,8 +2,10 @@ const { Sequelize, DataTypes } = require('sequelize');
 const pg = require('pg');
 let sequelize;
 if (process.env.DATABASE_URL || process.env.VERCEL) {
-  if (!process.env.DATABASE_URL) {
-    throw new Error('MISSING DATABASE_URL: Please add your Supabase connection string to Vercel Environment Variables.');
+  // Validate that the ENV variable exists and is a valid string
+  const dbUrl = process.env.DATABASE_URL;
+  if (!dbUrl || typeof dbUrl !== 'string' || dbUrl.trim() === '') {
+    throw new Error('MISSING DATABASE_URL: Please add your valid PostgreSQL connection string to Vercel Environment Variables.');
   }
   sequelize = new Sequelize(process.env.DATABASE_URL, {
     dialect: 'postgres',
