@@ -30,7 +30,8 @@ try {
     res.status(500).json({
       error: 'Backend Boot Failed',
       message: err.message,
-      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+      stack: err.stack,
+      hint: 'Please share this stack trace with the developer.'
     });
   };
 }
