@@ -5,7 +5,6 @@ try {
   // Forces inclusion of drivers for the Vercel Bundle
   require('pg');
   require('pg-hstore');
-  require('mysql2');
   require('dotenv').config();
   
   const backendPath = path.resolve(__dirname, '../backend/src/index.js');
