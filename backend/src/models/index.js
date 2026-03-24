@@ -7,7 +7,13 @@ if (process.env.DATABASE_URL || process.env.VERCEL) {
   if (!dbUrl || typeof dbUrl !== 'string' || dbUrl.trim() === '') {
     throw new Error('MISSING DATABASE_URL: Please add your valid PostgreSQL connection string to Vercel Environment Variables.');
   }
-  sequelize = new Sequelize(process.env.DATABASE_URL, {
+
+  // Ensure it has a protocol to prevent Sequelize from crashing with "Cannot read properties of null (reading 'replace')"
+  if (!dbUrl.startsWith('postgres://') && !dbUrl.startsWith('postgresql://')) {
+    throw new Error(`INVALID DATABASE_URL FORMAT: The provided string "${dbUrl}" does not start with "postgres://" or "postgresql://". Please copy the correct URI from your database provider.`);
+  }
+
+  sequelize = new Sequelize(dbUrl, {
     dialect: 'postgres',
     dialectModule: pg,
     logging: false,
