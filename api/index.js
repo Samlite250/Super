@@ -2,21 +2,27 @@ const path = require('path');
 console.log('Vercel Function starting...');
 
 try {
-  // Forces inclusion of drivers for the Vercel Bundle
+  // 1. Force critical drivers for the Vercel Bundle
   require('bcryptjs');
   require('pg');
   require('pg-hstore');
   require('dotenv').config();
   
+  // 2. Early Environment Check
+  if (!process.env.DATABASE_URL) {
+    throw new Error('MISSING DATABASE_URL Environment Variable.');
+  }
+
+  // 3. Resolve and Load Backend
   const backendPath = path.resolve(__dirname, '../backend/src/index.js');
-  console.log('Loading backend from:', backendPath);
+  console.log('[BOOT] Target:', backendPath);
   
   const app = require(backendPath);
   module.exports = app;
   
-  console.log('Backend loaded successfully.');
+  console.log('[BOOT] Success.');
 } catch (err) {
-  console.error('CRITICAL BOOT ERROR:', err.message);
+  console.error('[CRITICAL BOOT ERROR]:', err.message);
   console.error(err.stack);
   
   // Return a readable error for debugging
