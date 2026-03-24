@@ -3,6 +3,7 @@ console.log('Vercel Function starting...');
 
 try {
   // Forces inclusion of drivers for the Vercel Bundle
+  require('bcryptjs');
   require('pg');
   require('pg-hstore');
   require('dotenv').config();
