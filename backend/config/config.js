@@ -6,7 +6,7 @@ const baseConfig = {
 };
 
 // If DATABASE_URL is provided, use it. Otherwise, construct from params.
-if (process.env.DATABASE_URL) {
+if (process.env.DATABASE_URL || process.env.VERCEL) {
   baseConfig.url = process.env.DATABASE_URL;
   baseConfig.dialect = 'postgres';
   baseConfig.dialectOptions = {

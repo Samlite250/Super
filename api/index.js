@@ -2,9 +2,10 @@ const path = require('path');
 console.log('Vercel Function starting...');
 
 try {
-  // Forces inclusion of drivers
+  // Forces inclusion of drivers for the Vercel Bundle
   require('pg');
   require('pg-hstore');
+  require('mysql2');
   require('dotenv').config();
   
   const backendPath = path.resolve(__dirname, '../backend/src/index.js');
