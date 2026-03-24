@@ -20,8 +20,12 @@ api.interceptors.request.use((config) => {
 
 // global response handler
 api.interceptors.response.use(
-  (res) => res,
+  (res) => {
+    console.log('API Success:', res.config.url, res.data);
+    return res;
+  },
   (err) => {
+    console.error('API Error:', err.config?.url, err.response?.data || err.message);
     const status = err.response?.status;
     const msg = err.response?.data?.message || '';
     if ((status === 401 || status === 403) && (msg === 'Admin only' || window.location.pathname.startsWith('/admin'))) {
