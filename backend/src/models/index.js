@@ -2,7 +2,10 @@ const { Sequelize, DataTypes } = require('sequelize');
 const pg = require('pg');
 let sequelize;
 if (process.env.DATABASE_URL || process.env.VERCEL) {
-  sequelize = new Sequelize(process.env.DATABASE_URL || "", {
+  if (!process.env.DATABASE_URL) {
+    throw new Error('MISSING DATABASE_URL: Please add your Supabase connection string to Vercel Environment Variables.');
+  }
+  sequelize = new Sequelize(process.env.DATABASE_URL, {
     dialect: 'postgres',
     dialectModule: pg,
     logging: false,
