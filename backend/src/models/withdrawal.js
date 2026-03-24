@@ -6,7 +6,8 @@ module.exports = (sequelize, DataTypes) => {
     phone: { type: DataTypes.STRING, allowNull: false },
     network: { type: DataTypes.STRING, allowNull: false },
     fee: { type: DataTypes.DECIMAL(20,2) },
-    status: { type: DataTypes.STRING, defaultValue: 'pending' }
+    status: { type: DataTypes.STRING, defaultValue: 'pending' },
+    transferRef: { type: DataTypes.STRING, allowNull: true },
   });
   return Withdrawal;
 };

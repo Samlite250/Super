@@ -32,7 +32,11 @@ app.use((req, res, next) => {
 const path = require('path');
 
 // middleware
-app.use(cors());
+const corsOptions = {
+  origin: process.env.FRONTEND_URL || '*',
+  credentials: true
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -81,7 +85,7 @@ module.exports = app;
 
 // Only start the server if we are not in a Vercel Serverless environment
 if (!process.env.VERCEL) {
-  sequelize.sync().then(() => {
+  sequelize.sync({ alter: false }).then(() => {
     app.listen(port, () => {
       console.log(`Server running on port ${port}`);
       // Start ROI Scheduler
@@ -94,3 +98,4 @@ if (!process.env.VERCEL) {
 
 
 
+  

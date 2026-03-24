@@ -15,21 +15,14 @@ if (process.env.DATABASE_URL) {
   });
 } else {
   sequelize = new Sequelize(
-    process.env.DB_NAME,
-    process.env.DB_USER,
-    process.env.DB_PASS,
+    process.env.DB_NAME || 'supercash',
+    process.env.DB_USER || 'root',
+    process.env.DB_PASS || '',
     {
-      host: process.env.DB_HOST,
-      port: process.env.DB_PORT || 5432,
-      dialect: 'postgres',
-      dialectModule: pg,
-      logging: false,
-      dialectOptions: {
-        ssl: {
-          require: true,
-          rejectUnauthorized: false
-        }
-      }
+      host: process.env.DB_HOST || 'localhost',
+      port: process.env.DB_PORT || 3306,
+      dialect: 'mysql',
+      logging: false
     }
   );
 }
@@ -54,26 +47,25 @@ const Setting = require('./setting')(sequelize, DataTypes);
 const ExchangeRate = require('./exchange_rate')(sequelize, DataTypes);
 
 // associations
-User.hasMany(Investment);
-Investment.belongsTo(User);
-User.hasMany(Deposit);
-Deposit.belongsTo(User);
-User.hasMany(Withdrawal);
-Withdrawal.belongsTo(User);
-User.hasMany(Transaction);
-Transaction.belongsTo(User);
+User.hasMany(Investment, { foreignKey: 'userId' });
+Investment.belongsTo(User, { foreignKey: 'userId' });
+User.hasMany(Deposit, { foreignKey: 'userId' });
+Deposit.belongsTo(User, { foreignKey: 'userId' });
+User.hasMany(Withdrawal, { foreignKey: 'userId' });
+Withdrawal.belongsTo(User, { foreignKey: 'userId' });
+User.hasMany(Transaction, { foreignKey: 'userId' });
+Transaction.belongsTo(User, { foreignKey: 'userId' });
+
 User.hasMany(Referral, { foreignKey: 'referrerId' });
 Referral.belongsTo(User, { foreignKey: 'referrerId' });
-// allow loading the referred user's details via alias
 Referral.belongsTo(User, { foreignKey: 'referredId', as: 'referredUser' });
 User.hasMany(Referral, { foreignKey: 'referredId' });
 
-// Self-referential for upline/downline
 User.belongsTo(User, { as: 'upline', foreignKey: 'referredBy' });
 User.hasMany(User, { as: 'downline', foreignKey: 'referredBy' });
 
-Machine.hasMany(Investment);
-Investment.belongsTo(Machine);
+Machine.hasMany(Investment, { foreignKey: 'machineId' });
+Investment.belongsTo(Machine, { foreignKey: 'machineId' });
 
 // Export individual models
 db.User = User;

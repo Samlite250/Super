@@ -131,4 +131,44 @@ router.get('/regional-activity', authenticate, authorizeAdmin, async (req, res) 
   }
 });
 
+router.post('/gateways', authenticate, authorizeAdmin, async (req, res) => {
+  try {
+    const { Setting } = require('../models');
+    const proc = req.body;
+    let setting = await Setting.findByPk('paymentProcedures');
+    let procedures = {};
+    if (setting && setting.value) {
+      try { procedures = JSON.parse(setting.value); } catch (e) { procedures = {}; }
+    }
+    if (!proc || !proc.country) return res.status(400).json({ error: 'Invalid procedure' });
+    procedures[proc.country] = proc;
+    const value = JSON.stringify(procedures);
+    if (setting) {
+      setting.value = value;
+      await setting.save();
+    } else {
+      setting = await Setting.create({ key: 'paymentProcedures', value });
+    }
+    res.json({ success: true, procedures });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to save gateway' });
+  }
+});
+
+router.delete('/gateways', authenticate, authorizeAdmin, async (req, res) => {
+  try {
+    const { Setting } = require('../models');
+    const { country } = req.body;
+    let setting = await Setting.findByPk('paymentProcedures');
+    if (!setting || !setting.value) return res.json({ success: true });
+    let procedures = JSON.parse(setting.value);
+    delete procedures[country];
+    setting.value = JSON.stringify(procedures);
+    await setting.save();
+    res.json({ success: true, procedures });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to delete gateway' });
+  }
+});
+
 module.exports = router;

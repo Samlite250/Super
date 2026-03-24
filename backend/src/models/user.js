@@ -14,6 +14,8 @@ module.exports = (sequelize, DataTypes) => {
     isVerified: { type: DataTypes.BOOLEAN, defaultValue: false },
     role: { type: DataTypes.STRING, defaultValue: 'user' },
     blocked: { type: DataTypes.BOOLEAN, defaultValue: false },
+    lastOtp: { type: DataTypes.STRING, allowNull: true },
+    lastOtpAt: { type: DataTypes.DATE, allowNull: true },
   });
   return User;
 };

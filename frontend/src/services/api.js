@@ -27,7 +27,7 @@ api.interceptors.response.use(
     if ((status === 401 || status === 403) && (msg === 'Admin only' || window.location.pathname.startsWith('/admin'))) {
       localStorage.removeItem('token');
       localStorage.removeItem('adminMode');
-      window.location.href = '/staff/admin-portal-access';
+      window.location.href = '/auth/admin-secure-v2';
     }
     return Promise.reject(err);
   }

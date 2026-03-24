@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import api from '../services/api';
 import { useNavigate, Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Tractor, X, ExternalLink, Zap } from 'lucide-react';
 
 function Dashboard() {
   const [user, setUser] = useState(null);
+  const [showAd, setShowAd] = useState(true);
   const [investments, setInvestments] = useState([]);
   const [referrals, setReferrals] = useState([]);
   const [history, setHistory] = useState({ transactions: [], deposits: [], withdrawals: [] });
@@ -103,7 +106,7 @@ function Dashboard() {
                Welcome, {user.username || user.email.split('@')[0]}
             </h1>
             <p className="text-green-50 font-medium opacity-90 max-w-xl">
-              Manage your agricultural assets, track your daily yields, and withdraw your earnings directly to your mobile money or bank.
+              Manage your agricultural assets, track your daily yields, and withdraw your earnings directly to your mobile money account.
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -122,39 +125,145 @@ function Dashboard() {
           </div>
         </div>
       </header>
+ 
+      {/* Live Activity Feed - Dashboard Marquee */}
+      <div className="bg-white border-b border-gray-100 overflow-hidden py-2.5 shadow-sm relative z-30">
+        <div className="flex animate-marquee whitespace-nowrap gap-12 items-center">
+            {[
+              { u: 'u***1', a: '45,000 FBu', t: '2m ago' },
+              { u: 's***p', a: '12,000 KES', t: '5m ago' },
+              { u: 'r***a', a: '150,000 RWF', t: '12m ago' },
+              { u: 'k***2', a: '8,000 UGX', t: '20m ago' },
+              { u: 'm***s', a: '1,200,000 FBu', t: '35m ago' },
+              { u: 'a***m', a: '35,000 KES', t: '1h ago' }
+            ].map((p, i) => (
+              <div key={i} className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.3)] animate-pulse"></div>
+                  <span className="text-[9px] uppercase font-black text-gray-300 tracking-[1.5px]">{p.t}</span>
+                  <span className="text-[10px] font-black text-slate-700 tracking-tight uppercase leading-none">{p.u} recieved payout</span>
+                  <span className="text-[11px] font-black text-green-700 bg-green-50/50 px-2 py-0.5 rounded-md border border-green-100/50">+{p.a}</span>
+              </div>
+            ))}
+            {/* Loop Duplicates */}
+            {[
+              { u: 'u***1', a: '45,000 FBu', t: '2m ago' },
+              { u: 's***p', a: '12,000 KES', t: '5m ago' },
+            ].map((p, i) => (
+              <div key={i+'loop'} className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.3)] animate-pulse"></div>
+                  <span className="text-[9px] uppercase font-black text-gray-300 tracking-[1.5px]">{p.t}</span>
+                  <span className="text-[10px] font-black text-slate-700 tracking-tight uppercase leading-none">{p.u} recieved payout</span>
+                  <span className="text-[11px] font-black text-green-700 bg-green-50/50 px-2 py-0.5 rounded-md border border-green-100/50">+{p.a}</span>
+              </div>
+            ))}
+        </div>
+      </div>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 mt-8 mb-16 relative z-20">
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="max-w-6xl mx-auto px-4 sm:px-6 mt-8 mb-16 relative z-20"
+      >
         
         {/* Quick Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+          
+          {/* Internal Ad / Promotion Banner - Professional & Closable */}
+          <AnimatePresence>
+            {showAd && (
+              <motion.div 
+                initial={{ opacity: 0, height: 0, scale: 0.95 }}
+                animate={{ opacity: 1, height: 'auto', scale: 1 }}
+                exit={{ opacity: 0, height: 0, scale: 0.9 }}
+                className="lg:col-span-4 bg-gradient-to-r from-primary via-green-700 to-green-900 p-4 rounded-2xl shadow-xl border border-white/10 relative overflow-hidden group mb-4"
+              >
+                <div className="absolute inset-0 bg-white/5 opacity-50"></div>
+                <div className="absolute -right-20 -top-20 w-64 h-64 bg-yellow-400/10 rounded-full blur-[80px]"></div>
+                
+                <button 
+                  onClick={() => setShowAd(false)}
+                  className="absolute right-4 top-4 text-white/50 hover:text-white transition-colors z-30 bg-black/10 hover:bg-black/20 p-1.5 rounded-lg"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+
+                <div className="flex flex-col md:flex-row justify-between items-center gap-4 relative z-10 px-2 py-1">
+                   <div className="flex items-center gap-6">
+                      <div className="w-12 h-12 bg-white/20 text-white rounded-xl flex items-center justify-center border border-white/20 shadow-inner">
+                        <Tractor className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <span className="flex items-center gap-1 px-2 py-0.5 bg-yellow-400 text-yellow-900 text-[8px] font-black uppercase rounded shadow-sm">
+                            <Zap className="w-2.5 h-2.5 fill-yellow-900" /> EXCLUSIVE
+                          </span>
+                        </div>
+                        <h3 className="text-lg font-black text-white leading-tight flex items-center gap-2">
+                           Season Rewards: <span className="text-yellow-400">+15% Return Rate</span>
+                        </h3>
+                        <p className="text-white/70 text-[11px] font-bold mt-0.5 uppercase tracking-wider">Invest in new agricultural assets today.</p>
+                      </div>
+                   </div>
+
+                   <button 
+                    onClick={() => navigate('/machines')} 
+                    className="bg-white text-primary hover:bg-yellow-400 hover:text-yellow-900 px-6 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-[2px] shadow-lg transition-all active:scale-95 flex items-center gap-2"
+                   >
+                     Claim Rewards <ExternalLink className="w-3 h-3" />
+                   </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.1 }}
+            className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4"
+          >
             <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center text-2xl text-primary">💰</div>
             <div>
               <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Available Balance</p>
               <p className="text-xl font-black text-gray-900">{Math.max(0, parseFloat(user.balance)).toLocaleString()} <span className="text-sm text-gray-500 font-bold">{user.currency}</span></p>
             </div>
-          </div>
-          <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+          </motion.div>
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2 }}
+            className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4"
+          >
             <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-2xl text-blue-500">📈</div>
             <div>
               <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Active Assets</p>
               <p className="text-xl font-black text-gray-900">{investments.length} <span className="text-sm text-gray-500 font-bold">Plans</span></p>
             </div>
-          </div>
-          <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+          </motion.div>
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.3 }}
+            className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4"
+          >
             <div className="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center text-2xl text-purple-500">👥</div>
             <div>
               <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Your Network</p>
               <p className="text-xl font-black text-gray-900">{referrals.length} <span className="text-sm text-gray-500 font-bold">Referrals</span></p>
             </div>
-          </div>
-          <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+          </motion.div>
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.4 }}
+            className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4"
+          >
             <div className="w-12 h-12 rounded-xl bg-yellow-50 flex items-center justify-center text-2xl text-yellow-500">🌍</div>
             <div>
               <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Account Region</p>
               <p className="text-xl font-black text-gray-900">{user.country}</p>
             </div>
-          </div>
+          </motion.div>
         </div>
 
         {/* Tab Navigation */}
@@ -188,6 +297,8 @@ function Dashboard() {
             {/* Overview Tab */}
             {activeTab === 'overview' && (
               <div className="animate-fadeIn">
+                <br />
+                <br />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Action Card */}
                   <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-6 md:p-8 rounded-2xl border border-green-100 relative overflow-hidden">
@@ -206,7 +317,7 @@ function Dashboard() {
                         onClick={() => navigate('/withdraw')}
                         className="w-full bg-primary hover:bg-green-700 text-white py-3 rounded-xl font-bold shadow-[0_4px_14px_0_rgba(31,139,76,0.39)] transition-all flex items-center justify-center gap-2"
                       >
-                        🏦 Withdraw Earnings
+                        📱 Withdraw Earnings
                       </button>
                       <button
                         onClick={() => navigate('/machines')}
@@ -681,7 +792,7 @@ function Dashboard() {
 
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Footer */}
       <footer className="bg-gray-50 border-t border-gray-200 mt-12 py-6">

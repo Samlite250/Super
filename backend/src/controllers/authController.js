@@ -2,7 +2,8 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { Op } = require('sequelize');
 const { User, Setting, Transaction } = require('../models');
-const { sendWelcomeEmail, sendReferralCommissionEmail } = require('../utils/mailer');
+const { sendWelcomeEmail, sendReferralCommissionEmail, sendAdminOTPEmail } = require('../utils/mailer');
+const { sendWhatsAppOTP } = require('../utils/whatsapp');
 const { generateReferralCode } = require('../utils/helpers');
 
 exports.register = async (req, res) => {
@@ -14,6 +15,11 @@ exports.register = async (req, res) => {
     const hash = await bcrypt.hash(password, 10);
     const currencyMap = { Burundi: 'FBu', Rwanda: 'RWF', Uganda: 'UGX', Kenya: 'KES' };
     const currency = currencyMap[country] || 'FBu';
+
+    // Fetch Signup Bonus for the user
+    const bonusKey = `signup_bonus_${country}`;
+    const signupBonusRes = await Setting.findByPk(bonusKey);
+    const signupBonus = signupBonusRes ? parseFloat(signupBonusRes.value) : 0;
 
     let referredBy = null;
     let referrerRecord = null;
@@ -33,12 +39,21 @@ exports.register = async (req, res) => {
       referralCode: username,
       referredBy,
       isVerified: true,
-      balance: 0,
+      balance: signupBonus,
     });
+
+    if (signupBonus > 0) {
+      await Transaction.create({
+        userId: user.id,
+        type: 'signup_bonus',
+        amount: signupBonus,
+        description: `Welcome Reward for ${country} account registration`
+      });
+    }
 
     // Reward Referrer if exists
     if (referrerRecord) {
-      const bonusRes = await Setting.findByPk('signupBonus');
+      const bonusRes = await Setting.findByPk('referral_bonus');
       const bonus = bonusRes ? parseFloat(bonusRes.value) : 2500; // Default 2500 FBu/RWF
       
       referrerRecord.balance = parseFloat(referrerRecord.balance) + bonus;
@@ -85,10 +100,24 @@ exports.login = async (req, res) => {
     if (!match) return res.status(400).json({ message: 'Invalid credentials' });
     if (user.blocked) return res.status(403).json({ message: 'Account blocked' });
 
+    // Handle Admin MFA (OTP)
+    if (user.role === 'admin') {
+      const systemEmailRes = await Setting.findByPk('system_email');
+      const targetEmail = systemEmailRes ? systemEmailRes.value : user.email;
+      
+      const emailHint = targetEmail.replace(/(.{2})(.*)(@.*)/, "$1***$3");
+
+      return res.json({ 
+        otpRequired: true, 
+        emailHint,
+        username: user.username 
+      });
+    }
+
     const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_EXPIRES_IN,
     });
-    res.json({ token, user: { id: user.id, fullName: user.fullName, currency: user.currency } });
+    res.json({ token, user: { id: user.id, username: user.username, fullName: user.fullName, currency: user.currency, role: user.role } });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });
@@ -143,5 +172,75 @@ exports.changePassword = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.resendAdminOtp = async (req, res) => {
+  try {
+    const { username, method } = req.body; // method: 'email' or 'whatsapp'
+    const user = await User.findOne({ 
+      where: { 
+        [Op.or]: [{ email: username }, { username: username }],
+        role: 'admin' 
+      } 
+    });
+
+    if (!user) return res.status(404).json({ message: 'Administrative record disconnected' });
+
+    const otp = Math.floor(1000 + Math.random() * 9000).toString(); // 4 digits
+    user.lastOtp = otp;
+    user.lastOtpAt = new Date();
+    await user.save();
+
+    // Exclusively Email Dispatch (WhatsApp Decommissioned)
+    const systemEmailRes = await Setting.findByPk('system_email');
+    const targetEmail = systemEmailRes ? systemEmailRes.value : user.email;
+    await sendAdminOTPEmail(targetEmail, otp);
+
+    res.json({ message: 'Security token dispatched via institutional terminal' });
+
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'OTP dispatch failure' });
+  }
+};
+
+exports.verifyAdminOtp = async (req, res) => {
+  try {
+    const { username, otp } = req.body;
+    const user = await User.findOne({ 
+      where: { 
+        [Op.or]: [{ email: username }, { username: username }],
+        role: 'admin' 
+      } 
+    });
+
+    if (!user || user.lastOtp !== otp) {
+      return res.status(400).json({ message: 'Invalid or expired administrative OTP' });
+    }
+
+    // Check expiration (10 minutes)
+    const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
+    if (user.lastOtpAt < tenMinutesAgo) {
+      return res.status(400).json({ message: 'Administrative OTP has expired' });
+    }
+
+    // Clear OTP and authenticate
+    user.lastOtp = null;
+    await user.save();
+
+    const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_EXPIRES_IN,
+    });
+    
+    res.json({ 
+      token, 
+      user: { id: user.id, fullName: user.fullName, currency: user.currency, role: user.role } 
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'MFA Verification Error' });
   }
 };

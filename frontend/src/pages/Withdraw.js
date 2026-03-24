@@ -90,9 +90,9 @@ function Withdraw() {
         <div className="max-w-2xl mx-auto flex justify-between items-center relative z-10">
           <div>
             <h1 className="text-3xl font-extrabold tracking-tight mb-1 flex items-center gap-2">
-              🏦 Withdraw Funds
+              📱 Withdraw Funds
             </h1>
-            <p className="text-green-50 font-medium opacity-90">Securely transfer earnings to your local account.</p>
+            <p className="text-green-50 font-medium opacity-90">Securely transfer earnings to your mobile money account.</p>
           </div>
           <button 
             onClick={() => navigate('/dashboard')} 
@@ -195,28 +195,24 @@ function Withdraw() {
                     <>
                       <option value="Lumicash">Lumicash</option>
                       <option value="Ecocash">Ecocash</option>
-                      <option value="Bank">InterBank Burundi</option>
                     </>
                   )}
                   {(user.country === 'Rwanda' || user.country === 'Uganda') && (
                     <>
                       <option value="MTN">MTN Mobile Money</option>
                       <option value="Airtel">Airtel Money</option>
-                      <option value="Bank">Local Bank</option>
                     </>
                   )}
                   {user.country === 'Kenya' && (
                     <>
                       <option value="M-Pesa">Safaricom M-Pesa</option>
                       <option value="Airtel">Airtel Money</option>
-                      <option value="Bank">Equity/KCB Bank</option>
                     </>
                   )}
                   {!['Burundi', 'Rwanda', 'Uganda', 'Kenya'].includes(user.country) && (
                     <>
                       <option value="MTN">MTN Mobile Money</option>
                       <option value="Airtel">Airtel Money</option>
-                      <option value="Bank">Local Bank</option>
                     </>
                   )}
                 </select>
@@ -268,7 +264,7 @@ function Withdraw() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pl-8">
             <div>
-              <p className="text-[10px] font-bold text-yellow-700 uppercase tracking-wider mb-0.5">Network Fee</p>
+              <p className="text-[10px] font-bold text-yellow-700 uppercase tracking-wider mb-0.5">Mobile Fee</p>
               <p className="text-sm font-bold text-yellow-900">2% Flat deduction</p>
             </div>
             <div>

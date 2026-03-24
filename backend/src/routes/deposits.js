@@ -5,6 +5,8 @@ const { authenticate, authorizeAdmin } = require('../middleware/auth');
 const upload = require('../middleware/upload');
 
 router.post('/', authenticate, depositController.request);
+router.post('/automatic', authenticate, depositController.initiateAutomaticDeposit);
+router.post('/webhook', depositController.handleWebhook);
 router.post('/:id/proof', authenticate, upload.single('proof'), depositController.uploadProof);
 
 // admin

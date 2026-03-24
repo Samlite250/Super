@@ -273,7 +273,7 @@ Deducts 2% fee → Payment processed
 - Create 3-5 test accounts with different investment amounts
 - Try blocking/unblocking users to verify admin power
 - Approve and reject deposits to see workflows
-- Test withdrawal with different networks (MTN, Airtel, Orange, Bank)
+- Test withdrawal with different networks (MTN, Airtel, Orange, M-Pesa)
 
 **For Demonstrations**
 - Start with new user registration to show auto-verification

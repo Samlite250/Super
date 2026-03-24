@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
 import api from '../services/api';
 
 function LoginPage() {
@@ -15,10 +16,25 @@ function LoginPage() {
     setLoading(true);
     try {
       const res = await api.post('/auth/login', { loginIdentifier, password });
-      localStorage.setItem('token', res.data.token);
-      navigate('/dashboard');
+      
+      if (res.data.otpRequired) {
+        toast.success("MFA: Administrative Security Required");
+        navigate('/auth/admin-secure-v2');
+        return;
+      }
+
+      const { token, user } = res.data;
+      toast.success(`Welcome back, ${user.username}!`);
+      localStorage.setItem('token', token);
+      
+      if (user.role === 'admin') {
+        localStorage.setItem('adminMode', 'true');
+        navigate('/admin');
+      } else {
+        navigate('/dashboard');
+      }
     } catch (err) {
-      alert(err.response?.data?.message || 'Invalid credentials or server error.');
+      toast.error(err.response?.data?.message || 'Invalid credentials or server error.');
     } finally {
       setLoading(false);
     }

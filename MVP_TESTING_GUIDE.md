@@ -118,7 +118,7 @@ Should show new deposit with status: **"pending"**
 3. ✅ Should see form with:
    - Balance display: 500,000 FBu
    - Amount input field (minimum 10,000 FBu)
-   - Network dropdown (MTN, Airtel, Orange, Bank)
+   - Network dropdown (MTN, Airtel, Orange, M-Pesa)
    - Phone number input field
    - Fee info: 2% fee displayed (10,000 FBu = 200 FBu fee)
 4. Fill form:
@@ -205,7 +205,7 @@ Should show new deposit with status: **"pending"**
 3. Find row with status **"pending"**
 4. ✅ Should display:
    - Phone number provided
-   - Network: MTN/Airtel/Orange/Bank
+   - Network: MTN/Airtel/Orange
    - Fee amount: 2% highlighted in orange
 5. Click **"Approve"** button
 6. ✅ Row updates to "approved" status (green)

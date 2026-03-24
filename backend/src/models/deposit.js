@@ -8,7 +8,9 @@ module.exports = (sequelize, DataTypes) => {
     payerNumber: { type: DataTypes.STRING },
     payerNames: { type: DataTypes.STRING },
     proofUploadedAt: { type: DataTypes.DATE },
-    status: { type: DataTypes.STRING, defaultValue: 'pending' }
+    status: { type: DataTypes.STRING, defaultValue: 'pending' },
+    txRef: { type: DataTypes.STRING, unique: true },
+    paymentMethod: { type: DataTypes.STRING, defaultValue: 'manual' }
   });
   return Deposit;
 };

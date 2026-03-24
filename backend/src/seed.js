@@ -1,11 +1,21 @@
-const { sequelize, Machine, Admin, ExchangeRate, Setting } = require('./models');
+const { sequelize, User, Machine, Admin, ExchangeRate, Setting } = require('./models');
 const bcrypt = require('bcrypt');
 
 async function run() {
   await sequelize.sync({ force: true });
-  // create admin
+  // create admin in User table
   const hash = await bcrypt.hash('adminpass', 10);
-  await Admin.create({ username: 'admin', password: hash });
+  await User.create({ 
+    fullName: 'System Administrator',
+    username: 'admin', 
+    email: 'admin@supercash.com', 
+    phone: '+2570000000',
+    password: hash, 
+    role: 'admin',
+    country: 'Burundi',
+    currency: 'FBu',
+    isVerified: true
+  });
 
   // create exchange rates
   await ExchangeRate.bulkCreate([

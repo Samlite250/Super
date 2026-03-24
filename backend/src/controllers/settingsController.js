@@ -2,11 +2,9 @@ const { Setting, ExchangeRate } = require('../models');
 
 exports.getAll = async (req, res) => {
   const settings = await Setting.findAll();
-  // return as key => parsed value map for easier frontend consumption
   const map = {};
   settings.forEach(s => {
     try {
-      // only parse if it looks like JSON array or object
       if (s.value && (s.value.startsWith('{') || s.value.startsWith('['))) {
         map[s.key] = JSON.parse(s.value);
       } else {
@@ -15,6 +13,16 @@ exports.getAll = async (req, res) => {
     } catch (e) {
       map[s.key] = s.value;
     }
+  });
+  res.json(map);
+};
+
+exports.getPublicSettings = async (req, res) => {
+  const publicKeys = ['auto_deposit_enabled', 'supportEmail'];
+  const settings = await Setting.findAll({ where: { key: publicKeys } });
+  const map = {};
+  settings.forEach(s => {
+    map[s.key] = s.value;
   });
   res.json(map);
 };
@@ -100,6 +108,25 @@ exports.setPaymentProcedure = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to save procedure' });
+  }
+};
+
+exports.deletePaymentProcedure = async (req, res) => {
+  try {
+    const { country } = req.body;
+    let setting = await Setting.findByPk('paymentProcedures');
+    if (!setting || !setting.value) return res.json({ success: true });
+    
+    let procedures = JSON.parse(setting.value);
+    delete procedures[country];
+    
+    setting.value = JSON.stringify(procedures);
+    await setting.save();
+    
+    res.json({ success: true, procedures });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to delete procedure' });
   }
 };
 

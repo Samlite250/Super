@@ -46,7 +46,7 @@ function Terms() {
                      Withdrawal & Fees
                   </h2>
                   <p>
-                     You may request a withdrawal of your earned yields at any time, provided you meet the minimum threshold of 10,000 FBu (or equivalent). A standard network fee of 2% is deducted to cover mobile money and bank processing costs. Withdrawals are typically processed within 24 hours.
+                     You may request a withdrawal of your earned yields at any time, provided you meet the minimum threshold of 10,000 FBu (or equivalent). A standard network fee of 2% is deducted to cover mobile money processing costs. Withdrawals are typically processed within 24 hours.
                   </p>
                </section>
 

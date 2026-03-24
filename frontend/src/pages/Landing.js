@@ -24,15 +24,51 @@ function Landing() {
           </div>
         </div>
       </header>
+ 
+      {/* Live Activity Feed - Social Proof Marquee */}
+      <div className="bg-white border-b border-gray-100 overflow-hidden py-3 shadow-inner relative z-40">
+        <div className="flex animate-marquee whitespace-nowrap gap-12 items-center">
+            {[
+              { u: 'u***1', a: '45,000 FBu', t: '2m ago' },
+              { u: 's***p', a: '12,000 KES', t: '5m ago' },
+              { u: 'r***a', a: '150,000 RWF', t: '12m ago' },
+              { u: 'k***2', a: '8,000 UGX', t: '20m ago' },
+              { u: 'm***s', a: '1,200,000 FBu', t: '35m ago' },
+              { u: 'a***m', a: '35,000 KES', t: '1h ago' }
+            ].map((p, i) => (
+              <div key={i} className="flex items-center gap-2.5">
+                  <div className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)] animate-pulse"></div>
+                  <span className="text-[10px] uppercase font-black text-gray-300 tracking-widest">{p.t}</span>
+                  <span className="text-[11px] font-black text-gray-700 tracking-tight uppercase">{p.u} recieved payout</span>
+                  <span className="text-[11px] font-black text-green-700 bg-green-50 px-2.5 py-1 rounded-lg border border-green-100 shadow-sm">+{p.a}</span>
+              </div>
+            ))}
+            {/* Infinite Loop Duplicates */}
+            {[
+              { u: 'u***1', a: '45,000 FBu', t: '2m ago' },
+              { u: 's***p', a: '12,000 KES', t: '5m ago' },
+            ].map((p, i) => (
+              <div key={i+'loop'} className="flex items-center gap-2.5">
+                  <div className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)] animate-pulse"></div>
+                  <span className="text-[10px] uppercase font-black text-gray-300 tracking-widest">{p.t}</span>
+                  <span className="text-[11px] font-black text-gray-700 tracking-tight uppercase">{p.u} recieved payout</span>
+                  <span className="text-[11px] font-black text-green-700 bg-green-50 px-2.5 py-1 rounded-lg border border-green-100 shadow-sm">+{p.a}</span>
+              </div>
+            ))}
+        </div>
+      </div>
 
       {/* Hero Section */}
-      <section className="relative bg-secondary overflow-hidden pb-16 pt-24 lg:pb-32 lg:pt-32">
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary via-[#166c3a] to-black opacity-90 mix-blend-multiply"></div>
+      <section className="relative bg-primary overflow-hidden pb-16 pt-24 lg:pb-32 lg:pt-40 min-h-[90vh] flex items-center">
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="/images/hero-tractor.png" 
+            className="w-full h-full object-cover opacity-60 scale-110 blur-[0.5px] transform transition-transform duration-[15000ms] hover:scale-105" 
+            alt="Agricultural Tractor Background"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#064e3b] via-[#064e3b]/70 to-[#1F8B4C]/40"></div>
+          <div className="absolute inset-0 bg-[#1F8B4C]/10 mix-blend-multiply"></div>
         </div>
-        <div className="absolute top-0 right-0 -tr-translate-x-1/2 -tr-translate-y-1/2 w-[600px] h-[600px] bg-green-400 rounded-full opacity-20 blur-[100px]"></div>
-        <div className="absolute bottom-10 left-10 w-[400px] h-[400px] bg-blue-500 rounded-full opacity-10 blur-[100px]"></div>
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-yellow-400 rounded-full opacity-10 blur-[80px]"></div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10">
           <h2 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-white mb-6 tracking-tight leading-tight">
@@ -60,6 +96,7 @@ function Landing() {
         </div>
       </section>
 
+
       {/* How It Works */}
       <section className="py-24 bg-white relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -71,7 +108,7 @@ function Landing() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               { num: '01', title: 'Register', desc: 'Create your secure account in less than a minute.', icon: '🔐' },
-              { num: '02', title: 'Fund Wallet', desc: 'Deposit funds instantly via local mobile money or bank.', icon: '💵' },
+              { num: '02', title: 'Fund Wallet', desc: 'Deposit funds instantly via local mobile money.', icon: '📲' },
               { num: '03', title: 'Reserve Asset', desc: 'Select a highly-vetted agricultural equipment plan.', icon: '🚜' },
               { num: '04', title: 'Earn Daily', desc: 'Collect automated daily returns and withdraw anytime.', icon: '📈' }
             ].map((step, idx) => (
@@ -100,11 +137,11 @@ function Landing() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               { title: 'Automated Daily Yields', desc: 'Smart contracts automatically distribute your rental profits every 24 hours. No waiting for end-of-month.', color: 'from-green-400 to-emerald-500' },
-              { title: 'Local Integrations', desc: 'Native support for MTN, Airtel, and local banks. Deposit and withdraw in your local currency instantly.', color: 'from-blue-400 to-indigo-500' },
+              { title: 'Mobile Focus', desc: 'Native support for MTN, Airtel, and local mobile money providers. Get paid in your local currency instantly.', color: 'from-blue-400 to-indigo-500' },
               { title: 'Zero Hidden Fees', desc: '0% processing limits on deposits. Transparent ROI calculations with no surprise deductions.', color: 'from-yellow-400 to-orange-500' },
               { title: 'Vetted Assets', desc: 'Every tractor and drone is heavily vetted and actively deployed in high-yield farming sectors.', color: 'from-purple-400 to-pink-500' },
               { title: 'Referral Rewards', desc: 'Earn lucrative percentage commissions instantly when your network joins and invests.', color: 'from-red-400 to-rose-500' },
-              { title: 'Bank-Grade Security', desc: 'Your data and funds are encrypted and segregated following strict financial compliance standards.', color: 'from-teal-400 to-cyan-500' }
+              { title: 'Enterprise Security', desc: 'Your data and funds are encrypted and segregated following strict financial compliance standards.', color: 'from-teal-400 to-cyan-500' }
             ].map((feature, idx) => (
               <div key={idx} className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
                 <div className={`w-12 h-12 rounded-xl mb-6 bg-gradient-to-br ${feature.color} shadow-inner`}></div>

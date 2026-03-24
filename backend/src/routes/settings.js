@@ -5,6 +5,7 @@ const { authenticate, authorizeAdmin } = require('../middleware/auth');
 const upload = require('../middleware/upload');
 
 router.get('/', authenticate, authorizeAdmin, settingsController.getAll);
+router.get('/public', authenticate, settingsController.getPublicSettings);
 router.post('/', authenticate, authorizeAdmin, settingsController.update);
 router.get('/rates', authenticate, authorizeAdmin, settingsController.getRates);
 router.post('/rates', authenticate, authorizeAdmin, settingsController.setRate);

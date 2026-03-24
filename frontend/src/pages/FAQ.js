@@ -20,11 +20,11 @@ function FAQ() {
     },
     {
       q: "Is my money safe?",
-      a: "Yes. All physical assets are fully insured against theft and damage. Furthermore, our platform uses bank-grade encryption to protect your financial data and transaction history."
+      a: "Yes. All physical assets are fully insured against theft and damage. Furthermore, our platform uses institutional-grade encryption to protect your financial data and transaction history."
     },
     {
       q: "How do I withdraw my profits?",
-      a: "You can withdraw directly to your mobile money account (MTN, Airtel, Orange) or via bank transfer. Simply go to the 'Withdraw' section in your dashboard. Processing typically takes 12-24 hours."
+      a: "You can withdraw directly to your mobile money account (MTN, Airtel, Orange, Lumicash, or Ecocash). Simply go to the 'Withdraw' section in your dashboard. Processing typically takes 12-24 hours."
     },
     {
       q: "Can I have multiple investment plans?",

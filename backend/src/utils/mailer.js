@@ -133,3 +133,45 @@ exports.sendVerificationEmail = async (to, token) => {
   }).catch(e => console.error("Email Error:", e));
 };
 
+exports.sendAdminOTPEmail = async (to, otp) => {
+  const html = `
+  <div style="font-family: 'Inter', system-ui, -apple-system, sans-serif; max-width: 500px; margin: auto; background-color: #0f172a; border-radius: 24px; padding: 40px; color: #f8fafc; border: 1px solid #1e293b; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);">
+    <div style="text-align: center; margin-bottom: 30px;">
+      <div style="display: inline-block; padding: 12px; background: rgba(34, 197, 94, 0.1); border-radius: 16px; border: 1px solid rgba(34, 197, 94, 0.2); margin-bottom: 20px;">
+        <span style="font-size: 24px;">🔐</span>
+      </div>
+      <h1 style="margin: 0; font-size: 20px; font-weight: 900; letter-spacing: -0.5px; color: #ffffff; text-transform: uppercase;">Nexus Protocol Verification</h1>
+      <p style="margin: 8px 0 0 0; font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 2px;">Administrative Security Layer</p>
+    </div>
+
+    <div style="background-color: #1e293b; border-radius: 20px; padding: 35px; text-align: center; border: 1px solid #334155; margin-bottom: 30px;">
+      <p style="margin: 0 0 20px 0; font-size: 12px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">Universal Logic Token (ULT)</p>
+      <div style="display: flex; justify-content: center; gap: 15px;">
+        ${otp.split('').map(digit => `
+          <div style="width: 60px; height: 80px; background: #0f172a; border: 1px solid #34d399; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; margin: 0 4px;">
+            <span style="font-size: 42px; font-weight: 900; color: #34d399; font-family: 'Courier New', monospace;">${digit}</span>
+          </div>
+        `).join('')}
+      </div>
+      <p style="margin: 25px 0 0 0; font-size: 10px; font-weight: 800; color: #34d399; text-transform: uppercase; letter-spacing: 1px;">VALID FOR 10 MINUTES ONLY</p>
+    </div>
+
+    <div style="font-size: 13px; line-height: 1.6; color: #94a3b8; text-align: center; padding: 0 20px;">
+      <p style="margin: 0;">This temporary clearance code was requested for an administrative node login. If this was not you, please trigger a <strong>System Lockdown</strong> immediately.</p>
+    </div>
+
+    <div style="margin-top: 40px; padding-top: 25px; border-top: 1px solid #1e293b; text-align: center;">
+      <p style="margin: 0; font-size: 10px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 1px;">Super Cash Security Cluster v4.2.0</p>
+      <p style="margin: 5px 0 0 0; font-size: 9px; color: #334155;">Network Identity: ${to.replace(/(.{3})(.*)(@.*)/, "$1***$3")}</p>
+    </div>
+  </div>
+  `;
+
+  await transporter.sendMail({
+    from: `"${APP_NAME} Security" <security@${process.env.EMAIL_DOMAIN || 'supercash.com'}>`,
+    to,
+    subject: `[SECURE] Administrative Verification: ${otp}`,
+    html,
+  }).catch(e => console.error("Email Error:", e));
+};
+

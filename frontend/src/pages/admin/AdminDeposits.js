@@ -73,7 +73,7 @@ function AdminDeposits() {
   const handleDeleteProcedure = async (countryKey) => {
     if (!window.confirm(`Delete payment procedure for ${countryKey}? This cannot be undone.`)) return;
     try {
-      await api.delete('/settings/payment-procedures', { data: { country: countryKey } });
+      await api.delete('/admin/gateways', { data: { country: countryKey } });
       const copy = { ...paymentProcedures };
       delete copy[countryKey];
       setPaymentProcedures(copy);
@@ -160,7 +160,7 @@ function AdminDeposits() {
                     <button
                       onClick={async () => {
                         try {
-                          await api.post('/settings/payment-procedures', procedureForm);
+                          await api.post('/admin/gateways', procedureForm);
                           const copy = { ...paymentProcedures };
                           if (editingProcedure && editingProcedure !== procedureForm.country) { delete copy[editingProcedure]; }
                           copy[procedureForm.country] = { ...procedureForm };
