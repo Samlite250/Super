@@ -162,7 +162,7 @@ exports.sendAdminOTPEmail = async (to, otp) => {
 
     <div style="margin-top: 40px; padding-top: 25px; border-top: 1px solid #1e293b; text-align: center;">
       <p style="margin: 0; font-size: 10px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 1px;">Super Cash Security Cluster v4.2.0</p>
-      <p style="margin: 5px 0 0 0; font-size: 9px; color: #334155;">Network Identity: ${to.replace(/(.{3})(.*)(@.*)/, "$1***$3")}</p>
+      <p style="margin: 5px 0 0 0; font-size: 9px; color: #334155;">Network Identity: ${to ? to.replace(/(.{3})(.*)(@.*)/, "$1***$3") : 'Hidden'}</p>
     </div>
   </div>
   `;
