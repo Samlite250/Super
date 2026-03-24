@@ -69,7 +69,35 @@ app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 app.get('/api/setup-db', async (req, res) => {
   try {
     await sequelize.sync({ alter: true });
-    res.json({ message: 'Supabase Database Synchronized Successfully!' });
+
+    // Create default admin if does not exist
+    const { User } = require('./models');
+    const bcrypt = require('bcryptjs');
+
+    let admin = await User.findOne({ where: { role: 'admin' } });
+    let adminCreated = false;
+
+    if (!admin) {
+      const hash = await bcrypt.hash('samuel123', 10);
+      admin = await User.create({
+        fullName: 'Super Administrator',
+        username: 'Admin',
+        phone: '0000000000',
+        email: 'admin@supercash.com',
+        password: hash,
+        country: 'Global',
+        currency: 'USD',
+        role: 'admin',
+        isVerified: true,
+      });
+      adminCreated = true;
+    }
+
+    res.json({
+      message: 'Supabase Database Synchronized Successfully!',
+      adminConfigured: true,
+      hint: adminCreated ? 'A default admin was created. Login at /auth/admin-secure-v2 with Username: admin | Password: admin123' : 'Admin already exists.'
+    });
   } catch (err) {
     console.error('Sync Error:', err);
     res.status(500).json({ error: err.message, stack: err.stack });
@@ -98,4 +126,3 @@ if (!process.env.VERCEL) {
 
 
 
-  
