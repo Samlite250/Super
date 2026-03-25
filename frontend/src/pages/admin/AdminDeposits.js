@@ -308,7 +308,7 @@ function AdminDeposits() {
                <h3 className="text-4xl font-black text-gray-900 tracking-tight">Evidence Verification</h3>
             </div>
 
-            <div className="grid grid-cols-2 gap-8 mb-14">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-14">
               <div className="bg-gray-50/50 p-8 rounded-[2rem] border border-gray-100 group hover:bg-secondary/5 hover:border-secondary/20 transition-all">
                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-[4px] mb-3">Identity Analysis</p>
                 <p className="font-black text-gray-900 text-2xl tracking-tight">{selectedDeposit.User?.username}</p>
@@ -335,7 +335,7 @@ function AdminDeposits() {
                 </div>
                 <div className="p-12">
                    <img src={(selectedDeposit.proofUrl && (selectedDeposit.proofUrl.startsWith('http') ? selectedDeposit.proofUrl : `${(api.defaults.baseURL || '').replace(/\/api$/, '')}${selectedDeposit.proofUrl}`))} alt="Evidence" className="w-full rounded-[2.5rem] border-[6px] border-white shadow-3xl transform hover:scale-[1.03] transition-transform duration-700" />
-                   <div className="mt-12 grid grid-cols-2 gap-8">
+                   <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-8">
                       <div className="p-6 bg-white rounded-2xl border border-gray-100 shadow-sm">
                          <p className="text-[9px] font-black text-gray-400 uppercase tracking-[4px] mb-2 underline decoration-secondary/20 underline-offset-8">Relay Channel ID</p>
                          <p className="text-sm font-black text-gray-800 tracking-tight">{selectedDeposit.payerNumber || 'VOID'}</p>
@@ -350,7 +350,7 @@ function AdminDeposits() {
             )}
 
             {selectedDeposit.status === 'pending' && (
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <button
                   onClick={() => handleApprove(selectedDeposit.id)}
                   className="py-6 bg-primary text-white font-black rounded-3xl shadow-[0_20px_40px_-10px_rgba(34,197,94,0.4)] hover:scale-[1.02] active:scale-95 transition-all text-[12px] tracking-[4px] uppercase"
