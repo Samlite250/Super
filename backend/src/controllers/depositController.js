@@ -127,13 +127,43 @@ exports.uploadProof = async (req, res) => {
     deposit.payerNumber = payerNumber;
     deposit.payerNames = payerNames;
     deposit.proofUploadedAt = new Date();
-    await deposit.save();
+
+    // Try to save; if it fails due to column size, auto-alter and retry
+    try {
+      await deposit.save();
+    } catch (saveErr) {
+      // Check if this is a "value too long" or "data truncated" error
+      const errMsg = saveErr.message || '';
+      const isColumnError = errMsg.includes('value too long') || errMsg.includes('Data too long') || 
+                            errMsg.includes('String or binary data would be truncated') || saveErr.name === 'SequelizeDatabaseError';
+      if (isColumnError) {
+        // Attempt to alter the column and retry
+        const { sequelize } = require('../models');
+        try {
+          const dialect = sequelize.getDialect();
+          if (dialect === 'postgres') {
+            await sequelize.query('ALTER TABLE "Deposits" ALTER COLUMN "proofUrl" TYPE TEXT');
+          } else {
+            await sequelize.query('ALTER TABLE `Deposits` MODIFY COLUMN `proofUrl` LONGTEXT');
+          }
+          console.log('[DEPOSIT] proofUrl column auto-altered to TEXT');
+          await deposit.save();
+        } catch (alterErr) {
+          console.error('[DEPOSIT] Auto-alter failed:', alterErr.message);
+          throw saveErr; // re-throw original error
+        }
+      } else {
+        throw saveErr;
+      }
+    }
+
     res.json(deposit);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Upload failed' });
+    console.error('[DEPOSIT] uploadProof error:', err.message);
+    res.status(500).json({ message: 'Upload failed: ' + err.message });
   }
 };
+
 
 // admin
 exports.list = async (req, res) => {
