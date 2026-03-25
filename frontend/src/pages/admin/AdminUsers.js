@@ -167,14 +167,14 @@ function AdminUsers() {
                          </span>
                        </td>
                        <td className="p-6 text-center">
-                         <div className="flex gap-3 items-center justify-center opacity-0 group-hover:opacity-100 transition-all transform translate-x-3 group-hover:translate-x-0">
-                           <button onClick={() => openEdit(u)} className="p-3.5 rounded-2xl bg-white text-gray-400 hover:text-secondary border border-gray-100 shadow-xl hover:shadow-secondary/10 transition-all" title="Modify Protocol">
+                         <div className="flex gap-3 items-center justify-center transition-all">
+                           <button onClick={() => openEdit(u)} className="p-3.5 rounded-2xl bg-blue-50 text-blue-500 hover:bg-blue-500 hover:text-white border border-blue-100 shadow-sm transition-all" title="Modify Protocol">
                               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                            </button>
-                           <button onClick={() => handleBlock(u.id, u.blocked)} className={`p-3.5 rounded-2xl border border-gray-100 shadow-xl transition-all ${u.blocked ? 'bg-primary/10 text-primary hover:bg-primary hover:text-white' : 'bg-red-50/50 text-red-400 hover:bg-red-500 hover:text-white'}`} title={u.blocked ? 'De-Void' : 'Void Access'}>
+                           <button onClick={() => handleBlock(u.id, u.blocked)} className={`p-3.5 rounded-2xl border shadow-sm transition-all ${u.blocked ? 'bg-green-50 text-green-500 border-green-100 hover:bg-green-500 hover:text-white' : 'bg-red-50 text-red-500 border-red-100 hover:bg-red-500 hover:text-white'}`} title={u.blocked ? 'De-Void' : 'Void Access'}>
                               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                            </button>
-                           <button onClick={() => handleResetPassword(u.id)} className="p-3.5 rounded-2xl bg-white text-gray-400 hover:text-orange-500 border border-gray-100 shadow-xl hover:shadow-orange-500/10 transition-all" title="Secret Re-Auth">
+                           <button onClick={() => handleResetPassword(u.id)} className="p-3.5 rounded-2xl bg-orange-50 text-orange-500 hover:bg-orange-500 hover:text-white border border-orange-100 shadow-sm transition-all" title="Secret Re-Auth">
                               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg>
                            </button>
                          </div>
