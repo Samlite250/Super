@@ -273,9 +273,9 @@ function AdminDeposits() {
                            <td className="p-8 text-center">
                              {d.proofUrl ? (
                                <div className="relative inline-block group/img">
-                                  <img 
-                                    src={d.proofUrl.startsWith('http') ? d.proofUrl : `${(api.defaults.baseURL || '').replace(/\/api$/, '')}${d.proofUrl}`} 
-                                    alt="proof" 
+                                   <img 
+                                     src={d.proofUrl.startsWith('http') || d.proofUrl.startsWith('data:') ? d.proofUrl : `${(api.defaults.baseURL || '').replace(/\/api$/, '')}${d.proofUrl}`} 
+                                     alt="proof" 
                                     className="w-16 h-12 object-cover rounded-2xl mx-auto shadow-xl ring-4 ring-white cursor-pointer hover:scale-[1.4] hover:shadow-2xl transition-all duration-500" 
                                   />
                                </div>
@@ -329,12 +329,12 @@ function AdminDeposits() {
                    </p>
                    <button onClick={() => {
                       const origin = (api.defaults.baseURL || '').replace(/\/api$/, '');
-                      const url = selectedDeposit.proofUrl.startsWith('http') ? selectedDeposit.proofUrl : `${origin}${selectedDeposit.proofUrl}`;
+                      const url = (selectedDeposit.proofUrl.startsWith('http') || selectedDeposit.proofUrl.startsWith('data:')) ? selectedDeposit.proofUrl : `${origin}${selectedDeposit.proofUrl}`;
                       window.open(url, '_blank');
                    }} className="text-[10px] font-black text-secondary hover:underline uppercase tracking-[3px] decoration-2">Master Resolution</button>
                 </div>
                 <div className="p-12">
-                   <img src={(selectedDeposit.proofUrl && (selectedDeposit.proofUrl.startsWith('http') ? selectedDeposit.proofUrl : `${(api.defaults.baseURL || '').replace(/\/api$/, '')}${selectedDeposit.proofUrl}`))} alt="Evidence" className="w-full rounded-[2.5rem] border-[6px] border-white shadow-3xl transform hover:scale-[1.03] transition-transform duration-700" />
+                   <img src={(selectedDeposit.proofUrl && ((selectedDeposit.proofUrl.startsWith('http') || selectedDeposit.proofUrl.startsWith('data:')) ? selectedDeposit.proofUrl : `${(api.defaults.baseURL || '').replace(/\/api$/, '')}${selectedDeposit.proofUrl}`))} alt="Evidence" className="w-full rounded-[2.5rem] border-[6px] border-white shadow-3xl transform hover:scale-[1.03] transition-transform duration-700" />
                    <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-8">
                       <div className="p-6 bg-white rounded-2xl border border-gray-100 shadow-sm">
                          <p className="text-[9px] font-black text-gray-400 uppercase tracking-[4px] mb-2 underline decoration-secondary/20 underline-offset-8">Relay Channel ID</p>

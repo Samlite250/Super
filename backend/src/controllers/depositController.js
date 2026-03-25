@@ -119,7 +119,11 @@ exports.uploadProof = async (req, res) => {
   try {
     const { payerNumber, payerNames } = req.body;
     if (!payerNumber || !payerNames) return res.status(400).json({ message: 'Payer number and names are required' });
-    if (req.file) deposit.proofUrl = `/uploads/${req.file.filename}`;
+    if (req.file) {
+      deposit.proofUrl = req.file.buffer 
+        ? `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}` 
+        : `/uploads/${req.file.filename}`;
+    }
     deposit.payerNumber = payerNumber;
     deposit.payerNames = payerNames;
     deposit.proofUploadedAt = new Date();

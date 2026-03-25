@@ -142,7 +142,7 @@ function Machines() {
               const defaultImg = fallbackImages[idx % fallbackImages.length];
               const getMachineImage = (img) => {
                 if (!img) return defaultImg;
-                if (img.startsWith('http')) return img;
+                if (img.startsWith('http') || img.startsWith('data:')) return img;
                 const path = img.startsWith('/') ? img : `/${img}`;
                 return `${IMAGE_BASE_URL}${path}`;
               };

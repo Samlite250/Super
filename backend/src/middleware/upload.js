@@ -3,11 +3,11 @@ const path = require('path');
 
 const fs = require('fs');
 
-const storage = multer.diskStorage({
+const isVercel = process.env.VERCEL === '1' || process.env.VERCEL;
+
+const storage = isVercel ? multer.memoryStorage() : multer.diskStorage({
   destination: (req, file, cb) => {
-    // Determine the environment
-    const isVercel = process.env.VERCEL === '1' || process.env.VERCEL;
-    const dest = isVercel ? '/tmp' : path.join(__dirname, '../../uploads');
+    const dest = path.join(__dirname, '../../uploads');
     
     // Ensure the directory exists
     if (!fs.existsSync(dest)) {

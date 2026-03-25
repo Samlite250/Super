@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
     userId: { type: DataTypes.INTEGER, allowNull: false },
     amount: { type: DataTypes.DECIMAL(20,2), allowNull: false },
     currency: { type: DataTypes.STRING, allowNull: false },
-    proofUrl: { type: DataTypes.STRING },
+    proofUrl: { type: DataTypes.TEXT('long') },
     payerNumber: { type: DataTypes.STRING },
     payerNames: { type: DataTypes.STRING },
     proofUploadedAt: { type: DataTypes.DATE },

@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
     priceFBu: { type: DataTypes.DECIMAL(20,2), allowNull: false },
     durationDays: { type: DataTypes.INTEGER, allowNull: false },
     dailyPercent: { type: DataTypes.DECIMAL(5,2), allowNull: false },
-    imageUrl: { type: DataTypes.STRING },
+    imageUrl: { type: DataTypes.TEXT('long') },
     premium: { type: DataTypes.BOOLEAN, defaultValue: false }
   });
   return Machine;

@@ -133,7 +133,9 @@ exports.deletePaymentProcedure = async (req, res) => {
 exports.uploadPaymentLogo = async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
-    const url = `/uploads/${req.file.filename}`;
+    const url = req.file.buffer 
+      ? `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}` 
+      : `/uploads/${req.file.filename}`;
     res.json({ url });
   } catch (err) {
     console.error(err);
@@ -160,7 +162,9 @@ exports.uploadPaymentProcedureLogo = async (req, res) => {
     if (!country) return res.status(400).json({ error: 'Country is required' });
     if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
 
-    const url = `/uploads/${req.file.filename}`;
+    const url = req.file.buffer 
+      ? `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}` 
+      : `/uploads/${req.file.filename}`;
 
     // load existing procedures
     let setting = await Setting.findByPk('paymentProcedures');

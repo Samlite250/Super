@@ -72,7 +72,12 @@ exports.list = async (req, res) => {
 exports.create = async (req, res) => {
   const { name, description, priceFBu, durationDays, dailyPercent, premium } = req.body;
   try {
-    const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
+    let imageUrl = null;
+    if (req.file) {
+      imageUrl = req.file.buffer 
+        ? `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}` 
+        : `/uploads/${req.file.filename}`;
+    }
     const machine = await Machine.create({ 
       name, 
       description, 
@@ -102,8 +107,10 @@ exports.update = async (req, res) => {
     }
 
     if (req.file) {
-      machine.imageUrl = `/uploads/${req.file.filename}`;
-      console.log(`[MACHINE] Image uploaded: ${req.file.filename}`);
+      machine.imageUrl = req.file.buffer 
+        ? `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}` 
+        : `/uploads/${req.file.filename}`;
+      console.log(`[MACHINE] Image uploaded or updated for ID: ${id}`);
     }
 
     // Sanitize and validate inputs
