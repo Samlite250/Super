@@ -70,6 +70,22 @@ app.get('/api/setup-db', async (req, res) => {
   try {
     await sequelize.sync({ alter: true });
 
+    // Proactively expand TEXT columns that may have been created as VARCHAR(255)
+    try {
+      const dialect = sequelize.getDialect();
+      if (dialect === 'postgres') {
+        await sequelize.query('ALTER TABLE "Deposits" ALTER COLUMN "proofUrl" TYPE TEXT');
+        await sequelize.query('ALTER TABLE "Machines" ALTER COLUMN "imageUrl" TYPE TEXT');
+      } else {
+        await sequelize.query('ALTER TABLE `Deposits` MODIFY COLUMN `proofUrl` LONGTEXT');
+        await sequelize.query('ALTER TABLE `Machines` MODIFY COLUMN `imageUrl` LONGTEXT');
+      }
+      console.log('[SETUP-DB] proofUrl and imageUrl columns expanded to TEXT');
+    } catch (alterErr) {
+      // Columns may already be TEXT — ignore
+      console.log('[SETUP-DB] Column alter skipped (already TEXT):', alterErr.message);
+    }
+
     // Create default admin if does not exist
     const { User } = require('./models');
     const bcrypt = require('bcryptjs');

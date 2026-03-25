@@ -128,13 +128,39 @@ exports.update = async (req, res) => {
     
     machine.premium = (premium === 'true' || premium === true);
 
-    await machine.save();
+    // Try to save; auto-alter imageUrl column if too short, then retry
+    try {
+      await machine.save();
+    } catch (saveErr) {
+      const errMsg = saveErr.message || '';
+      const isColumnError = errMsg.includes('value too long') || errMsg.includes('Data too long') || 
+                            errMsg.includes('String or binary data would be truncated') || saveErr.name === 'SequelizeDatabaseError';
+      if (isColumnError) {
+        const { sequelize } = require('../models');
+        try {
+          const dialect = sequelize.getDialect();
+          if (dialect === 'postgres') {
+            await sequelize.query('ALTER TABLE "Machines" ALTER COLUMN "imageUrl" TYPE TEXT');
+          } else {
+            await sequelize.query('ALTER TABLE `Machines` MODIFY COLUMN `imageUrl` LONGTEXT');
+          }
+          console.log('[MACHINE] imageUrl column auto-altered to TEXT');
+          await machine.save();
+        } catch (alterErr) {
+          console.error('[MACHINE] Auto-alter failed:', alterErr.message);
+          throw saveErr;
+        }
+      } else {
+        throw saveErr;
+      }
+    }
+
     console.log(`[MACHINE] Successfully updated machine: ${machine.name}`);
     res.json(machine);
   } catch (err) {
-    console.error(`[MACHINE] CRITICAL UPDATE ERROR for ID ${id}:`, err);
+    console.error(`[MACHINE] CRITICAL UPDATE ERROR for ID ${id}:`, err.message);
     res.status(500).json({ 
-      message: `Update failed: ${err.name} - ${err.message}`,
+      message: `Update failed: ${err.message}`,
       details: err.errors ? err.errors.map(e => e.message) : []
     });
   }
