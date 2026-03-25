@@ -1,7 +1,30 @@
 const { Machine } = require('../models');
 
 exports.list = async (req, res) => {
-  const machines = await Machine.findAll({ order: [['priceFBu', 'ASC']] });
+  let machines = await Machine.findAll({ order: [['priceFBu', 'ASC']] });
+  
+  // Auto-seed the 15 plans if the database is empty (fixing the "Registry Void" issue)
+  if (machines.length === 0) {
+     const plans = ['Tractor X200', 'Plow Deluxe', 'Harvester Pro', 'Mini Cultivator', 'Seeder M1', 'Miller 250', 'Irrigation Machine', 'Crop Duster', 'Harvest Titan', 'Pro Seeder 900', 'Mega Agro Combine', 'Deep Well Driller', 'Soil Nutrient Lab', 'Autonomous Crop Rover', 'Silo Storage Unit'];
+     const basePrices = [15000, 30000, 60000, 150000, 300000, 450000, 600000, 900000, 1200000, 1500000, 2100000, 2700000, 3300000, 3900000, 4500000];
+     try {
+       for (let i = 0; i < plans.length; i++) {
+          await Machine.create({
+              name: plans[i],
+              description: 'Advanced automated agricultural equipment. Lease stake to generate daily agro-returns.',
+              priceFBu: basePrices[i],
+              durationDays: 30 + (i * 2), // e.g. 30 to 58 days
+              dailyPercent: 5.0 + (i * 0.1), // e.g. 5.0 to 6.4%
+              premium: i >= 10,
+              imageUrl: null
+          });
+       }
+       machines = await Machine.findAll({ order: [['priceFBu', 'ASC']] });
+     } catch (seedErr) {
+       console.error('[MACHINE] Auto-seed failed', seedErr);
+     }
+  }
+
   // attempt to decode token if provided for currency conversion
   let userCurrency;
   try {
