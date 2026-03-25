@@ -34,8 +34,11 @@ function LoginPage() {
         navigate('/dashboard');
       }
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Invalid credentials or server error.');
+      console.error('Login technical failure:', err);
+      const msg = err.response?.data?.message || 'Access denied: Check credentials or network sync.';
+      toast.error(msg);
     } finally {
+
       setLoading(false);
     }
   };
@@ -44,10 +47,10 @@ function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 font-sans p-4 relative overflow-hidden">
       
       {/* Background Decor */}
-      <div className="absolute top-0 right-0 -tr-translate-y-1/2 w-96 h-96 bg-primary/10 rounded-full opacity-10 blur-3xl pointer-events-none"></div>
+      <div className="absolute top-0 right-0 -translate-y-1/2 w-96 h-96 bg-primary/10 rounded-full opacity-10 blur-3xl pointer-events-none"></div>
       <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-primary rounded-full opacity-10 blur-[100px] pointer-events-none"></div>
 
-      <div className="w-full max-w-md bg-white rounded-3xl shadow-xl p-8 md:p-10 border border-gray-100 relative z-10 transition-all">
+      <div className="w-full max-w-md bg-white rounded-3xl shadow-xl p-6 sm:p-8 md:p-10 border border-gray-100 relative z-10 transition-all mx-2">
         
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center gap-2 mb-6 hover:scale-105 transition-transform">
@@ -66,7 +69,7 @@ function LoginPage() {
               value={loginIdentifier}
               onChange={(e) => setLoginIdentifier(e.target.value)}
               placeholder="Username or email"
-              className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-secondary focus:border-secondary transition-all font-medium text-gray-900"
+              className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-secondary focus:border-secondary transition-all font-medium text-gray-900 outline-none"
               required
             />
           </div>
@@ -74,14 +77,14 @@ function LoginPage() {
           <div>
             <div className="flex justify-between items-center mb-1.5">
               <label className="block text-sm font-bold text-gray-700">Password</label>
-              {/* Optional: <Link to="/forgot-password" className="text-xs font-bold text-primary hover:text-green-700 transition">Forgot password?</Link> */}
+              <Link to="/forgot-password" size="sm" className="text-xs font-bold text-primary hover:text-green-700 transition">Forgot password?</Link>
             </div>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-secondary focus:border-secondary transition-all font-medium text-gray-900"
+              className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-secondary focus:border-secondary transition-all font-medium text-gray-900 outline-none"
               required
             />
           </div>
@@ -105,6 +108,7 @@ function LoginPage() {
           </p>
         </div>
       </div>
+
     </div>
   );
 }

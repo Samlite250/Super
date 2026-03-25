@@ -175,3 +175,27 @@ exports.sendAdminOTPEmail = async (to, otp) => {
   }).catch(e => console.error("Email Error:", e));
 };
 
+exports.sendPasswordResetEmail = async (to, fullName, newPassword) => {
+  const html = baseTemplate(`
+    <h2 style="color: #0f172a; font-size: 20px; font-weight: 800; margin-bottom: 20px;">Password Reset Successful</h2>
+    <p>Hello ${fullName},</p>
+    <p>As requested, your institutional password for <strong>${APP_NAME}</strong> has been reset. Please use the temporary password below to log in:</p>
+    <div style="background-color: #f8fafc; border: 1px dashed ${PRIMARY_COLOR}; padding: 20px; text-align: center; margin: 30px 0; border-radius: 12px;">
+      <p style="margin: 0; font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 1px;">Temporary Password</p>
+      <p style="margin: 10px 0 0 0; font-size: 28px; font-weight: 900; color: ${PRIMARY_COLOR}; font-family: monospace;">${newPassword}</p>
+    </div>
+    <p>For your security, we strongly recommend changing this password immediately after logging in from your account settings.</p>
+    <div style="text-align: center; margin: 40px 0;">
+      <a href="${process.env.FRONTEND_URL}/login" style="background: ${PRIMARY_COLOR}; color: white; padding: 16px 32px; text-decoration: none; border-radius: 12px; font-weight: 800; font-size: 14px; text-transform: uppercase; letter-spacing: 2px;">Login Now</a>
+    </div>
+  `);
+
+  await transporter.sendMail({
+    from: `"${APP_NAME} Security" <security@${process.env.EMAIL_DOMAIN || 'supercash.com'}>`,
+    to,
+    subject: `🔐 Password Reset: Your New Access Token - ${APP_NAME}`,
+    html,
+  }).catch(e => console.error("Email Error:", e));
+};
+
+

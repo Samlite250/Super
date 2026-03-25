@@ -136,8 +136,40 @@ exports.login = async (req, res) => {
 };
 
 exports.forgotPassword = async (req, res) => {
-  // implementation stub
-  res.json({ message: 'Check your email for reset instructions' });
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: 'Email is required' });
+
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      // Don't reveal if email exists for security
+      return res.json({ message: 'If that email exists, a new password has been sent to it.' });
+    }
+
+    // Generate a secure random temporary password (10 chars)
+    const chars = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789@#!';
+    let tmpPassword = '';
+    for (let i = 0; i < 10; i++) {
+      tmpPassword += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+
+    const hash = await bcrypt.hash(tmpPassword, 10);
+    user.password = hash;
+    await user.save();
+
+    // Send email with the new password
+    try {
+      const { sendPasswordResetEmail } = require('../utils/mailer');
+      await sendPasswordResetEmail(user.email, user.fullName, tmpPassword);
+    } catch (emailErr) {
+      console.error('[FORGOT PWD] Email send failed:', emailErr.message);
+    }
+
+    res.json({ message: 'If that email exists, a new temporary password has been sent to it.' });
+  } catch (err) {
+    console.error('[FORGOT PWD] Error:', err.message);
+    res.status(500).json({ message: 'Server error while processing request' });
+  }
 };
 
 exports.resetPassword = async (req, res) => {

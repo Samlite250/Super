@@ -9,21 +9,22 @@ function Landing() {
     <div className="min-h-screen bg-gray-50 font-sans">
       {/* Header */}
       <header className="bg-primary/95 backdrop-blur-md text-white sticky top-0 z-50 shadow-sm border-b border-white/10 transition-all">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <img src="/logo.png" className="w-10 h-10 object-contain" alt="Super Cash Logo" />
-            <h1 className="text-2xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-green-200">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <img src="/logo.png" className="w-8 h-8 sm:w-10 sm:h-10 object-contain" alt="Super Cash Logo" />
+            <h1 className="text-xl sm:text-2xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-green-200">
                Super Cash
             </h1>
           </div>
-          <div className="flex gap-4 items-center">
-            <Link to="/login" className="text-sm font-bold text-white/90 hover:text-white transition-colors">Log In</Link>
-            <Link to="/register" className="text-sm font-bold bg-white text-primary px-5 py-2.5 rounded-xl hover:bg-gray-100 hover:scale-105 transition-all shadow-sm">
+          <div className="flex gap-3 sm:gap-4 items-center">
+            <Link to="/login" className="text-xs sm:text-sm font-bold text-white/90 hover:text-white transition-colors">Log In</Link>
+            <Link to="/register" className="text-xs sm:text-sm font-bold bg-white text-primary px-3.5 py-2 sm:px-5 sm:py-2.5 rounded-xl hover:bg-gray-100 hover:scale-105 transition-all shadow-sm">
               Get Started
             </Link>
           </div>
         </div>
       </header>
+
  
       {/* Live Activity Feed - Social Proof Marquee */}
       <div className="bg-white border-b border-gray-100 overflow-hidden py-3 shadow-inner relative z-40">
@@ -38,10 +39,11 @@ function Landing() {
             ].map((p, i) => (
               <div key={i} className="flex items-center gap-2.5">
                   <div className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)] animate-pulse"></div>
-                  <span className="text-[10px] uppercase font-black text-gray-300 tracking-widest">{p.t}</span>
-                  <span className="text-[11px] font-black text-gray-700 tracking-tight uppercase">{p.u} recieved payout</span>
-                  <span className="text-[11px] font-black text-green-700 bg-green-50 px-2.5 py-1 rounded-lg border border-green-100 shadow-sm">+{p.a}</span>
+                  <span className="text-[9px] sm:text-[10px] uppercase font-black text-gray-400 tracking-widest">{p.t}</span>
+                  <span className="text-[10px] sm:text-[11px] font-black text-gray-700 tracking-tight uppercase">{p.u} recieved payout</span>
+                  <span className="text-[10px] sm:text-[11px] font-black text-green-700 bg-green-50 px-2 sm:px-2.5 py-1 rounded-lg border border-green-100 shadow-sm">+{p.a}</span>
               </div>
+
             ))}
             {/* Infinite Loop Duplicates */}
             {[
@@ -50,51 +52,53 @@ function Landing() {
             ].map((p, i) => (
               <div key={i+'loop'} className="flex items-center gap-2.5">
                   <div className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)] animate-pulse"></div>
-                  <span className="text-[10px] uppercase font-black text-gray-300 tracking-widest">{p.t}</span>
-                  <span className="text-[11px] font-black text-gray-700 tracking-tight uppercase">{p.u} recieved payout</span>
-                  <span className="text-[11px] font-black text-green-700 bg-green-50 px-2.5 py-1 rounded-lg border border-green-100 shadow-sm">+{p.a}</span>
+                  <span className="text-[9px] sm:text-[10px] uppercase font-black text-gray-400 tracking-widest">{p.t}</span>
+                  <span className="text-[10px] sm:text-[11px] font-black text-gray-700 tracking-tight uppercase">{p.u} recieved payout</span>
+                  <span className="text-[10px] sm:text-[11px] font-black text-green-700 bg-green-50 px-2 sm:px-2.5 py-1 rounded-lg border border-green-100 shadow-sm">+{p.a}</span>
               </div>
+
             ))}
         </div>
       </div>
 
       {/* Hero Section */}
-      <section className="relative bg-primary overflow-hidden pb-16 pt-24 lg:pb-32 lg:pt-40 min-h-[90vh] flex items-center">
-        <div className="absolute inset-0 z-0">
+      <section className="relative bg-primary overflow-hidden pb-12 pt-16 sm:pb-16 sm:pt-20 lg:pb-32 lg:pt-40 min-h-[85vh] sm:min-h-[90vh] flex items-center">
+        <div className="absolute inset-0 z-0 text-white">
           <img 
             src="/images/hero-tractor.png" 
             className="w-full h-full object-cover opacity-60 scale-110 blur-[0.5px] transform transition-transform duration-[15000ms] hover:scale-105" 
             alt="Agricultural Tractor Background"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#064e3b] via-[#064e3b]/70 to-[#1F8B4C]/40"></div>
-          <div className="absolute inset-0 bg-[#1F8B4C]/10 mix-blend-multiply"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-[#064e3b] via-[#064e3b]/70 to-[#1F8B4C]/40 text-white"></div>
+          <div className="absolute inset-0 bg-[#1F8B4C]/10 mix-blend-multiply text-white"></div>
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10">
-          <h2 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-white mb-6 tracking-tight leading-tight">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10 w-full">
+          <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white mb-6 tracking-tight leading-tight">
             Invest in <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-green-300">Agriculture</span>.<br/>Generate Wealth.
           </h2>
-          <p className="mt-4 max-w-2xl mx-auto text-xl md:text-2xl text-green-50 mb-10 font-medium opacity-90">
+          <p className="mt-4 max-w-2xl mx-auto text-sm sm:text-xl md:text-2xl text-green-50 mb-10 font-medium opacity-90 px-2 lg:px-0">
             Earn steady, automated daily income by co-funding heavy agricultural equipment rentals across East Africa.
           </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Link to="/register" className="px-8 py-4 bg-white text-primary hover:bg-gray-50 rounded-2xl font-bold text-lg transition-transform transform hover:scale-105 shadow-[0_0_20px_rgba(31,139,76,0.3)] flex items-center justify-center gap-2">
+          <div className="flex flex-col sm:flex-row justify-center gap-4 px-6 sm:px-0">
+            <Link to="/register" className="px-8 py-3.5 sm:py-4 bg-white text-primary hover:bg-gray-50 rounded-2xl font-bold text-base sm:text-lg transition-transform transform hover:scale-105 shadow-[0_0_20px_rgba(31,139,76,0.3)] flex items-center justify-center gap-2">
               Start Earning Now
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
             </Link>
-            <Link to="/machines" className="px-8 py-4 bg-black/20 hover:bg-black/30 backdrop-blur-md border border-white/20 text-white rounded-2xl font-bold text-lg transition-all flex items-center justify-center">
+            <Link to="/machines" className="px-8 py-3.5 sm:py-4 bg-black/20 hover:bg-black/30 backdrop-blur-md border border-white/20 text-white rounded-2xl font-bold text-base sm:text-lg transition-all flex items-center justify-center">
               View Verified Plans
             </Link>
           </div>
-          <div className="mt-12 flex justify-center items-center gap-8 text-white/70 text-sm font-semibold uppercase tracking-wider">
+          <div className="mt-8 sm:mt-10 flex flex-wrap justify-center items-center gap-3 sm:gap-8 text-white/70 text-[10px] sm:text-sm font-semibold uppercase tracking-wider px-2">
             <span className="flex items-center justify-center gap-1.5"><span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span> Trusted by 10k+</span>
-            <span>•</span>
+            <span className="hidden sm:block">•</span>
             <span>Regulated Assets</span>
-            <span>•</span>
+            <span className="hidden sm:block">•</span>
             <span>Instant Payouts</span>
           </div>
         </div>
       </section>
+
 
 
       {/* How It Works */}

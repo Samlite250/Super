@@ -13,6 +13,7 @@ import FAQ from './pages/FAQ';
 import Contact from './pages/Contact';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
+import ForgotPassword from './pages/ForgotPassword';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminUsers from './pages/admin/AdminUsers';
@@ -32,6 +33,7 @@ function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/machines" element={<Machines />} />
         <Route path="/deposit" element={<Deposit />} />
