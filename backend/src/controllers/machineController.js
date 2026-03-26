@@ -272,7 +272,7 @@ const COUNTRY_SEED_CONFIGS = [
   },
   {
     country: 'Burundi',
-    prices: [15000, 30000, 60000, 150000, 300000, 450000, 600000, 900000, 1200000, 1500000, 2100000, 2700000, 3300000, 3900000, 4500000]
+    prices: [50000, 100000, 200000, 300000, 400000, 500000, 600000, 700000, 800000, 900000, 1000000, 1200000, 1500000, 1700000, 2000000]
   },
 ];
 
@@ -282,7 +282,20 @@ exports.seedCountries = async (req, res) => {
     for (const cfg of COUNTRY_SEED_CONFIGS) {
       const existing = await Machine.count({ where: { country: cfg.country } });
       if (existing > 0) {
-        results.push({ country: cfg.country, status: 'skipped', existing });
+        if (cfg.country === 'Burundi') {
+          const machines = await Machine.findAll({ where: { country: 'Burundi' }, order: [['priceFBu', 'ASC']] });
+          let updated = 0;
+          for (let i = 0; i < machines.length && i < cfg.prices.length; i++) {
+            machines[i].priceFBu = cfg.prices[i];
+            machines[i].durationDays = 30;
+            machines[i].dailyPercent = 5.0;
+            await machines[i].save();
+            updated++;
+          }
+          results.push({ country: cfg.country, status: 'updated', updated });
+        } else {
+          results.push({ country: cfg.country, status: 'skipped', existing });
+        }
         continue;
       }
       let created = 0;
@@ -291,8 +304,8 @@ exports.seedCountries = async (req, res) => {
           name: PLAN_NAMES[i],
           description: 'Advanced automated agricultural equipment. Lease stake to generate daily agro-returns.',
           priceFBu: cfg.prices[i],
-          durationDays: 30 + (i * 2),
-          dailyPercent: 5.0 + (i * 0.1),
+          durationDays: cfg.country === 'Burundi' ? 30 : 30 + (i * 2),
+          dailyPercent: cfg.country === 'Burundi' ? 5.0 : 5.0 + (i * 0.1),
           premium: i >= 10,
           country: cfg.country,
           imageUrl: null
