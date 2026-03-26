@@ -25,6 +25,7 @@ const getMachineImage = (img) => {
 function AdminMachines() {
   const [machines, setMachines] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(null);
   const [activeTab, setActiveTab] = useState('Global');
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
@@ -46,12 +47,15 @@ function AdminMachines() {
     try {
       const res = await api.get('/machines');
       setMachines(Array.isArray(res.data) ? res.data : []);
-    } catch {
-      navigate('/auth/admin-secure-v2');
+      setFetchError(null);
+    } catch (err) {
+      const msg = err.response?.data?.message || err.message || 'Failed to load plans';
+      setFetchError(msg);
+      console.error('[AdminMachines] fetch error:', msg);
     } finally {
       setLoading(false);
     }
-  }, [navigate]);
+  }, []);
 
   useEffect(() => { fetchMachines(); }, [fetchMachines]);
 
@@ -145,8 +149,37 @@ function AdminMachines() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-secondary"></div>
+        <div className="flex flex-col items-center gap-3">
+          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-secondary"></div>
+          <p className="text-xs text-gray-400 font-medium">Loading Asset Lab...</p>
+        </div>
       </div>
+    );
+  }
+
+  if (fetchError) {
+    return (
+      <AdminLayout>
+        <div className="p-8">
+          <div className="bg-red-50 border border-red-200 rounded-2xl p-8 text-center max-w-xl mx-auto mt-10">
+            <p className="text-3xl mb-3">⚠️</p>
+            <h3 className="text-lg font-black text-red-700 mb-2">Failed to Load Plans</h3>
+            <p className="text-sm text-red-600 font-medium mb-4">{fetchError}</p>
+            <p className="text-xs text-gray-500 mb-6">
+              If this is a new deployment, the <strong>country</strong> column may be missing from the database.
+              Visit <code className="bg-gray-100 px-1 py-0.5 rounded text-gray-700">/api/setup-db</code> to apply schema updates, then refresh.
+            </p>
+            <div className="flex gap-3 justify-center">
+              <button onClick={fetchMachines} className="px-6 py-2.5 bg-gray-900 text-white rounded-xl font-bold text-sm hover:bg-black transition-all">
+                🔄 Retry
+              </button>
+              <a href="/api/setup-db" target="_blank" rel="noreferrer" className="px-6 py-2.5 bg-red-600 text-white rounded-xl font-bold text-sm hover:bg-red-700 transition-all">
+                Run Setup DB
+              </a>
+            </div>
+          </div>
+        </div>
+      </AdminLayout>
     );
   }
 

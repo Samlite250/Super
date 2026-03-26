@@ -1,84 +1,105 @@
 const { Machine } = require('../models');
 
-exports.list = async (req, res) => {
-  let userCountry = null;
-  let userCurrency = null;
-  let isAdmin = false;
-
+// Helper: fetch machines with fallback if 'country' column doesn't exist yet in DB
+async function fetchMachinesSafe(whereClause) {
   try {
-    const header = req.headers.authorization;
-    if (header) {
-      const token = header.split(' ')[1];
-      const jwt = require('jsonwebtoken');
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      if (decoded.role === 'admin') {
-        isAdmin = true;
-      } else {
-        const { User } = require('../models');
-        const user = await User.findByPk(decoded.id);
-        if (user) {
-          userCurrency = user.currency;
-          userCountry = user.country;
+    return await Machine.findAll({ where: whereClause, order: [['priceFBu', 'ASC']] });
+  } catch (dbErr) {
+    // country column likely missing — fall back without it
+    const errMsg = dbErr.message || '';
+    const isColumnError = errMsg.includes('country') || errMsg.includes('column') || errMsg.includes('does not exist');
+    if (isColumnError) {
+      console.warn('[MACHINE] country column missing, using fallback query. Run /api/setup-db to fix.');
+      // Return all machines without country filtering; treat them all as 'Global'
+      const rows = await Machine.findAll({
+        attributes: ['id', 'name', 'description', 'priceFBu', 'durationDays', 'dailyPercent', 'imageUrl', 'premium', 'createdAt', 'updatedAt'],
+        order: [['priceFBu', 'ASC']]
+      });
+      // Patch in a default country value
+      rows.forEach(r => r.setDataValue('country', 'Global'));
+      return rows;
+    }
+    throw dbErr;
+  }
+}
+
+exports.list = async (req, res) => {
+  try {
+    let userCountry = null;
+    let userCurrency = null;
+    let isAdmin = false;
+
+    try {
+      const header = req.headers.authorization;
+      if (header) {
+        const token = header.split(' ')[1];
+        const jwt = require('jsonwebtoken');
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        if (decoded.role === 'admin') {
+          isAdmin = true;
+        } else {
+          const { User } = require('../models');
+          const user = await User.findByPk(decoded.id);
+          if (user) {
+            userCurrency = user.currency;
+            userCountry = user.country;
+          }
         }
       }
+    } catch (err) {
+      // ignore auth errors
     }
-  } catch (err) {
-    // ignore
-  }
 
-  const { Op } = require('sequelize');
-  let whereClause = {};
-  if (!isAdmin && userCountry) {
-    whereClause = { country: { [Op.in]: ['Global', userCountry] } };
-  } else if (!isAdmin) {
-    whereClause = { country: 'Global' };
-  }
+    const { Op } = require('sequelize');
+    let whereClause = {};
+    if (!isAdmin && userCountry) {
+      whereClause = { country: { [Op.in]: ['Global', userCountry] } };
+    } else if (!isAdmin) {
+      whereClause = { country: 'Global' };
+    }
 
-  let machines = await Machine.findAll({ where: whereClause, order: [['priceFBu', 'ASC']] });
-  
-  // Auto-seed the 15 plans if the database is empty (fixing the "Registry Void" issue)
-  if (machines.length === 0 && (!userCountry || userCountry === 'Burundi' || Object.keys(whereClause).length === 0)) {
-     const plans = ['Tractor X200', 'Plow Deluxe', 'Harvester Pro', 'Mini Cultivator', 'Seeder M1', 'Miller 250', 'Irrigation Machine', 'Crop Duster', 'Harvest Titan', 'Pro Seeder 900', 'Mega Agro Combine', 'Deep Well Driller', 'Soil Nutrient Lab', 'Autonomous Crop Rover', 'Silo Storage Unit'];
-     const basePrices = [15000, 30000, 60000, 150000, 300000, 450000, 600000, 900000, 1200000, 1500000, 2100000, 2700000, 3300000, 3900000, 4500000];
-     try {
-       const existingCount = await Machine.count();
-       if (existingCount === 0) {
-         for (let i = 0; i < plans.length; i++) {
+    let machines = await fetchMachinesSafe(whereClause);
+
+    // Auto-seed if empty
+    if (machines.length === 0 && (!userCountry || userCountry === 'Burundi' || Object.keys(whereClause).length === 0)) {
+      const plans = ['Tractor X200', 'Plow Deluxe', 'Harvester Pro', 'Mini Cultivator', 'Seeder M1', 'Miller 250', 'Irrigation Machine', 'Crop Duster', 'Harvest Titan', 'Pro Seeder 900', 'Mega Agro Combine', 'Deep Well Driller', 'Soil Nutrient Lab', 'Autonomous Crop Rover', 'Silo Storage Unit'];
+      const basePrices = [15000, 30000, 60000, 150000, 300000, 450000, 600000, 900000, 1200000, 1500000, 2100000, 2700000, 3300000, 3900000, 4500000];
+      try {
+        const existingCount = await Machine.count();
+        if (existingCount === 0) {
+          for (let i = 0; i < plans.length; i++) {
             await Machine.create({
-                name: plans[i],
-                description: 'Advanced automated agricultural equipment. Lease stake to generate daily agro-returns.',
-                priceFBu: basePrices[i],
-                durationDays: 30 + (i * 2), // e.g. 30 to 58 days
-                dailyPercent: 5.0 + (i * 0.1), // e.g. 5.0 to 6.4%
-                premium: i >= 10,
-                country: 'Global',
-                imageUrl: null
+              name: plans[i],
+              description: 'Advanced automated agricultural equipment. Lease stake to generate daily agro-returns.',
+              priceFBu: basePrices[i],
+              durationDays: 30 + (i * 2),
+              dailyPercent: 5.0 + (i * 0.1),
+              premium: i >= 10,
+              imageUrl: null
             });
-         }
-       }
-       machines = await Machine.findAll({ where: whereClause, order: [['priceFBu', 'ASC']] });
-     } catch (seedErr) {
-       console.error('[MACHINE] Auto-seed failed', seedErr);
-     }
-  }
+          }
+        }
+        machines = await fetchMachinesSafe(whereClause);
+      } catch (seedErr) {
+        console.error('[MACHINE] Auto-seed failed', seedErr);
+      }
+    }
 
-  if (userCurrency && userCurrency !== 'FBu') {
-    const { ExchangeRate } = require('../models');
-    const rate = await ExchangeRate.findOne({ where: { currency: userCurrency } });
-    
-    // Specialized Price Ladder for Rwanda (RWF)
-    const rwLadder = [5000, 10000, 20000, 50000, 100000, 150000, 200000, 300000, 400000, 500000, 700000, 900000, 1100000, 1300000, 1500000];
+    // Currency conversion for non-FBu users
+    if (userCurrency && userCurrency !== 'FBu') {
+      const { ExchangeRate } = require('../models');
+      const rate = await ExchangeRate.findOne({ where: { currency: userCurrency } });
 
-    // Specialized Price Ladder for Kenya (KES)
-    const keLadder = [650, 7746, 14843, 21939, 29036, 36132, 43229, 50325, 57421, 64518, 71614, 78711, 85807, 92904, 100000];
+      const rwLadder = [5000, 10000, 20000, 50000, 100000, 150000, 200000, 300000, 400000, 500000, 700000, 900000, 1100000, 1300000, 1500000];
+      const keLadder = [650, 7746, 14843, 21939, 29036, 36132, 43229, 50325, 57421, 64518, 71614, 78711, 85807, 92904, 100000];
 
-    machines.forEach((m, idx) => {
-      let convertedPrice;
-      
-      if (m.country && m.country !== 'Global') {
-         convertedPrice = m.priceFBu; // Admin entered exact specific local price
-      } else {
-        if (userCurrency === 'RWF' && rwLadder[idx]) {
+      machines.forEach((m, idx) => {
+        let convertedPrice;
+        const mCountry = m.country || m.getDataValue('country') || 'Global';
+
+        if (mCountry !== 'Global') {
+          convertedPrice = m.priceFBu; // exact local price set by admin
+        } else if (userCurrency === 'RWF' && rwLadder[idx]) {
           convertedPrice = rwLadder[idx];
         } else if (userCurrency === 'KES' && keLadder[idx]) {
           convertedPrice = keLadder[idx];
@@ -87,14 +108,17 @@ exports.list = async (req, res) => {
         } else {
           convertedPrice = m.priceFBu;
         }
-      }
-      
-      m.setDataValue('price', convertedPrice);
-      m.setDataValue('currency', m.country !== 'Global' && userCurrency ? userCurrency : (userCurrency || 'FBu'));
-    });
+
+        m.setDataValue('price', convertedPrice);
+        m.setDataValue('currency', userCurrency || 'FBu');
+      });
+    }
+
+    res.json(machines);
+  } catch (err) {
+    console.error('[MACHINE] list error:', err.message);
+    res.status(500).json({ message: 'Failed to load plans: ' + err.message });
   }
-  
-  res.json(machines);
 };
 
 exports.create = async (req, res) => {
