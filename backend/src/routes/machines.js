@@ -10,4 +10,7 @@ router.post('/', authenticate, authorizeAdmin, upload.single('image'), machineCo
 router.put('/:id', authenticate, authorizeAdmin, upload.single('image'), machineController.update);
 router.delete('/:id', authenticate, authorizeAdmin, machineController.delete);
 
+// Admin-only: seed default plans for all countries
+router.post('/seed-countries', authenticate, authorizeAdmin, machineController.seedCountries);
+
 module.exports = router;

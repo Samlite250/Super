@@ -60,63 +60,34 @@ exports.list = async (req, res) => {
 
     let machines = await fetchMachinesSafe(whereClause);
 
-    // Always ensure all countries have their 15 plans seeded
-    {
-      // ── Seed data ─────────────────────────────────────────────────────────
-      const planNames = [
+    // Light fallback: only seed Global plans if the table is completely empty
+    if (machines.length === 0 && Object.keys(whereClause).length === 0) {
+      const GLOBAL_PLANS = [
         'Tractor X200', 'Plow Deluxe', 'Harvester Pro', 'Mini Cultivator',
         'Seeder M1', 'Miller 250', 'Irrigation Machine', 'Crop Duster',
         'Harvest Titan', 'Pro Seeder 900', 'Mega Agro Combine',
         'Deep Well Driller', 'Soil Nutrient Lab', 'Autonomous Crop Rover', 'Silo Storage Unit'
       ];
-
-      // Price ladders per country (same plans, localised prices)
-      const seedCountries = [
-        {
-          country: 'Global',
-          prices: [15000, 30000, 60000, 150000, 300000, 450000, 600000, 900000, 1200000, 1500000, 2100000, 2700000, 3300000, 3900000, 4500000]
-        },
-        {
-          country: 'Uganda',
-          prices: [20000, 40000, 85000, 200000, 400000, 600000, 800000, 1200000, 1600000, 2000000, 2800000, 3600000, 4400000, 5200000, 6000000]
-        },
-        {
-          country: 'Rwanda',
-          prices: [5000, 10000, 20000, 50000, 100000, 150000, 200000, 300000, 400000, 500000, 700000, 900000, 1100000, 1300000, 1500000]
-        },
-        {
-          country: 'Kenya',
-          prices: [650, 7746, 14843, 21939, 29036, 36132, 43229, 50325, 57421, 64518, 71614, 78711, 85807, 92904, 100000]
-        },
-        {
-          country: 'Burundi',
-          prices: [15000, 30000, 60000, 150000, 300000, 450000, 600000, 900000, 1200000, 1500000, 2100000, 2700000, 3300000, 3900000, 4500000]
-        },
-      ];
-      // ───────────────────────────────────────────────────────────────────────
-
+      const GLOBAL_PRICES = [15000, 30000, 60000, 150000, 300000, 450000, 600000, 900000, 1200000, 1500000, 2100000, 2700000, 3300000, 3900000, 4500000];
       try {
-        for (const countryConfig of seedCountries) {
-          const countryCount = await Machine.count({ where: { country: countryConfig.country } });
-          if (countryCount === 0) {
-            console.log(`[MACHINE] Seeding 15 plans for country: ${countryConfig.country}`);
-            for (let i = 0; i < planNames.length; i++) {
-              await Machine.create({
-                name: planNames[i],
-                description: 'Advanced automated agricultural equipment. Lease stake to generate daily agro-returns.',
-                priceFBu: countryConfig.prices[i],
-                durationDays: 30 + (i * 2),
-                dailyPercent: 5.0 + (i * 0.1),
-                premium: i >= 10,
-                country: countryConfig.country,
-                imageUrl: null
-              });
-            }
+        const total = await Machine.count();
+        if (total === 0) {
+          for (let i = 0; i < GLOBAL_PLANS.length; i++) {
+            await Machine.create({
+              name: GLOBAL_PLANS[i],
+              description: 'Advanced automated agricultural equipment. Lease stake to generate daily agro-returns.',
+              priceFBu: GLOBAL_PRICES[i],
+              durationDays: 30 + (i * 2),
+              dailyPercent: 5.0 + (i * 0.1),
+              premium: i >= 10,
+              country: 'Global',
+              imageUrl: null
+            });
           }
+          machines = await fetchMachinesSafe(whereClause);
         }
-        machines = await fetchMachinesSafe(whereClause);
       } catch (seedErr) {
-        console.error('[MACHINE] Auto-seed failed', seedErr);
+        console.error('[MACHINE] Global auto-seed failed', seedErr);
       }
     }
 
@@ -271,5 +242,68 @@ exports.delete = async (req, res) => {
   } catch (err) {
     console.error('[MACHINE] delete error', err);
     res.status(500).json({ message: 'Delete failed' });
+  }
+};
+
+// ─── Seed country plans (admin-triggered, avoids Vercel timeout) ─────────────
+const PLAN_NAMES = [
+  'Tractor X200', 'Plow Deluxe', 'Harvester Pro', 'Mini Cultivator',
+  'Seeder M1', 'Miller 250', 'Irrigation Machine', 'Crop Duster',
+  'Harvest Titan', 'Pro Seeder 900', 'Mega Agro Combine',
+  'Deep Well Driller', 'Soil Nutrient Lab', 'Autonomous Crop Rover', 'Silo Storage Unit'
+];
+
+const COUNTRY_SEED_CONFIGS = [
+  {
+    country: 'Global',
+    prices: [15000, 30000, 60000, 150000, 300000, 450000, 600000, 900000, 1200000, 1500000, 2100000, 2700000, 3300000, 3900000, 4500000]
+  },
+  {
+    country: 'Uganda',
+    prices: [20000, 40000, 85000, 200000, 400000, 600000, 800000, 1200000, 1600000, 2000000, 2800000, 3600000, 4400000, 5200000, 6000000]
+  },
+  {
+    country: 'Rwanda',
+    prices: [5000, 10000, 20000, 50000, 100000, 150000, 200000, 300000, 400000, 500000, 700000, 900000, 1100000, 1300000, 1500000]
+  },
+  {
+    country: 'Kenya',
+    prices: [650, 7746, 14843, 21939, 29036, 36132, 43229, 50325, 57421, 64518, 71614, 78711, 85807, 92904, 100000]
+  },
+  {
+    country: 'Burundi',
+    prices: [15000, 30000, 60000, 150000, 300000, 450000, 600000, 900000, 1200000, 1500000, 2100000, 2700000, 3300000, 3900000, 4500000]
+  },
+];
+
+exports.seedCountries = async (req, res) => {
+  try {
+    const results = [];
+    for (const cfg of COUNTRY_SEED_CONFIGS) {
+      const existing = await Machine.count({ where: { country: cfg.country } });
+      if (existing > 0) {
+        results.push({ country: cfg.country, status: 'skipped', existing });
+        continue;
+      }
+      let created = 0;
+      for (let i = 0; i < PLAN_NAMES.length; i++) {
+        await Machine.create({
+          name: PLAN_NAMES[i],
+          description: 'Advanced automated agricultural equipment. Lease stake to generate daily agro-returns.',
+          priceFBu: cfg.prices[i],
+          durationDays: 30 + (i * 2),
+          dailyPercent: 5.0 + (i * 0.1),
+          premium: i >= 10,
+          country: cfg.country,
+          imageUrl: null
+        });
+        created++;
+      }
+      results.push({ country: cfg.country, status: 'seeded', created });
+    }
+    res.json({ message: 'Seed completed', results });
+  } catch (err) {
+    console.error('[MACHINE] seedCountries error:', err.message);
+    res.status(500).json({ message: 'Seed failed: ' + err.message });
   }
 };
