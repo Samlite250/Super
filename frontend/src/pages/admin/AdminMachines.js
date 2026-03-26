@@ -5,9 +5,9 @@ import AdminLayout from '../../components/AdminLayout';
 
 const COUNTRIES = [
   { key: 'Global',  label: 'Global',   flag: '🌍', currency: 'FBu',  color: 'bg-gray-800 text-white' },
-  { key: 'Uganda',  label: 'Uganda',   flag: '🇺🇬', currency: 'UGX',  color: 'bg-yellow-600 text-white' },
+  { key: 'Uganda',  label: 'Uganda',   flag: '🇺🇬', currency: 'UGX',  color: 'bg-pink-500 text-white' },
   { key: 'Rwanda',  label: 'Rwanda',   flag: '🇷🇼', currency: 'RWF',  color: 'bg-blue-700 text-white' },
-  { key: 'Kenya',   label: 'Kenya',    flag: '🇰🇪', currency: 'KES',  color: 'bg-red-700 text-white' },
+  { key: 'Kenya',   label: 'Kenya',    flag: '🇰🇪', currency: 'KES',  color: 'bg-sky-500 text-white' },
   { key: 'Burundi', label: 'Burundi',  flag: '🇧🇮', currency: 'FBu',  color: 'bg-green-700 text-white' },
 ];
 
@@ -33,7 +33,6 @@ function AdminMachines() {
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [saving, setSaving] = useState(false);
-  const [seeding, setSeeding] = useState(false);
   const [toast, setToast] = useState(null);
   const navigate = useNavigate();
 
@@ -59,23 +58,6 @@ function AdminMachines() {
   }, []);
 
   useEffect(() => { fetchMachines(); }, [fetchMachines]);
-
-  const handleSeedCountries = async () => {
-    if (!window.confirm('This will seed 15 default plans for each country that has 0 plans. Countries that already have plans will be skipped. Continue?')) return;
-    setSeeding(true);
-    try {
-      const res = await api.post('/machines/seed-countries');
-      const results = res.data.results || [];
-      const seededList = results.filter(r => r.status === 'seeded').map(r => `${r.country} (${r.created})`).join(', ');
-      const skippedList = results.filter(r => r.status === 'skipped').map(r => r.country).join(', ');
-      showToast(`✓ Seeded: ${seededList || 'none'}${skippedList ? ` | Skipped: ${skippedList}` : ''}`);
-      await fetchMachines();
-    } catch (err) {
-      showToast('✗ Seed failed: ' + (err.response?.data?.message || err.message), 'error');
-    } finally {
-      setSeeding(false);
-    }
-  };
 
   const tabMachines = machines.filter(m => (m.country || 'Global') === activeTab);
   const activeCountry = COUNTRIES.find(c => c.key === activeTab) || COUNTRIES[0];
@@ -219,18 +201,6 @@ function AdminMachines() {
             <p className="text-xs font-semibold text-gray-400 mt-1 uppercase tracking-widest">Investment Plans Management</p>
           </div>
           <div className="flex items-center gap-3 flex-wrap">
-            <button
-              onClick={handleSeedCountries}
-              disabled={seeding}
-              title="Auto-seed 15 default plans for each country that has 0 plans"
-              className="px-5 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest border-2 border-gray-200 text-gray-600 hover:border-gray-400 hover:bg-gray-50 transition-all disabled:opacity-50 flex items-center gap-2"
-            >
-              {seeding ? (
-                <><div className="w-3 h-3 border-2 border-gray-400 border-t-gray-700 rounded-full animate-spin"></div> Seeding...</>
-              ) : (
-                '🌱 Seed Country Plans'
-              )}
-            </button>
             <button
               onClick={showForm ? closeForm : openAdd}
               className={`px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all ${showForm ? 'bg-red-500 text-white' : 'bg-gray-900 text-white shadow-lg hover:bg-black active:scale-95'}`}
