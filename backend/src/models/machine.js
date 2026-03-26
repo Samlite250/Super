@@ -7,7 +7,8 @@ module.exports = (sequelize, DataTypes) => {
     durationDays: { type: DataTypes.INTEGER, allowNull: false },
     dailyPercent: { type: DataTypes.DECIMAL(5,2), allowNull: false },
     imageUrl: { type: DataTypes.TEXT('long') },
-    premium: { type: DataTypes.BOOLEAN, defaultValue: false }
+    premium: { type: DataTypes.BOOLEAN, defaultValue: false },
+    country: { type: DataTypes.STRING, defaultValue: 'Global' } // e.g., 'Global', 'Uganda', 'Kenya', 'Rwanda', 'Burundi'
   });
   return Machine;
 };
