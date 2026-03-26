@@ -60,23 +60,58 @@ exports.list = async (req, res) => {
 
     let machines = await fetchMachinesSafe(whereClause);
 
-    // Auto-seed if empty
-    if (machines.length === 0 && (!userCountry || userCountry === 'Burundi' || Object.keys(whereClause).length === 0)) {
-      const plans = ['Tractor X200', 'Plow Deluxe', 'Harvester Pro', 'Mini Cultivator', 'Seeder M1', 'Miller 250', 'Irrigation Machine', 'Crop Duster', 'Harvest Titan', 'Pro Seeder 900', 'Mega Agro Combine', 'Deep Well Driller', 'Soil Nutrient Lab', 'Autonomous Crop Rover', 'Silo Storage Unit'];
-      const basePrices = [15000, 30000, 60000, 150000, 300000, 450000, 600000, 900000, 1200000, 1500000, 2100000, 2700000, 3300000, 3900000, 4500000];
+    // Always ensure all countries have their 15 plans seeded
+    {
+      // ── Seed data ─────────────────────────────────────────────────────────
+      const planNames = [
+        'Tractor X200', 'Plow Deluxe', 'Harvester Pro', 'Mini Cultivator',
+        'Seeder M1', 'Miller 250', 'Irrigation Machine', 'Crop Duster',
+        'Harvest Titan', 'Pro Seeder 900', 'Mega Agro Combine',
+        'Deep Well Driller', 'Soil Nutrient Lab', 'Autonomous Crop Rover', 'Silo Storage Unit'
+      ];
+
+      // Price ladders per country (same plans, localised prices)
+      const seedCountries = [
+        {
+          country: 'Global',
+          prices: [15000, 30000, 60000, 150000, 300000, 450000, 600000, 900000, 1200000, 1500000, 2100000, 2700000, 3300000, 3900000, 4500000]
+        },
+        {
+          country: 'Uganda',
+          prices: [20000, 40000, 85000, 200000, 400000, 600000, 800000, 1200000, 1600000, 2000000, 2800000, 3600000, 4400000, 5200000, 6000000]
+        },
+        {
+          country: 'Rwanda',
+          prices: [5000, 10000, 20000, 50000, 100000, 150000, 200000, 300000, 400000, 500000, 700000, 900000, 1100000, 1300000, 1500000]
+        },
+        {
+          country: 'Kenya',
+          prices: [650, 7746, 14843, 21939, 29036, 36132, 43229, 50325, 57421, 64518, 71614, 78711, 85807, 92904, 100000]
+        },
+        {
+          country: 'Burundi',
+          prices: [15000, 30000, 60000, 150000, 300000, 450000, 600000, 900000, 1200000, 1500000, 2100000, 2700000, 3300000, 3900000, 4500000]
+        },
+      ];
+      // ───────────────────────────────────────────────────────────────────────
+
       try {
-        const existingCount = await Machine.count();
-        if (existingCount === 0) {
-          for (let i = 0; i < plans.length; i++) {
-            await Machine.create({
-              name: plans[i],
-              description: 'Advanced automated agricultural equipment. Lease stake to generate daily agro-returns.',
-              priceFBu: basePrices[i],
-              durationDays: 30 + (i * 2),
-              dailyPercent: 5.0 + (i * 0.1),
-              premium: i >= 10,
-              imageUrl: null
-            });
+        for (const countryConfig of seedCountries) {
+          const countryCount = await Machine.count({ where: { country: countryConfig.country } });
+          if (countryCount === 0) {
+            console.log(`[MACHINE] Seeding 15 plans for country: ${countryConfig.country}`);
+            for (let i = 0; i < planNames.length; i++) {
+              await Machine.create({
+                name: planNames[i],
+                description: 'Advanced automated agricultural equipment. Lease stake to generate daily agro-returns.',
+                priceFBu: countryConfig.prices[i],
+                durationDays: 30 + (i * 2),
+                dailyPercent: 5.0 + (i * 0.1),
+                premium: i >= 10,
+                country: countryConfig.country,
+                imageUrl: null
+              });
+            }
           }
         }
         machines = await fetchMachinesSafe(whereClause);
