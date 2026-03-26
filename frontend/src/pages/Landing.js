@@ -4,16 +4,16 @@ import { Link, useNavigate } from 'react-router-dom';
 function Landing() {
   const navigate = useNavigate();
 
-  useEffect(() => { document.title = "Super Cash | Agricultural Yield & Investment"; }, []);
+  useEffect(() => { document.title = "Tracova | Agricultural Yield & Investment"; }, []);
   return (
     <div className="min-h-screen bg-gray-50 font-sans">
       {/* Header */}
       <header className="bg-primary/95 backdrop-blur-md text-white sticky top-0 z-50 shadow-sm border-b border-white/10 transition-all">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <div className="flex items-center gap-1.5 sm:gap-2">
-            <img src="/logo.png" className="w-8 h-8 sm:w-10 sm:h-10 object-contain" alt="Super Cash Logo" />
+            <img src="/logo.png" className="w-8 h-8 sm:w-10 sm:h-10 object-contain" alt="Tracova Logo" />
             <h1 className="text-xl sm:text-2xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-green-200">
-               Super Cash
+               Tracova
             </h1>
           </div>
           <div className="flex gap-3 sm:gap-4 items-center">
@@ -176,8 +176,8 @@ function Landing() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
             <div className="col-span-1 md:col-span-2">
               <div className="flex items-center gap-2 mb-4">
-                <img src="/logo.png" className="w-10 h-10 object-contain" alt="Super Cash Logo" />
-                <span className="text-2xl font-black text-white">Super Cash</span>
+                <img src="/logo.png" className="w-10 h-10 object-contain" alt="Tracova Logo" />
+                <span className="text-2xl font-black text-white">Tracova</span>
               </div>
               <p className="text-gray-400 font-medium leading-relaxed max-w-sm">
                 The premier digital platform for agricultural equipment fractional investing in East Africa.
@@ -203,7 +203,7 @@ function Landing() {
           
           <div className="pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-gray-500 font-medium text-sm">
-              © 2024 Super Cash Technologies. All rights reserved.
+              © 2024 Tracova Technologies. All rights reserved.
             </p>
             <div className="flex items-center gap-2 text-xs font-bold text-gray-500 bg-gray-800 px-3 py-1.5 rounded-lg border border-gray-700">
               <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>

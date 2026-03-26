@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 
 async function run() {
   try {
-    const testEmail = 'user@supercash.com';
+    const testEmail = 'user@tracova.com';
     const testPassword = 'userpass123';
     
     const existing = await User.findOne({ where: { email: testEmail } });

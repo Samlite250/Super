@@ -2,14 +2,14 @@ import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 function Terms() {
-  useEffect(() => { document.title = "Service Terms | Super Cash"; }, []);
+  useEffect(() => { document.title = "Service Terms | Tracova"; }, []);
   return (
     <div className="min-h-screen bg-gray-50 font-sans">
       <header className="bg-gray-900 py-20 text-center text-white relative overflow-hidden">
          <div className="absolute top-0 right-0 w-80 h-80 bg-primary/20 rounded-full opacity-10 blur-[100px]"></div>
          <h1 className="text-4xl md:text-5xl font-black mb-4 tracking-tight">Terms of Service</h1>
          <p className="max-w-xl mx-auto text-gray-500 font-bold uppercase tracking-[4px] text-xs px-4">
-            Governing the Super Cash Ecosystem
+            Governing the Tracova Ecosystem
          </p>
       </header>
 
@@ -23,7 +23,7 @@ function Terms() {
                      Eligibility
                   </h2>
                   <p>
-                     By accessing Super Cash, you warrant that you are at least 18 years of age and reside in one of our operational regions (Burundi, Rwanda, Uganda, Kenya). You are responsible for ensuring that your use of the platform complies with all local laws and regulations.
+                     By accessing Tracova, you warrant that you are at least 18 years of age and reside in one of our operational regions (Burundi, Rwanda, Uganda, Kenya). You are responsible for ensuring that your use of the platform complies with all local laws and regulations.
                   </p>
                </section>
 
@@ -33,7 +33,7 @@ function Terms() {
                      Investment Risks
                   </h2>
                   <p className="mb-4">
-                     All investments carry risk. While Super Cash ensures all agricultural assets are insured and professionally managed, market fluctuations in rental demand can affect daily ROIs. 
+                     All investments carry risk. While Tracova ensures all agricultural assets are insured and professionally managed, market fluctuations in rental demand can affect daily ROIs. 
                   </p>
                   <p className="p-4 bg-yellow-50 border-l-4 border-yellow-400 text-sm font-medium text-yellow-800 italic">
                      Past performance is not as guarantee of future results. Co-funding assets involves active participation in a rental fleet model.

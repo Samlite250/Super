@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 function Privacy() {
-  useEffect(() => { document.title = "Privacy Policy | Super Cash"; }, []);
+  useEffect(() => { document.title = "Privacy Policy | Tracova"; }, []);
   return (
     <div className="min-h-screen bg-white font-sans">
       <header className="bg-gray-50 py-16 text-center border-b border-gray-100">
@@ -17,7 +17,7 @@ function Privacy() {
             <section>
                <h2 className="text-xl font-black text-gray-900 mb-4 uppercase tracking-tighter italic">1. Information We Collect</h2>
                <p className="mb-4">
-                  When you register on Super Cash, we collect your full name, email address, phone number, and regional location. This information is required to establish your legal investment account and process withdrawals to your local mobile money provider.
+                  When you register on Tracova, we collect your full name, email address, phone number, and regional location. This information is required to establish your legal investment account and process withdrawals to your local mobile money provider.
                </p>
                <p>
                   We also collect technical data such as IP addresses and device information to ensure the security of your account and prevent fraudulent login attempts.
@@ -48,7 +48,7 @@ function Privacy() {
             <section>
                <h2 className="text-xl font-black text-gray-900 mb-4 uppercase tracking-tighter italic">4. Sharing with Third Parties</h2>
                <p>
-                  Super Cash does not sell, trade, or rent your personal data to advertisers. We only share necessary data with our verified payment processing partners (MTN, Airtel, Orange, etc.) specifically to execute the transactions you request.
+                  Tracova does not sell, trade, or rent your personal data to advertisers. We only share necessary data with our verified payment processing partners (MTN, Airtel, Orange, etc.) specifically to execute the transactions you request.
                </p>
             </section>
 

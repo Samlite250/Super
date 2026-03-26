@@ -49,7 +49,7 @@ exports.initiateAutomaticDeposit = async (req, res) => {
         name: user.fullName
       },
       customizations: {
-        title: "Super Cash Deposit",
+        title: "Tracova Deposit",
         description: `Funding account for ${user.email}`,
       }
     };

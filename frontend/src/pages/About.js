@@ -2,12 +2,12 @@ import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 function About() {
-  useEffect(() => { document.title = "About Us | Super Cash"; }, []);
+  useEffect(() => { document.title = "About Us | Tracova"; }, []);
   return (
     <div className="min-h-screen bg-white font-sans">
       <header className="bg-secondary py-12 text-center text-white relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-green-400 rounded-full opacity-10 blur-3xl"></div>
-        <h1 className="text-4xl md:text-5xl font-black mb-4 relative z-10 tracking-tight">About Super Cash</h1>
+        <h1 className="text-4xl md:text-5xl font-black mb-4 relative z-10 tracking-tight">About Tracova</h1>
         <p className="max-w-2xl mx-auto text-lg text-green-50 px-4 opacity-90 relative z-10 leading-relaxed">
           Empowering African agriculture through fractional asset investment and co-funding technology.
         </p>
@@ -17,7 +17,7 @@ function About() {
         <section className="mb-16">
            <h2 className="text-2xl font-black text-gray-900 mb-6 border-b-4 border-secondary w-max pb-1">Our Mission</h2>
            <p className="text-gray-600 text-lg leading-relaxed mb-6">
-              Super Cash was born out of a vision to bridge the gap between large-scale agricultural potential and individual capital. 
+              Tracova was born out of a vision to bridge the gap between large-scale agricultural potential and individual capital. 
               In many regions across East Africa, smallholders and community farms lack access to high-efficiency machinery like heavy tractors, drones, and harvesters.
            </p>
            <p className="text-gray-600 text-lg leading-relaxed">
@@ -66,7 +66,7 @@ function About() {
 
       <footer className="py-8 text-center border-t border-gray-100 mt-12">
          <p className="text-gray-400 text-xs font-bold uppercase tracking-widest leading-loose">
-            © 2024 Super Cash Technologies • Feeding the Future, Funding the People
+            © 2024 Tracova Technologies • Feeding the Future, Funding the People
          </p>
       </footer>
     </div>

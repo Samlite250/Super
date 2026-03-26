@@ -1,7 +1,7 @@
 {
   "name": "super-cash-backend",
   "version": "1.0.0",
-  "description": "Backend API for Super Cash investment platform",
+  "description": "Backend API for Tracova investment platform",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",

@@ -2,17 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 function FAQ() {
-  useEffect(() => { document.title = "Help Center | Super Cash"; }, []);
+  useEffect(() => { document.title = "Help Center | Tracova"; }, []);
   const [openIndex, setOpenIndex] = useState(0);
 
   const faqs = [
     {
-      q: "What is Super Cash exactly?",
-      a: "Super Cash is an agricultural crowdfunding platform. We source high-quality farming machinery (tractors, drones, etc.) and allow individuals to buy 'shares' or 'plans' in that machinery. The income generated from renting this equipment to farms is then distributed daily to the investors."
+      q: "What is Tracova exactly?",
+      a: "Tracova is an agricultural crowdfunding platform. We source high-quality farming machinery (tractors, drones, etc.) and allow individuals to buy 'shares' or 'plans' in that machinery. The income generated from renting this equipment to farms is then distributed daily to the investors."
     },
     {
       q: "How often do I receive my earnings?",
-      a: "Earnings are credited to your Super Cash wallet every 24 hours. You can see your balance growing in real-time on your dashboard."
+      a: "Earnings are credited to your Tracova wallet every 24 hours. You can see your balance growing in real-time on your dashboard."
     },
     {
       q: "What is the minimum investment amount?",

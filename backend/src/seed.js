@@ -8,7 +8,7 @@ async function run() {
   await User.create({ 
     fullName: 'System Administrator',
     username: 'admin', 
-    email: 'admin@supercash.com', 
+    email: 'admin@tracova.com', 
     phone: '+2570000000',
     password: hash, 
     role: 'admin',

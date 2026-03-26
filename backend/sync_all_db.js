@@ -34,7 +34,7 @@ async function sync() {
                 await User.create({
                     fullName: a.username,
                     username: a.username,
-                    email: `${a.username.toLowerCase()}@supercash.com`,
+                    email: `${a.username.toLowerCase()}@tracova.com`,
                     phone: `000000${a.id}`,
                     password: pwd,
                     country: 'Burundi',

@@ -10,9 +10,9 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const APP_NAME = 'Super Cash';
+const APP_NAME = 'Tracova';
 const PRIMARY_COLOR = '#22c55e'; // Institutional Green
-const SYSTEM_EMAIL = 'no-reply@supercash.com'; // Default placeholder
+const SYSTEM_EMAIL = 'no-reply@tracova.com'; // Default placeholder
 
 const baseTemplate = (content, signature = true) => `
 <div style="font-family: 'Inter', system-ui, sans-serif; max-width: 600px; margin: auto; border: 1px solid #f0f0f0; padding: 40px; border-radius: 16px; background-color: #ffffff; box-shadow: 0 4px 24px rgba(0,0,0,0.02);">
@@ -54,7 +54,7 @@ exports.sendWelcomeEmail = async (to, fullName) => {
   `);
   
   await transporter.sendMail({
-    from: `"${APP_NAME} Protocol" <no-reply@${process.env.EMAIL_DOMAIN || 'supercash.com'}>`,
+    from: `"${APP_NAME} Protocol" <no-reply@${process.env.EMAIL_DOMAIN || 'tracova.com'}>`,
     to,
     subject: `🎉 Congratulations: Your ${APP_NAME} Account is Live!`,
     html,
@@ -73,7 +73,7 @@ exports.sendReferralCommissionEmail = async (to, referrerName, amount, currency)
   `);
 
   await transporter.sendMail({
-    from: `"${APP_NAME} Protocol" <no-reply@${process.env.EMAIL_DOMAIN || 'supercash.com'}>`,
+    from: `"${APP_NAME} Protocol" <no-reply@${process.env.EMAIL_DOMAIN || 'tracova.com'}>`,
     to,
     subject: `🎁 Congratulations! You've Earned a Commission - ${APP_NAME}`,
     html,
@@ -89,7 +89,7 @@ exports.sendWithdrawalRequestEmail = async (to, amount, currency, method) => {
   `);
 
   await transporter.sendMail({
-    from: `"${APP_NAME} Protocol" <no-reply@${process.env.EMAIL_DOMAIN || 'supercash.com'}>`,
+    from: `"${APP_NAME} Protocol" <no-reply@${process.env.EMAIL_DOMAIN || 'tracova.com'}>`,
     to,
     subject: `⚡ Your Withdrawal Request is Being Processed - ${APP_NAME}`,
     html,
@@ -107,7 +107,7 @@ exports.sendWithdrawalApprovalEmail = async (to, amount, currency) => {
   `);
 
   await transporter.sendMail({
-    from: `"${APP_NAME} Protocol" <no-reply@${process.env.EMAIL_DOMAIN || 'supercash.com'}>`,
+    from: `"${APP_NAME} Protocol" <no-reply@${process.env.EMAIL_DOMAIN || 'tracova.com'}>`,
     to,
     subject: `🎊 Congratulations! Your Withdrawal is Approved - ${APP_NAME}`,
     html,
@@ -126,7 +126,7 @@ exports.sendVerificationEmail = async (to, token) => {
   `, false);
   
   await transporter.sendMail({
-    from: `"${APP_NAME} Protocol" <no-reply@${process.env.EMAIL_DOMAIN || 'supercash.com'}>`,
+    from: `"${APP_NAME} Protocol" <no-reply@${process.env.EMAIL_DOMAIN || 'tracova.com'}>`,
     to,
     subject: `Security: Verify your email address - ${APP_NAME}`,
     html,
@@ -161,14 +161,14 @@ exports.sendAdminOTPEmail = async (to, otp) => {
     </div>
 
     <div style="margin-top: 40px; padding-top: 25px; border-top: 1px solid #1e293b; text-align: center;">
-      <p style="margin: 0; font-size: 10px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 1px;">Super Cash Security Cluster v4.2.0</p>
+      <p style="margin: 0; font-size: 10px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 1px;">Tracova Security Cluster v4.2.0</p>
       <p style="margin: 5px 0 0 0; font-size: 9px; color: #334155;">Network Identity: ${to ? to.replace(/(.{3})(.*)(@.*)/, "$1***$3") : 'Hidden'}</p>
     </div>
   </div>
   `;
 
   await transporter.sendMail({
-    from: `"${APP_NAME} Security" <security@${process.env.EMAIL_DOMAIN || 'supercash.com'}>`,
+    from: `"${APP_NAME} Security" <security@${process.env.EMAIL_DOMAIN || 'tracova.com'}>`,
     to,
     subject: `[SECURE] Administrative Verification: ${otp}`,
     html,
@@ -191,7 +191,7 @@ exports.sendPasswordResetEmail = async (to, fullName, newPassword) => {
   `);
 
   await transporter.sendMail({
-    from: `"${APP_NAME} Security" <security@${process.env.EMAIL_DOMAIN || 'supercash.com'}>`,
+    from: `"${APP_NAME} Security" <security@${process.env.EMAIL_DOMAIN || 'tracova.com'}>`,
     to,
     subject: `🔐 Password Reset: Your New Access Token - ${APP_NAME}`,
     html,

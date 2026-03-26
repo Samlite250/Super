@@ -9,7 +9,7 @@ function LoginPage() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => { document.title = "Login | Super Cash"; }, []);
+  useEffect(() => { document.title = "Login | Tracova"; }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -54,8 +54,8 @@ function LoginPage() {
         
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center gap-2 mb-6 hover:scale-105 transition-transform">
-            <img src="/logo.png" className="w-10 h-10 object-contain" alt="Super Cash Logo" />
-            <span className="text-2xl font-black text-primary tracking-tight">Super Cash</span>
+            <img src="/logo.png" className="w-10 h-10 object-contain" alt="Tracova Logo" />
+            <span className="text-2xl font-black text-primary tracking-tight">Tracova</span>
           </Link>
           <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-2 tracking-tight">Welcome back</h2>
           <p className="text-sm font-medium text-gray-500">Log in to view your agricultural yields.</p>

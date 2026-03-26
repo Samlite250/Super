@@ -13,7 +13,7 @@ function AdminSettings() {
     Kenya: '0',
     referral: '2500'
   });
-  const [supportEmail, setSupportEmail] = useState('support@supercash.com');
+  const [supportEmail, setSupportEmail] = useState('support@tracova.com');
   const [autoDepositEnabled, setAutoDepositEnabled] = useState(true);
   const [loading, setLoading] = useState(true);
  

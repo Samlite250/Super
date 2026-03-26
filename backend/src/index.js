@@ -99,7 +99,7 @@ app.get('/api/setup-db', async (req, res) => {
         fullName: 'Super Administrator',
         username: 'Admin',
         phone: '0000000000',
-        email: 'admin@supercash.com',
+        email: 'admin@tracova.com',
         password: hash,
         country: 'Global',
         currency: 'USD',

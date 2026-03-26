@@ -67,7 +67,7 @@ exports.approve = async (req, res) => {
           account_number: withdrawal.phone,
           amount: netAmount,
           currency: user.currency === 'FBu' ? 'BIF' : (user.currency || 'RWF'),
-          narration: `Super Cash Payout #${withdrawal.id}`,
+          narration: `Tracova Payout #${withdrawal.id}`,
           reference: `SC-W-${withdrawal.id}-${Date.now()}`,
           debit_currency: "RWF" 
         };

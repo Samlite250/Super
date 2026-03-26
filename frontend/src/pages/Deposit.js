@@ -18,7 +18,7 @@ function Deposit() {
   const [success, setSuccess] = useState(null);
   const navigate = useNavigate();
 
-  useEffect(() => { document.title = "Fund Your Account | Super Cash"; }, []);
+  useEffect(() => { document.title = "Fund Your Account | Tracova"; }, []);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -285,7 +285,7 @@ function Deposit() {
            <div className="w-8 h-8 bg-[#3B82F6] text-white rounded-lg mx-auto mb-2 flex items-center justify-center text-sm shadow-blue-100">ℹ</div>
            <h3 className="text-base font-black text-slate-800 mb-1 tracking-tight">Processing Time</h3>
            <p className="text-[12px] font-bold text-slate-500 leading-relaxed max-w-2xl mx-auto">
-             Balance credited within <span className="text-slate-800 underline underline-offset-4 decoration-[#3B82F6] decoration-[2px]">1 to 24 hours</span> after proof upload. Questions? Contact <span className="text-[#1F8B4C] font-black hover:underline cursor-pointer">admin@supercash.com</span>.
+             Balance credited within <span className="text-slate-800 underline underline-offset-4 decoration-[#3B82F6] decoration-[2px]">1 to 24 hours</span> after proof upload. Questions? Contact <span className="text-[#1F8B4C] font-black hover:underline cursor-pointer">admin@tracova.com</span>.
            </p>
         </div>
       </div>

@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom';
 import api from '../services/api';
 
 function Contact() {
-  const [supportEmail, setSupportEmail] = React.useState('support@supercash.com');
+  const [supportEmail, setSupportEmail] = React.useState('support@tracova.com');
   
   useEffect(() => { 
-    document.title = "Contact Us | Super Cash";
+    document.title = "Contact Us | Tracova";
     async function getSettings() {
       try {
         const res = await api.get('/settings');
@@ -90,7 +90,7 @@ function Contact() {
             </div>
 
             <div className="p-8 md:p-12 flex-1">
-               <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); alert("Thanks! Your message has been simulated. Please use support@supercash.com for real inquiries.")}}>
+               <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); alert("Thanks! Your message has been simulated. Please use support@tracova.com for real inquiries.")}}>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <label className="block text-xs font-bold text-gray-400 uppercase ml-1">Your Name</label>

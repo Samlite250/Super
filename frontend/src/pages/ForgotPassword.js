@@ -9,7 +9,7 @@ function ForgotPassword() {
   const [submitted, setSubmitted] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => { document.title = "Forgot Password | Super Cash"; }, []);
+  useEffect(() => { document.title = "Forgot Password | Tracova"; }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -39,8 +39,8 @@ function ForgotPassword() {
       <div className="w-full max-w-md bg-white rounded-3xl shadow-xl p-8 md:p-10 border border-gray-100 relative z-10">
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center gap-2 mb-6 hover:scale-105 transition-all">
-            <img src="/logo.png" className="w-10 h-10 object-contain" alt="Super Cash Logo" />
-            <span className="text-2xl font-black text-primary tracking-tight">Super Cash</span>
+            <img src="/logo.png" className="w-10 h-10 object-contain" alt="Tracova Logo" />
+            <span className="text-2xl font-black text-primary tracking-tight">Tracova</span>
           </Link>
           <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-2 tracking-tight">Reset Password</h2>
           <p className="text-sm font-medium text-gray-500">

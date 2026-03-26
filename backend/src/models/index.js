@@ -27,7 +27,7 @@ if (process.env.DATABASE_URL || process.env.VERCEL) {
 } else {
   // Local development fallback
   sequelize = new Sequelize(
-    process.env.DB_NAME || 'supercash',
+    process.env.DB_NAME || 'tracova',
     process.env.DB_USER || 'root',
     process.env.DB_PASS || '',
     {

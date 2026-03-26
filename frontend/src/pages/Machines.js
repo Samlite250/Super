@@ -11,7 +11,7 @@ function Machines() {
   const [investingId, setInvestingId] = useState(null);
   const navigate = useNavigate();
 
-  useEffect(() => { document.title = "Agro Plans | Super Cash"; }, []);
+  useEffect(() => { document.title = "Agro Plans | Tracova"; }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -87,7 +87,7 @@ function Machines() {
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row md:justify-between md:items-center relative z-10 gap-4">
           <div>
             <h1 className="text-3xl font-extrabold tracking-tight mb-2 flex items-center gap-2">
-              <img src="/logo.png" className="w-10 h-10 object-contain inline-block mr-2" alt="Super Cash Logo" />
+              <img src="/logo.png" className="w-10 h-10 object-contain inline-block mr-2" alt="Tracova Logo" />
               Agricultural Investment Plans
             </h1>
             <p className="text-green-50 font-medium opacity-90 max-w-xl">

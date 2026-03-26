@@ -10,7 +10,7 @@ function Withdraw() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  useEffect(() => { document.title = "Withdraw | Super Cash"; }, []);
+  useEffect(() => { document.title = "Withdraw | Tracova"; }, []);
 
   useEffect(() => {
     const fetchUser = async () => {

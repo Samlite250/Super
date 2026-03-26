@@ -20,7 +20,7 @@ function Dashboard() {
   const navigate = useNavigate();
 
 
-  useEffect(() => { document.title = "Dashboard | Super Cash"; }, []);
+  useEffect(() => { document.title = "Dashboard | Tracova"; }, []);
 
   useEffect(() => {
     async function load() {
@@ -101,7 +101,7 @@ function Dashboard() {
         
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row md:justify-between md:items-center relative z-10 gap-4">
           <div>
-            <img src="/logo.png" className="w-10 h-10 object-contain" alt="Super Cash Logo" />
+            <img src="/logo.png" className="w-10 h-10 object-contain" alt="Tracova Logo" />
             <h1 className="text-3xl font-extrabold tracking-tight">
                Welcome, {user.username || user.email.split('@')[0]}
             </h1>
@@ -799,8 +799,8 @@ function Dashboard() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-2">
-              <img src="/logo.png" className="w-8 h-8 object-contain" alt="Super Cash Logo" />
-              <span className="text-lg font-black text-primary tracking-tight">Super Cash</span>
+              <img src="/logo.png" className="w-8 h-8 object-contain" alt="Tracova Logo" />
+              <span className="text-lg font-black text-primary tracking-tight">Tracova</span>
             </div>
             
             <div className="flex gap-6 text-sm font-medium">
@@ -811,7 +811,7 @@ function Dashboard() {
 
             <div className="flex items-center gap-4 mt-2 md:mt-0">
               <p className="text-gray-400 font-medium text-xs">
-                © 2024 Super Cash Technologies.
+                © 2024 Tracova Technologies.
               </p>
               <div className="flex items-center gap-1.5 text-[10px] font-bold text-gray-400 bg-white shadow-sm px-2.5 py-1 rounded-md border border-gray-200 uppercase tracking-wider">
                 <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>

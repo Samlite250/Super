@@ -8,7 +8,7 @@ function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  useEffect(() => { document.title = "Admin Dashboard | Super Cash"; }, []);
+  useEffect(() => { document.title = "Admin Dashboard | Tracova"; }, []);
   useEffect(() => {
     const fetchStats = async () => {
       try {
