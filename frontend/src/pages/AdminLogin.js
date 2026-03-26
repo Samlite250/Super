@@ -143,7 +143,7 @@ function AdminLogin() {
         <div className="text-center mb-8 animate-fadeIn">
             <div className="inline-block relative mb-4">
                 <div className="relative w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-lg overflow-hidden">
-                    <img src="/logo.png" className="w-10 h-10 object-contain" alt="Logo" />
+                    <img src="/logo.png" className="h-12 w-auto object-contain" alt="Logo" />
                 </div>
             </div>
             <h1 className="text-2xl font-black text-white tracking-tight">Admin Login</h1>

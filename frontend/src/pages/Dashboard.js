@@ -101,7 +101,7 @@ function Dashboard() {
         
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row md:justify-between md:items-center relative z-10 gap-4">
           <div>
-            <img src="/logo.png" className="w-10 h-10 object-contain" alt="Tracova Logo" />
+            <img src="/logo.png" className="h-12 w-auto object-contain" alt="Tracova Logo" />
             <h1 className="text-3xl font-extrabold tracking-tight">
                Welcome, {user.username || user.email.split('@')[0]}
             </h1>
@@ -799,7 +799,7 @@ function Dashboard() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-2">
-              <img src="/logo.png" className="w-8 h-8 object-contain" alt="Tracova Logo" />
+              <img src="/logo.png" className="h-10 w-auto object-contain scale-110" alt="Tracova Logo" />
               <span className="text-lg font-black text-primary tracking-tight">Tracova</span>
             </div>
             
