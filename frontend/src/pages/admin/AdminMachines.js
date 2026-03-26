@@ -5,7 +5,7 @@ import AdminLayout from '../../components/AdminLayout';
 
 const COUNTRIES = [
   { key: 'Global',  label: 'Global',   flag: '🌍', currency: 'FBu',  color: 'bg-gray-800 text-white' },
-  { key: 'Uganda',  label: 'Uganda',   flag: '🇺🇬', currency: 'UGX',  color: 'bg-pink-500 text-white' },
+  { key: 'Uganda',  label: 'Uganda',   flag: '🇺🇬', currency: 'UGX',  color: 'bg-[#ffbf65] text-gray-900' },
   { key: 'Rwanda',  label: 'Rwanda',   flag: '🇷🇼', currency: 'RWF',  color: 'bg-blue-700 text-white' },
   { key: 'Kenya',   label: 'Kenya',    flag: '🇰🇪', currency: 'KES',  color: 'bg-sky-500 text-white' },
   { key: 'Burundi', label: 'Burundi',  flag: '🇧🇮', currency: 'FBu',  color: 'bg-green-700 text-white' },
