@@ -11,7 +11,7 @@ function Landing() {
       <header className="bg-primary/95 backdrop-blur-md text-white sticky top-0 z-50 shadow-sm border-b border-white/10 transition-all">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <div className="flex items-center gap-1.5 sm:gap-2">
-            <img src="/logo.jpeg" className="h-10 w-auto sm:h-12 object-contain" alt="Tracova Logo" />
+            <img src="/logo.png" className="h-10 w-auto sm:h-12 object-contain" alt="Tracova Logo" />
             <h1 className="text-xl sm:text-2xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-green-200">
                Tracova
             </h1>
@@ -176,7 +176,7 @@ function Landing() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
             <div className="col-span-1 md:col-span-2">
               <div className="flex items-center gap-2 mb-4">
-                <img src="/logo.jpeg" className="h-12 w-auto object-contain" alt="Tracova Logo" />
+                <img src="/logo.png" className="h-12 w-auto object-contain" alt="Tracova Logo" />
                 <span className="text-2xl font-black text-white">Tracova</span>
               </div>
               <p className="text-gray-400 font-medium leading-relaxed max-w-sm">
