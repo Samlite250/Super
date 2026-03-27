@@ -18,22 +18,30 @@ async function calculateDailyReturns() {
       const machine = inv.Machine;
       const user = inv.User;
       
-      // Calculate how much time has passed since the last return or start date
       const referenceDate = inv.lastReturnAt || inv.startDate;
-      const hoursPassed = (now - new Date(referenceDate)) / (1000 * 60 * 60);
+      const lastReturnTime = new Date(referenceDate).getTime();
+      const currentTime = now.getTime();
+      const hoursPassed = (currentTime - lastReturnTime) / (1000 * 60 * 60);
 
-      // Only give ROI if 24 hours have passed
       if (hoursPassed >= 24) {
-        const dailyIncome = (parseFloat(inv.amount) * parseFloat(machine.dailyPercent)) / 100;
+        // Calculate income (use stored dailyIncome if available, otherwise fallback to percentage)
+        let dailyIncome = 0;
+        if (inv.dailyIncome && parseFloat(inv.dailyIncome) > 0) {
+          dailyIncome = parseFloat(inv.dailyIncome);
+        } else {
+          dailyIncome = (parseFloat(inv.amount) * parseFloat(machine.dailyPercent)) / 100;
+        }
         
         const t = await sequelize.transaction();
         try {
           // Increment user balance
-          user.balance = parseFloat(user.balance) + dailyIncome;
+          const oldBalance = parseFloat(user.balance || 0);
+          user.balance = oldBalance + dailyIncome;
           await user.save({ transaction: t });
           
-          // Update lastReturnAt
-          inv.lastReturnAt = now;
+          // Update lastReturnAt to exactly 24h after the last return to prevent drift
+          const newReturnDate = new Date(lastReturnTime + (24 * 60 * 60 * 1000));
+          inv.lastReturnAt = newReturnDate;
           
           // Create transaction record
           await Transaction.create({ 
@@ -45,7 +53,8 @@ async function calculateDailyReturns() {
 
           // Check if the investment lifecycle is over
           const start = new Date(inv.startDate);
-          const expiry = new Date(start.getTime() + (machine.durationDays * 24 * 60 * 60 * 1000));
+          const durationDays = parseInt(machine.durationDays);
+          const expiry = new Date(start.getTime() + (durationDays * 24 * 60 * 60 * 1000));
           
           if (now >= expiry) {
             inv.status = 'completed';
@@ -54,7 +63,7 @@ async function calculateDailyReturns() {
 
           await inv.save({ transaction: t });
           await t.commit();
-          console.log(`[ROI] Dispatched ${dailyIncome} to ${user.email} for ${machine.name}`);
+          console.log(`[ROI] Dispatched ${dailyIncome} to ${user.email} (Balance: ${oldBalance} -> ${user.balance})`);
         } catch (err) {
           await t.rollback();
           console.error(`[ROI] Failed for investment ${inv.id}:`, err);

@@ -53,8 +53,9 @@ function LoginPage() {
       <div className="w-full max-w-md bg-white rounded-3xl shadow-xl p-6 sm:p-8 md:p-10 border border-gray-100 relative z-10 transition-all mx-2">
         
         <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-2 mb-6 hover:scale-105 transition-transform">
-            <img src="/logo.png" className="h-[70px] w-auto object-contain mx-auto mb-2 drop-shadow-lg" alt="Tracova Logo" />
+          <Link to="/" className="inline-flex flex-col items-center gap-1 mb-6 hover:scale-105 transition-transform group">
+            <img src="/logo.png" className="h-[70px] w-auto object-contain mx-auto drop-shadow-lg" alt="Tracova Logo" />
+            <span className="text-xl font-black text-primary tracking-[0.2em] uppercase mt-1 group-hover:text-green-700 transition-colors">Tracova</span>
           </Link>
           <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-2 tracking-tight">Welcome back</h2>
           <p className="text-sm font-medium text-gray-500">Log in to view your agricultural yields.</p>
