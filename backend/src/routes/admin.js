@@ -47,6 +47,18 @@ router.post('/users/:id/unblock', authenticate, authorizeAdmin, async (req, res)
   res.json(user);
 });
 
+router.delete('/users/:id', authenticate, authorizeAdmin, async (req, res) => {
+  try {
+    const user = await User.findByPk(req.params.id);
+    if (!user) return res.status(404).json({ message: 'Not found' });
+    if (user.id === req.user.id) return res.status(400).json({ message: 'Cannot purge your own account' });
+    await user.destroy();
+    res.json({ message: 'User identity and all associated meta-data purged' });
+  } catch (err) {
+    res.status(500).json({ message: 'Purge failed: ' + err.message });
+  }
+});
+
 // Admin: reset a user's password to a generated temporary password and email it
 router.post('/users/:id/reset-password', authenticate, authorizeAdmin, async (req, res) => {
   try {

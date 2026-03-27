@@ -13,5 +13,6 @@ router.post('/:id/proof', authenticate, upload.single('proof'), depositControlle
 router.get('/', authenticate, authorizeAdmin, depositController.list);
 router.post('/:id/approve', authenticate, authorizeAdmin, depositController.approve);
 router.post('/:id/reject', authenticate, authorizeAdmin, depositController.reject);
+router.delete('/:id', authenticate, authorizeAdmin, depositController.deleteDeposit);
 
 module.exports = router;

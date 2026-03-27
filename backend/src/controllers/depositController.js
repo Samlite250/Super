@@ -192,3 +192,16 @@ exports.reject = async (req, res) => {
   await deposit.save();
   res.json(deposit);
 };
+
+exports.deleteDeposit = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deposit = await Deposit.findByPk(id);
+    if (!deposit) return res.status(404).json({ message: 'Not found' });
+    
+    await deposit.destroy();
+    res.json({ message: 'Record purged from registry' });
+  } catch (err) {
+    res.status(500).json({ message: 'Deletion failed: ' + err.message });
+  }
+};

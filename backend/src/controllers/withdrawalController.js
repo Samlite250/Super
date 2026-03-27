@@ -166,3 +166,16 @@ exports.exportWithdrawals = async (req, res) => {
     res.status(500).json({ error: 'Export failed' });
   }
 };
+
+exports.deleteWithdrawal = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const withdrawal = await Withdrawal.findByPk(id);
+    if (!withdrawal) return res.status(404).json({ message: 'Not found' });
+    
+    await withdrawal.destroy();
+    res.json({ message: 'Withdrawal record purged from registry' });
+  } catch (err) {
+    res.status(500).json({ message: 'Deletion failed: ' + err.message });
+  }
+};

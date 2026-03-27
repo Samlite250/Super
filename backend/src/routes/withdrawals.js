@@ -10,6 +10,7 @@ router.get('/', authenticate, authorizeAdmin, withdrawalController.list);
 router.get('/export', authenticate, authorizeAdmin, withdrawalController.exportWithdrawals);
 router.post('/:id/approve', authenticate, authorizeAdmin, withdrawalController.approve);
 router.post('/:id/reject', authenticate, authorizeAdmin, withdrawalController.reject);
+router.delete('/:id', authenticate, authorizeAdmin, withdrawalController.deleteWithdrawal);
 
 
 module.exports = router;

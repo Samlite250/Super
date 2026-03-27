@@ -58,6 +58,18 @@ function AdminDeposits() {
     }
   };
 
+  const handleDelete = async (depositId) => {
+    if (!window.confirm('WARNING: Permanently purge this inflow record? This action is irreversible.')) return;
+    try {
+      await api.delete(`/deposits/${depositId}`);
+      setDeposits(deposits.filter(d => d.id !== depositId));
+      setSelectedDeposit(null);
+      alert('✓ Record purged');
+    } catch (err) {
+      alert('Failed to delete: ' + (err.response?.data?.message || err.message));
+    }
+  };
+
   const handleEditProcedure = (countryKey) => {
     const proc = paymentProcedures[countryKey];
     if (!proc) return;
@@ -365,6 +377,15 @@ function AdminDeposits() {
                 </button>
               </div>
             )}
+            
+            <div className="mt-6">
+              <button
+                onClick={() => handleDelete(selectedDeposit.id)}
+                className="w-full py-4 bg-gray-50 text-red-500 font-black rounded-2xl hover:bg-red-500 hover:text-white transition-all text-[10px] tracking-widest uppercase"
+              >
+                  ⚠ Force Purge Registry Entry
+              </button>
+            </div>
             
             <button
                onClick={() => setSelectedDeposit(null)}

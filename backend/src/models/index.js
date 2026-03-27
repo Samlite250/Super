@@ -59,22 +59,22 @@ const Setting = require('./setting')(sequelize, DataTypes);
 const ExchangeRate = require('./exchange_rate')(sequelize, DataTypes);
 
 // associations
-User.hasMany(Investment, { foreignKey: 'userId' });
+User.hasMany(Investment, { foreignKey: 'userId', onDelete: 'CASCADE' });
 Investment.belongsTo(User, { foreignKey: 'userId' });
-User.hasMany(Deposit, { foreignKey: 'userId' });
+User.hasMany(Deposit, { foreignKey: 'userId', onDelete: 'CASCADE' });
 Deposit.belongsTo(User, { foreignKey: 'userId' });
-User.hasMany(Withdrawal, { foreignKey: 'userId' });
+User.hasMany(Withdrawal, { foreignKey: 'userId', onDelete: 'CASCADE' });
 Withdrawal.belongsTo(User, { foreignKey: 'userId' });
-User.hasMany(Transaction, { foreignKey: 'userId' });
+User.hasMany(Transaction, { foreignKey: 'userId', onDelete: 'CASCADE' });
 Transaction.belongsTo(User, { foreignKey: 'userId' });
 
-User.hasMany(Referral, { foreignKey: 'referrerId' });
+User.hasMany(Referral, { foreignKey: 'referrerId', onDelete: 'CASCADE' });
 Referral.belongsTo(User, { foreignKey: 'referrerId' });
 Referral.belongsTo(User, { foreignKey: 'referredId', as: 'referredUser' });
-User.hasMany(Referral, { foreignKey: 'referredId' });
+User.hasMany(Referral, { foreignKey: 'referredId', onDelete: 'CASCADE' });
 
 User.belongsTo(User, { as: 'upline', foreignKey: 'referredBy' });
-User.hasMany(User, { as: 'downline', foreignKey: 'referredBy' });
+User.hasMany(User, { as: 'downline', foreignKey: 'referredBy', onDelete: 'SET NULL' });
 
 Machine.hasMany(Investment, { foreignKey: 'machineId' });
 Investment.belongsTo(Machine, { foreignKey: 'machineId' });

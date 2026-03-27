@@ -68,6 +68,17 @@ function AdminWithdrawals() {
     }
   };
 
+  const handleDelete = async (withdrawalId) => {
+    if (!window.confirm('WARNING: Permanently purge this disbursement record? This action is irreversible.')) return;
+    try {
+      await api.delete(`/withdrawals/${withdrawalId}`);
+      setWithdrawals(withdrawals.filter(w => w.id !== withdrawalId));
+      alert('✓ Record purged');
+    } catch (err) {
+      alert('Failed to delete: ' + (err.response?.data?.message || err.message));
+    }
+  };
+
   if (loading) return <div className="min-h-screen flex items-center justify-center bg-gray-50"><div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-secondary"></div></div>;
 
   const pending = withdrawals.filter(w => w.status === 'pending');
@@ -133,7 +144,15 @@ function AdminWithdrawals() {
                           <button onClick={() => handleReject(w.id)} className="px-4 py-2 bg-white text-red-500 border border-red-100 rounded-xl text-[9px] font-black uppercase tracking-widest">Reject</button>
                         </div>
                       ) : (
-                        <span className="text-[10px] font-black text-gray-200 uppercase tracking-[6px] italic">Immutable_Log</span>
+                        <div className="flex flex-col gap-2 items-center">
+                           <span className="text-[10px] font-black text-gray-200 uppercase tracking-[6px] italic mb-2">Immutable_Log</span>
+                           <button 
+                             onClick={() => handleDelete(w.id)}
+                             className="text-[9px] font-black text-red-300 hover:text-red-500 uppercase tracking-widest transition-colors"
+                           >
+                             Force_Purge
+                           </button>
+                        </div>
                       )}
                     </td>
                   </tr>

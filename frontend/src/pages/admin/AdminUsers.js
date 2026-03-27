@@ -61,6 +61,17 @@ function AdminUsers() {
     }
   };
 
+  const handlePurge = async (userId) => {
+    if (!window.confirm('CRITICAL WARNING: This will permanently EXTERMINATE this user identity and all their associated data (deposits, investments, etc.) from the system. This cannot be undone. Proceed?')) return;
+    try {
+      await api.delete(`/admin/users/${userId}`);
+      setUsers(users.filter(u => u.id !== userId));
+      alert('✓ User purged from registry');
+    } catch (err) {
+      alert('Failed: ' + (err.response?.data?.message || err.message));
+    }
+  };
+
   const [editingUser, setEditingUser] = useState(null);
   const [editForm, setEditForm] = useState({ fullName: '', email: '', phone: '', country: '', balance: 0, role: 'user' });
 
