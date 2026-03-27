@@ -40,7 +40,7 @@ const AdminLayout = ({ children }) => {
         <div className="p-8 border-b border-white/5 bg-black/20">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-br from-primary/30 to-secondary/30 rounded-xl flex items-center justify-center border border-white/10 shadow-lg transition-transform group-hover:scale-110">
-              <img src="/logo.png" className="h-10 w-auto object-contain scale-110" alt="Tracova Logo" />
+              <img src="/logo.jpeg" className="h-10 w-auto object-contain scale-110" alt="Tracova Logo" />
             </div>
             <div>
               <h1 className="text-xl font-black text-white tracking-tight">Tracova</h1>
@@ -100,7 +100,7 @@ const AdminLayout = ({ children }) => {
         <div className="lg:hidden flex items-center justify-between p-4 bg-gray-900 text-white z-30 sticky top-0 shadow-md">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-br from-primary/30 to-secondary/30 rounded-xl flex items-center justify-center border border-white/10 shadow-lg">
-              <img src="/logo.png" className="h-10 w-auto object-contain scale-110" alt="Tracova Logo" />
+              <img src="/logo.jpeg" className="h-10 w-auto object-contain scale-110" alt="Tracova Logo" />
             </div>
             <div>
               <h1 className="text-xl font-black tracking-tight leading-tight">Tracova</h1>

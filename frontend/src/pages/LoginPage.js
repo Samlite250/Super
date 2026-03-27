@@ -54,7 +54,7 @@ function LoginPage() {
         
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center gap-2 mb-6 hover:scale-105 transition-transform">
-            <img src="/logo.png" className="h-[70px] w-auto object-contain mx-auto mb-2 drop-shadow-lg" alt="Tracova Logo" />
+            <img src="/logo.jpeg" className="h-[70px] w-auto object-contain mx-auto mb-2 drop-shadow-lg" alt="Tracova Logo" />
           </Link>
           <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-2 tracking-tight">Welcome back</h2>
           <p className="text-sm font-medium text-gray-500">Log in to view your agricultural yields.</p>
