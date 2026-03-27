@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { authenticate, authorizeAdmin } = require('../middleware/auth');
-const { User, Investment, Deposit, Withdrawal, Referral } = require('../models');
+const { User, Investment, Deposit, Withdrawal, Referral, Transaction } = require('../models');
 const bcrypt = require('bcryptjs');
 const { sendPasswordResetEmail } = require('../utils/mailer');
 
