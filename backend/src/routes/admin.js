@@ -49,26 +49,33 @@ router.post('/users/:id/unblock', authenticate, authorizeAdmin, async (req, res)
 
 router.delete('/users/:id', authenticate, authorizeAdmin, async (req, res) => {
   try {
-    const user = await User.findByPk(req.params.id);
+    const { id } = req.params;
+    const user = await User.findByPk(id);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    const userId = user.id;
+    const { Op } = require('sequelize');
 
-    // Delete related records first to avoid foreign key constraints (if not using ON DELETE CASCADE)
-    await Investment.destroy({ where: { userId } });
-    await Deposit.destroy({ where: { userId } });
-    await Withdrawal.destroy({ where: { userId } });
-    await Transaction.destroy({ where: { userId } });
-    await Referral.destroy({ where: { [require('sequelize').Op.or]: [{ referrerId: userId }, { referredId: userId }] } });
+    // Delete related records first to avoid foreign key constraints
+    await Investment.destroy({ where: { userId: id } });
+    await Deposit.destroy({ where: { userId: id } });
+    await Withdrawal.destroy({ where: { userId: id } });
+    await Transaction.destroy({ where: { userId: id } });
+    
+    // Delete referrals where user is either referrer OR referred
+    await Referral.destroy({ 
+      where: { 
+        [Op.or]: [{ referrerId: id }, { referredId: id }] 
+      } 
+    });
 
-    // Remove reference from downlines (set referredBy to null or 1 default admin)
-    await User.update({ referredBy: null }, { where: { referredBy: userId } });
+    // Remove reference from downlines by setting referredBy to null
+    await User.update({ referredBy: null }, { where: { referredBy: id } });
 
     await user.destroy();
-    res.json({ message: 'User and all associated data deleted successfully' });
+    res.json({ message: `User ID ${id} and all associated data deleted successfully` });
   } catch (err) {
     console.error('[ADMIN] Delete User Error:', err);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: 'Internal server error: ' + err.message });
   }
 });
 
