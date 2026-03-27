@@ -61,6 +61,22 @@ function AdminUsers() {
     }
   };
 
+  const handleDelete = async (userId) => {
+    if (!window.confirm('CRITICAL ACTION: Are you sure you want to PERMANENTLY DELETE this user and all associated data (investments, deposits, etc.)? This cannot be undone.')) return;
+    try {
+      await api.delete(`/admin/users/${userId}`);
+      setUsers(users.filter(u => u.id !== userId));
+      alert('User deleted successfully');
+    } catch (err) {
+      if (err.response?.status === 403) {
+        alert('Admin only — please login');
+        navigate('/auth/admin-secure-v2');
+        return;
+      }
+      alert('Failed to delete user: ' + (err.response?.data?.message || err.message));
+    }
+  };
+
   const [editingUser, setEditingUser] = useState(null);
   const [editForm, setEditForm] = useState({ fullName: '', email: '', phone: '', country: '', balance: 0, role: 'user' });
 
@@ -175,10 +191,13 @@ function AdminUsers() {
                               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                            </button>
                            <button onClick={() => handleResetPassword(u.id)} className="p-3.5 rounded-2xl bg-orange-50 text-orange-500 hover:bg-orange-500 hover:text-white border border-orange-100 shadow-sm transition-all" title="Secret Re-Auth">
-                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg>
-                           </button>
-                         </div>
-                       </td>
+                               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg>
+                            </button>
+                            <button onClick={() => handleDelete(u.id)} className="p-3.5 rounded-2xl bg-red-50 text-red-600 hover:bg-red-600 hover:text-white border border-red-100 shadow-sm transition-all" title="Purge Identity">
+                               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </button>
+                          </div>
+                        </td>
                      </tr>
                     ))}
                  </tbody>

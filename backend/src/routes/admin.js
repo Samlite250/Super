@@ -47,6 +47,31 @@ router.post('/users/:id/unblock', authenticate, authorizeAdmin, async (req, res)
   res.json(user);
 });
 
+router.delete('/users/:id', authenticate, authorizeAdmin, async (req, res) => {
+  try {
+    const user = await User.findByPk(req.params.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    const userId = user.id;
+
+    // Delete related records first to avoid foreign key constraints (if not using ON DELETE CASCADE)
+    await Investment.destroy({ where: { userId } });
+    await Deposit.destroy({ where: { userId } });
+    await Withdrawal.destroy({ where: { userId } });
+    await Transaction.destroy({ where: { userId } });
+    await Referral.destroy({ where: { [require('sequelize').Op.or]: [{ referrerId: userId }, { referredId: userId }] } });
+
+    // Remove reference from downlines (set referredBy to null or 1 default admin)
+    await User.update({ referredBy: null }, { where: { referredBy: userId } });
+
+    await user.destroy();
+    res.json({ message: 'User and all associated data deleted successfully' });
+  } catch (err) {
+    console.error('[ADMIN] Delete User Error:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 // Admin: reset a user's password to a generated temporary password and email it
 router.post('/users/:id/reset-password', authenticate, authorizeAdmin, async (req, res) => {
   try {
