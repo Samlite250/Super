@@ -73,7 +73,7 @@ function AdminWithdrawals() {
     try {
       await api.delete(`/withdrawals/${withdrawalId}`);
       setWithdrawals(withdrawals.filter(w => w.id !== withdrawalId));
-      alert('✓ Record purged');
+      alert('✓ Withdrawal deleted');
     } catch (err) {
       alert('Failed to delete: ' + (err.response?.data?.message || err.message));
     }
@@ -89,16 +89,16 @@ function AdminWithdrawals() {
       <div className="p-8 lg:p-12 animate-fadeIn">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-8">
            <div>
-              <h2 className="text-4xl font-black text-gray-900 tracking-tight mb-2">Withdrawals Control</h2>
-              <p className="text-gray-500 font-medium">Manage and process outgoing user funds.</p>
+              <h2 className="text-4xl font-black text-gray-900 tracking-tight mb-2">Withdrawals</h2>
+              <p className="text-gray-500 font-medium">Manage and process user withdrawals.</p>
            </div>
            <div className="flex flex-wrap items-center gap-4">
               <select value={exportRegion} onChange={(e) => setExportRegion(e.target.value)} className="bg-white border border-gray-100 px-4 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest outline-none">
                 <option value="">All Regions</option>
                 {countries.map(c => <option key={c} value={c}>{c.toUpperCase()}</option>)}
               </select>
-              <button onClick={handleExport} disabled={isExporting} className="bg-green-500 text-white px-6 py-3 rounded-2xl text-[9px] font-black uppercase tracking-widest shadow-lg">Excel</button>
-              <button onClick={() => window.open(`/admin/withdrawals/manifest/${exportRegion}`, '_blank')} className="bg-gray-900 text-white px-6 py-3 rounded-2xl text-[9px] font-black uppercase tracking-widest border border-white/10">Manifest</button>
+              <button onClick={handleExport} disabled={isExporting} className="bg-green-500 text-white px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg">📊 Export to Excel</button>
+              <button onClick={() => window.open(`/admin/withdrawals/manifest/${exportRegion}`, '_blank')} className="bg-gray-900 text-white px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-white/10">🖨️ Print Daily Manifest</button>
            </div>
         </div>
 
@@ -139,7 +139,7 @@ function AdminWithdrawals() {
                     <td className="p-8 text-center">
                       {w.status === 'pending' ? (
                         <div className="flex gap-2 justify-center">
-                          <button onClick={() => handleApprove(w.id, true)} className="px-4 py-2 bg-secondary text-white rounded-xl text-[9px] font-black uppercase tracking-widest shadow-lg">⚡ Auto</button>
+                          <button onClick={() => handleApprove(w.id, true)} className="px-4 py-2 bg-secondary text-white rounded-xl text-[9px] font-black uppercase tracking-widest shadow-lg">Auto</button>
                           <button onClick={() => handleApprove(w.id, false)} className="px-4 py-2 bg-gray-900 text-white rounded-xl text-[9px] font-black uppercase tracking-widest">Manual</button>
                           <button onClick={() => handleReject(w.id)} className="px-4 py-2 bg-white text-red-500 border border-red-100 rounded-xl text-[9px] font-black uppercase tracking-widest">Reject</button>
                         </div>
@@ -150,7 +150,7 @@ function AdminWithdrawals() {
                              onClick={() => handleDelete(w.id)}
                              className="text-[9px] font-black text-red-300 hover:text-red-500 uppercase tracking-widest transition-colors"
                            >
-                             Delete Entry
+                             Delete
                            </button>
                         </div>
                       )}

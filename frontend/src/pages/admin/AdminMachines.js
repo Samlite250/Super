@@ -36,7 +36,7 @@ function AdminMachines() {
   const [toast, setToast] = useState(null);
   const navigate = useNavigate();
 
-  useEffect(() => { document.title = 'Asset Lab | Admin'; }, []);
+  useEffect(() => { document.title = 'Farm Packages | Admin'; }, []);
 
   const showToast = (msg, type = 'success') => {
     setToast({ msg, type });
@@ -151,7 +151,7 @@ function AdminMachines() {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="flex flex-col items-center gap-3">
           <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-secondary"></div>
-          <p className="text-xs text-gray-400 font-medium">Loading Asset Lab...</p>
+          <p className="text-xs text-gray-400 font-medium">Loading Farm Packages...</p>
         </div>
       </div>
     );
@@ -197,15 +197,15 @@ function AdminMachines() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
           <div>
-            <h2 className="text-3xl font-black text-gray-900 tracking-tight">Asset Lab</h2>
-            <p className="text-xs font-semibold text-gray-400 mt-1 uppercase tracking-widest">Investment Plans Management</p>
+            <h2 className="text-3xl font-black text-gray-900 tracking-tight">Farm Packages</h2>
+            <p className="text-xs font-semibold text-gray-400 mt-1 uppercase tracking-widest">Management and Provisioning</p>
           </div>
           <div className="flex items-center gap-3 flex-wrap">
             <button
               onClick={showForm ? closeForm : openAdd}
               className={`px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all ${showForm ? 'bg-red-500 text-white' : 'bg-gray-900 text-white shadow-lg hover:bg-black active:scale-95'}`}
             >
-              {showForm ? '✕ Cancel' : `+ Deploy ${activeCountry.flag} ${activeCountry.label} Plan`}
+              {showForm ? '✕ Cancel' : `+ New ${activeCountry.flag} ${activeCountry.label} Package`}
             </button>
           </div>
         </div>
@@ -240,7 +240,7 @@ function AdminMachines() {
           <div className={`${activeCountry.color} rounded-2xl p-4 mb-6 flex items-center gap-4 shadow-md`}>
             <span className="text-4xl">{activeCountry.flag}</span>
             <div>
-              <p className="font-black text-white text-base">{activeCountry.label} — Country-Specific Plans</p>
+              <p className="font-black text-white text-base">{activeCountry.label} — Country-Specific Packages</p>
               <p className="text-white/70 text-xs font-medium mt-0.5">
                 Plans here are shown <strong className="text-white">exclusively</strong> to {activeCountry.label}n users, with prices in <strong className="text-white">{activeCountry.currency}</strong>. They appear alongside Global plans.
               </p>
@@ -253,7 +253,7 @@ function AdminMachines() {
           <div className="bg-white rounded-[2rem] border border-gray-100 p-8 mb-10 shadow-xl animate-scaleUp">
             <div className="flex items-center justify-between mb-6 pb-4 border-b-2 border-gray-50">
               <h3 className="text-xl font-black text-gray-900">
-                {editingId ? '✏️ Edit Plan' : '🚀 New Plan'} — {activeCountry.flag} {activeCountry.label}
+                {editingId ? '✏️ Edit Package' : '🚀 New Package'} — {activeCountry.flag} {activeCountry.label}
               </h3>
               {formData.premium && (
                 <span className="px-3 py-1 rounded-full bg-secondary text-white text-[10px] font-black uppercase tracking-widest">Elite</span>
@@ -324,7 +324,7 @@ function AdminMachines() {
 
                 <div>
                   <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Description</label>
-                  <textarea name="description" value={formData.description} onChange={handleInput} placeholder="Brief plan description..." className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl font-medium text-sm h-24 resize-none focus:ring-1 focus:ring-secondary outline-none" required />
+                  <textarea name="description" value={formData.description} onChange={handleInput} placeholder="Brief package description..." className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl font-medium text-sm h-24 resize-none focus:ring-1 focus:ring-secondary outline-none" required />
                 </div>
 
                 {/* Premium Toggle */}
@@ -350,7 +350,7 @@ function AdminMachines() {
                   {saving ? (
                     <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> Saving...</>
                   ) : (
-                    editingId ? '✓ Save Changes' : '🚀 Deploy Plan'
+                    editingId ? '✓ Save Changes' : '🚀 Create Package'
                   )}
                 </button>
               </div>
