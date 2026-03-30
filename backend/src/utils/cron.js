@@ -18,12 +18,12 @@ async function calculateDailyReturns() {
       const machine = inv.Machine;
       const user = inv.User;
       
-      const referenceDate = inv.lastReturnAt || inv.startDate;
-      const lastReturnTime = new Date(referenceDate).getTime();
-      const currentTime = now.getTime();
-      const hoursPassed = (currentTime - lastReturnTime) / (1000 * 60 * 60);
+      let referenceDate = inv.lastReturnAt || inv.startDate;
+      let lastReturnTime = new Date(referenceDate).getTime();
+      let currentTime = now.getTime();
+      let hoursPassed = (currentTime - lastReturnTime) / (1000 * 60 * 60);
 
-      if (hoursPassed >= 24) {
+      while (hoursPassed >= 24) {
         // Calculate income (use stored dailyIncome if available, otherwise fallback to percentage)
         let dailyIncome = 0;
         if (inv.dailyIncome && parseFloat(inv.dailyIncome) > 0) {
@@ -56,17 +56,25 @@ async function calculateDailyReturns() {
           const durationDays = parseInt(machine.durationDays);
           const expiry = new Date(start.getTime() + (durationDays * 24 * 60 * 60 * 1000));
           
-          if (now >= expiry) {
+          if (newReturnDate >= expiry) {
             inv.status = 'completed';
             console.log(`[ROI] Plan ${inv.id} completed for ${user.email}`);
           }
 
           await inv.save({ transaction: t });
           await t.commit();
+          
+          // Update variables for the next iteration of the catch-up loop
+          lastReturnTime = newReturnDate.getTime();
+          hoursPassed = (currentTime - lastReturnTime) / (1000 * 60 * 60);
+
           console.log(`[ROI] Dispatched ${dailyIncome} to ${user.email} (Balance: ${oldBalance} -> ${user.balance})`);
+          
+          if (inv.status === 'completed') break;
         } catch (err) {
           await t.rollback();
           console.error(`[ROI] Failed for investment ${inv.id}:`, err);
+          break; // Exit loop to avoid infinite stuck
         }
       }
     }
