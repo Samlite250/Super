@@ -13,13 +13,15 @@ const AdminLayout = ({ children }) => {
   };
 
   const menuItems = [
-    { path: '/admin', label: 'Overview', icon: '📊' },
-    { path: '/admin/users', label: 'User Registry', icon: '👥' },
-    { path: '/admin/deposits', label: 'Financial Inflow', icon: '💰' },
-    { path: '/admin/withdrawals', label: 'Payout Control', icon: '🏦' },
-    { path: '/admin/activity', label: 'Regional Analysis', icon: '🌍' },
-    { path: '/admin/machines', label: 'Asset Lab', icon: '🚜' },
-    { path: '/admin/settings', label: 'System Prefs', icon: '⚙️' },
+    { path: '/admin',               label: 'Overview',             icon: '📊' },
+    { path: '/admin/users',         label: 'Users',                icon: '👥' },
+    { path: '/admin/deposits',      label: 'Deposits',             icon: '💰' },
+    { path: '/admin/withdrawals',   label: 'Withdrawals',          icon: '🏦' },
+    { path: '/admin/investments',   label: 'Investments',          icon: '📈' },
+    { path: '/admin/ledger',        label: 'Transaction Ledger',   icon: '📋' },
+    { path: '/admin/activity',      label: 'Regional Activity',    icon: '🌍' },
+    { path: '/admin/machines',      label: 'Investment Plans',     icon: '🚜' },
+    { path: '/admin/settings',      label: 'Settings',             icon: '⚙️' },
   ];
 
   return (
@@ -43,8 +45,8 @@ const AdminLayout = ({ children }) => {
               <img src="/logo.png" className="h-10 w-auto object-contain scale-110" alt="Tracova Logo" />
             </div>
             <div>
-              <h1 className="text-xl font-black text-white tracking-tight">Tracova</h1>
-              <p className="text-[10px] font-black text-secondary uppercase tracking-[3px]">Nexus Control</p>
+              <h1 className="text-xl font-black text-white tracking-tight">Admin Panel</h1>
+              <p className="text-[10px] font-black text-secondary uppercase tracking-[3px]">Platform Control</p>
             </div>
           </div>
         </div>
@@ -79,8 +81,8 @@ const AdminLayout = ({ children }) => {
              <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-secondary/20 border border-secondary/30 flex items-center justify-center text-xs font-black text-secondary">A</div>
                 <div className="overflow-hidden">
-                   <p className="text-xs font-black text-white truncate">Master Admin</p>
-                   <p className="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Clearance: Level 4</p>
+                   <p className="text-xs font-black text-white truncate">Admin</p>
+                   <p className="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Administrator</p>
                 </div>
              </div>
           </div>
@@ -88,7 +90,7 @@ const AdminLayout = ({ children }) => {
             onClick={handleLogout}
             className="w-full py-4 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white border border-red-500/20 rounded-2xl font-black text-xs uppercase tracking-widest transition-all active:scale-95"
           >
-            System Exit
+            Sign Out
           </button>
         </div>
       </aside>
@@ -103,8 +105,8 @@ const AdminLayout = ({ children }) => {
               <img src="/logo.png" className="h-10 w-auto object-contain scale-110" alt="Tracova Logo" />
             </div>
             <div>
-              <h1 className="text-xl font-black tracking-tight leading-tight">Tracova</h1>
-              <p className="text-[10px] font-black text-secondary uppercase tracking-[3px] leading-tight">Nexus Control</p>
+              <h1 className="text-xl font-black tracking-tight leading-tight">Admin Panel</h1>
+              <p className="text-[10px] font-black text-secondary uppercase tracking-[3px] leading-tight">Platform Control</p>
             </div>
           </div>
           <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-2 bg-white/10 rounded-xl hover:bg-white/20 transition-colors border border-white/5 shadow-sm">

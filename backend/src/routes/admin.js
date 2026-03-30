@@ -204,4 +204,19 @@ router.delete('/gateways', authenticate, authorizeAdmin, async (req, res) => {
   }
 });
 
+// Admin: full transaction ledger
+router.get('/transactions', authenticate, authorizeAdmin, async (req, res) => {
+  try {
+    const txs = await Transaction.findAll({
+      include: [{ model: User, attributes: ['id', 'fullName', 'email', 'country', 'currency'] }],
+      order: [['createdAt', 'DESC']],
+      limit: 2000
+    });
+    res.json(txs);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 module.exports = router;

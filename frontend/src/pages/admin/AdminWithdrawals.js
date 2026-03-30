@@ -62,7 +62,7 @@ function AdminWithdrawals() {
     try {
       await api.post(`/withdrawals/${withdrawalId}/reject`);
       setWithdrawals(withdrawals.map(w => w.id === withdrawalId ? { ...w, status: 'rejected' } : w));
-      alert('✓ Protocol Rejected');
+      alert('✓ Request Rejected');
     } catch (err) {
       alert('Failed to reject withdrawal');
     }
@@ -89,8 +89,8 @@ function AdminWithdrawals() {
       <div className="p-8 lg:p-12 animate-fadeIn">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-8">
            <div>
-              <h2 className="text-4xl font-black text-gray-900 tracking-tight mb-2">Disbursement Engine</h2>
-              <p className="text-gray-500 font-medium">Authorize outgoing capital transfers and monitor global liquidity flux.</p>
+              <h2 className="text-4xl font-black text-gray-900 tracking-tight mb-2">Withdrawals Control</h2>
+              <p className="text-gray-500 font-medium">Manage and process outgoing user funds.</p>
            </div>
            <div className="flex flex-wrap items-center gap-4">
               <select value={exportRegion} onChange={(e) => setExportRegion(e.target.value)} className="bg-white border border-gray-100 px-4 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest outline-none">
@@ -145,12 +145,12 @@ function AdminWithdrawals() {
                         </div>
                       ) : (
                         <div className="flex flex-col gap-2 items-center">
-                           <span className="text-[10px] font-black text-gray-200 uppercase tracking-[6px] italic mb-2">Immutable_Log</span>
+                           <span className="text-[10px] font-black text-gray-200 uppercase tracking-[6px] italic mb-2">Processed</span>
                            <button 
                              onClick={() => handleDelete(w.id)}
                              className="text-[9px] font-black text-red-300 hover:text-red-500 uppercase tracking-widest transition-colors"
                            >
-                             Force_Purge
+                             Delete Entry
                            </button>
                         </div>
                       )}

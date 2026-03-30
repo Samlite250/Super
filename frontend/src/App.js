@@ -23,6 +23,8 @@ import AdminMachines from './pages/admin/AdminMachines';
 import AdminSettings from './pages/admin/AdminSettings';
 import AdminActivity from './pages/admin/AdminActivity';
 import AdminManifest from './pages/admin/AdminManifest';
+import AdminInvestments from './pages/admin/AdminInvestments';
+import AdminLedger from './pages/admin/AdminLedger';
 
 
 function App() {
@@ -53,6 +55,8 @@ function App() {
         <Route path="/admin/activity" element={<AdminActivity />} />
         <Route path="/admin/withdrawals/manifest" element={<AdminManifest />} />
         <Route path="/admin/withdrawals/manifest/:country" element={<AdminManifest />} />
+        <Route path="/admin/investments" element={<AdminInvestments />} />
+        <Route path="/admin/ledger" element={<AdminLedger />} />
 
         {/* additional static pages could be added here */}
       </Routes>

@@ -126,12 +126,12 @@ function AdminUsers() {
         
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
            <div>
-              <h2 className="text-4xl font-black text-gray-900 tracking-tight mb-2">Registry Control</h2>
-              <p className="text-gray-500 font-medium">Manage database identities and analyze regional access patterns.</p>
+              <h2 className="text-4xl font-black text-gray-900 tracking-tight mb-2">Users Manager</h2>
+              <p className="text-gray-500 font-medium">Manage user accounts and balances.</p>
            </div>
            <div className="flex items-center gap-3 bg-white px-6 py-4 rounded-3xl border border-gray-100 shadow-xl shadow-secondary/5">
               <span className="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
-              <span className="text-[10px] font-black text-gray-900 uppercase tracking-widest leading-none">{users.length} Database Entities Active</span>
+              <span className="text-[10px] font-black text-gray-900 uppercase tracking-widest leading-none">{users.length} Active Users</span>
            </div>
         </div>
         
@@ -148,11 +148,11 @@ function AdminUsers() {
                <table className="w-full text-left">
                  <thead className="bg-gray-50/80 border-b border-gray-100">
                    <tr>
-                     <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Protocol Identity</th>
-                     <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Cluster</th>
-                     <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Net Liquidity</th>
-                     <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Security State</th>
-                     <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Directives</th>
+                     <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">User Identity</th>
+                     <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Country</th>
+                     <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Balance</th>
+                     <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Status</th>
+                     <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Actions</th>
                    </tr>
                  </thead>
                  <tbody className="divide-y divide-gray-50">
@@ -184,16 +184,16 @@ function AdminUsers() {
                        </td>
                        <td className="p-6 text-center">
                          <div className="flex gap-3 items-center justify-center transition-all">
-                           <button onClick={() => openEdit(u)} className="p-3.5 rounded-2xl bg-blue-50 text-blue-500 hover:bg-blue-500 hover:text-white border border-blue-100 shadow-sm transition-all" title="Modify Protocol">
+                           <button onClick={() => openEdit(u)} className="p-3.5 rounded-2xl bg-blue-50 text-blue-500 hover:bg-blue-500 hover:text-white border border-blue-100 shadow-sm transition-all" title="Edit User">
                               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                            </button>
-                           <button onClick={() => handleBlock(u.id, u.blocked)} className={`p-3.5 rounded-2xl border shadow-sm transition-all ${u.blocked ? 'bg-green-50 text-green-500 border-green-100 hover:bg-green-500 hover:text-white' : 'bg-red-50 text-red-500 border-red-100 hover:bg-red-500 hover:text-white'}`} title={u.blocked ? 'De-Void' : 'Void Access'}>
+                           <button onClick={() => handleBlock(u.id, u.blocked)} className={`p-3.5 rounded-2xl border shadow-sm transition-all ${u.blocked ? 'bg-green-50 text-green-500 border-green-100 hover:bg-green-500 hover:text-white' : 'bg-red-50 text-red-500 border-red-100 hover:bg-red-500 hover:text-white'}`} title={u.blocked ? 'Unblock User' : 'Block User'}>
                               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                            </button>
-                           <button onClick={() => handleResetPassword(u.id)} className="p-3.5 rounded-2xl bg-orange-50 text-orange-500 hover:bg-orange-500 hover:text-white border border-orange-100 shadow-sm transition-all" title="Secret Re-Auth">
+                           <button onClick={() => handleResetPassword(u.id)} className="p-3.5 rounded-2xl bg-orange-50 text-orange-500 hover:bg-orange-500 hover:text-white border border-orange-100 shadow-sm transition-all" title="Reset Password">
                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg>
                             </button>
-                            <button onClick={() => handleDelete(u.id)} className="p-3.5 rounded-2xl bg-red-50 text-red-600 hover:bg-red-600 hover:text-white border border-red-100 shadow-sm transition-all" title="Purge Identity">
+                            <button onClick={() => handleDelete(u.id)} className="p-3.5 rounded-2xl bg-red-50 text-red-600 hover:bg-red-600 hover:text-white border border-red-100 shadow-sm transition-all" title="Delete User">
                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                             </button>
                           </div>
@@ -213,36 +213,36 @@ function AdminUsers() {
           <div className="bg-white p-12 lg:p-14 rounded-[4rem] w-full max-w-2xl shadow-[0_40px_100px_-20px_rgba(0,0,0,0.5)] border border-white/20 relative">
             <button onClick={closeEdit} className="absolute top-10 right-10 w-12 h-12 bg-gray-50 flex items-center justify-center rounded-full text-gray-400 hover:bg-black hover:text-white transition-all font-black text-xl">✕</button>
             <h3 className="text-3xl font-black text-gray-900 mb-10 decoration-secondary underline underline-offset-[14px] decoration-4">
-               Audit Persona
+               Edit User
             </h3>
             <form onSubmit={submitEdit} className="space-y-8">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                  <div className="space-y-2">
-                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[4px] ml-1">Legal Identity</label>
+                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[4px] ml-1">Full Name</label>
                     <input name="fullName" value={editForm.fullName} onChange={handleEditChange} className="w-full px-6 py-5 bg-gray-50 border border-gray-100 rounded-[1.5rem] focus:ring-2 focus:ring-secondary outline-none transition-all font-black text-gray-800" />
                  </div>
                  <div className="space-y-2">
-                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[4px] ml-1">Data Hash (Email)</label>
+                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[4px] ml-1">Email</label>
                     <input name="email" value={editForm.email} onChange={handleEditChange} className="w-full px-6 py-5 bg-gray-50 border border-gray-100 rounded-[1.5rem] focus:ring-2 focus:ring-secondary outline-none transition-all font-black text-gray-800" />
                  </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-2">
-                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[4px] ml-1">Relay Contact</label>
+                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[4px] ml-1">Phone Number</label>
                     <input name="phone" value={editForm.phone} onChange={handleEditChange} className="w-full px-6 py-5 bg-gray-50 border border-gray-100 rounded-[1.5rem] focus:ring-2 focus:ring-secondary outline-none transition-all font-black text-gray-800" />
                 </div>
                 <div className="space-y-2">
-                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[4px] ml-1">Origin Cluster</label>
+                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[4px] ml-1">Country</label>
                     <input name="country" value={editForm.country} onChange={handleEditChange} className="w-full px-6 py-5 bg-gray-50 border border-gray-100 rounded-[1.5rem] focus:ring-2 focus:ring-secondary outline-none transition-all font-black text-gray-800" />
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-end">
                 <div className="space-y-2">
-                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[4px] ml-1">Asset Allocation (FBu)</label>
-                    <input name="balance" value={editForm.balance} onChange={handleEditChange} className="w-full px-6 py-5 bg-secondary/5 border border-secondary/20 rounded-[1.5rem] focus:ring-2 focus:ring-secondary outline-none transition-all font-black text-secondary text-xl tracking-tighter" />
+                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[4px] ml-1">Balance</label>
+                    <input name="balance" value={editForm.balance} onChange={handleEditChange} type="number" step="0.01" className="w-full px-6 py-5 bg-secondary/5 border border-secondary/20 rounded-[1.5rem] focus:ring-2 focus:ring-secondary outline-none transition-all font-black text-secondary text-xl tracking-tighter" />
                 </div>
                 <div className="space-y-2">
-                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[4px] ml-1">Security Rank</label>
+                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[4px] ml-1">User Role</label>
                     <select name="role" value={editForm.role} onChange={handleEditChange} className="w-full px-6 py-5 bg-gray-900 border border-white/10 rounded-[1.5rem] focus:ring-2 focus:ring-secondary outline-none transition-all font-black text-white hover:bg-black transition-all cursor-pointer appearance-none text-xs tracking-widest">
                       <option value="user">Standard Agent</option>
                       <option value="admin">Nexus Administrator</option>
@@ -296,8 +296,8 @@ function AdminUsers() {
               </div>
 
               <div className="flex gap-4 pt-10 border-t border-gray-50">
-                <button type="button" onClick={closeEdit} className="flex-1 py-5 bg-gray-50 text-gray-400 font-black rounded-3xl hover:bg-gray-100 transition-all uppercase tracking-[4px] text-[10px]">Decline Directive</button>
-                <button type="submit" className="flex-1 py-5 bg-gray-900 text-white font-black rounded-3xl shadow-[0_20px_40px_-10px_rgba(0,0,0,0.3)] hover:bg-black transition-all uppercase tracking-[4px] text-[10px]">Commit Directive</button>
+                <button type="button" onClick={closeEdit} className="flex-1 py-5 bg-gray-50 text-gray-400 font-black rounded-3xl hover:bg-gray-100 transition-all uppercase tracking-[4px] text-[10px]">Cancel</button>
+                <button type="submit" className="flex-1 py-5 bg-gray-900 text-white font-black rounded-3xl shadow-[0_20px_40px_-10px_rgba(0,0,0,0.3)] hover:bg-black transition-all uppercase tracking-[4px] text-[10px]">Save Changes</button>
               </div>
             </form>
           </div>

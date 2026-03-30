@@ -200,8 +200,8 @@ function AdminSettings() {
       <div className="p-8 lg:p-12 animate-fadeIn">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-8">
            <div>
-              <h2 className="text-4xl font-black text-gray-900 tracking-tight mb-2">Protocol Config</h2>
-              <p className="text-gray-500 font-medium">Synchronize global payment gateways and manage institutional registry parameters.</p>
+              <h2 className="text-4xl font-black text-gray-900 tracking-tight mb-2">Settings</h2>
+              <p className="text-gray-500 font-medium">Manage payment gateways, bonuses, contact links and system options.</p>
            </div>
         </div>
 
@@ -212,7 +212,7 @@ function AdminSettings() {
                      <span className="text-2xl">⚡</span> Gateway Status
                   </h3>
                   <div className="flex items-center justify-between p-6 bg-gray-50 rounded-[2.5rem] border border-gray-100">
-                     <p className="text-[11px] font-black text-gray-900 uppercase tracking-[3px]">Flutterwave Engine</p>
+                     <p className="text-[11px] font-black text-gray-900 uppercase tracking-[3px]">Flutterwave Auto-Pay</p>
                      <button onClick={toggleAutoDeposit} disabled={savingSocial} className={`w-16 h-8 rounded-full relative transition-all ${autoDepositEnabled ? 'bg-primary' : 'bg-gray-300'}`}>
                         <div className={`absolute top-1 w-6 h-6 bg-white rounded-full shadow-lg transition-all ${autoDepositEnabled ? 'left-9' : 'left-1'}`}></div>
                      </button>
@@ -266,11 +266,11 @@ function AdminSettings() {
                <div className="bg-primary px-8 py-10 rounded-[3.5rem] border border-white/20 shadow-3xl text-white">
                 <div className="space-y-6">
                     <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest opacity-60 ml-1">Group: WhatsApp</label>
+                        <label className="text-[10px] font-black uppercase tracking-widest opacity-60 ml-1">WhatsApp Group Link</label>
                         <input placeholder="WhatsApp URI" value={socialLinks.whatsapp} onChange={e => setSocialLinks({ ...socialLinks, whatsapp: e.target.value })} className="w-full px-5 py-3.5 bg-white/10 border border-white/10 rounded-2xl text-white text-xs outline-none focus:border-white/30 transition-all font-mono" />
                     </div>
                     <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest opacity-60 ml-1">Group: Telegram</label>
+                        <label className="text-[10px] font-black uppercase tracking-widest opacity-60 ml-1">Telegram Group Link</label>
                         <input placeholder="Telegram URI" value={socialLinks.telegram} onChange={e => setSocialLinks({ ...socialLinks, telegram: e.target.value })} className="w-full px-5 py-3.5 bg-white/10 border border-white/10 rounded-2xl text-white text-xs outline-none focus:border-white/30 transition-all font-mono" />
                     </div>
                     <button onClick={saveSocialLinks} className="w-full py-4 bg-white text-primary rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-gray-100 active:scale-95 transition-all mt-4">COMMIT_COMMUNITY_HUB_CHGS</button>
@@ -286,7 +286,7 @@ function AdminSettings() {
 
            <div className="lg:col-span-2 space-y-8">
               <div className="flex items-center justify-between px-8">
-                 <h2 className="text-[11px] font-black text-gray-400 uppercase tracking-[6px]">Gateways List</h2>
+                 <h2 className="text-[11px] font-black text-gray-400 uppercase tracking-[6px]">Active Payment Methods</h2>
                  <span className="text-[10px] bg-secondary/10 text-secondary px-4 py-2 rounded-full font-black">{options.length} Systems</span>
               </div>
               <div className="grid grid-cols-1 gap-6">
