@@ -52,13 +52,25 @@ exports.list = async (req, res) => {
 
     const { Op } = require('sequelize');
     let whereClause = {};
+    let machines = [];
+    
     if (!isAdmin && userCountry) {
-      whereClause = { country: { [Op.in]: ['Global', userCountry] } };
+      // Try to fetch plans specifically for the user's country
+      whereClause = { country: userCountry };
+      machines = await fetchMachinesSafe(whereClause);
+      
+      // If no specific plans exist for this country, fallback to Global
+      if (machines.length === 0) {
+        whereClause = { country: 'Global' };
+        machines = await fetchMachinesSafe(whereClause);
+      }
     } else if (!isAdmin) {
       whereClause = { country: 'Global' };
+      machines = await fetchMachinesSafe(whereClause);
+    } else {
+      // If admin, fetch all
+      machines = await fetchMachinesSafe({});
     }
-
-    let machines = await fetchMachinesSafe(whereClause);
 
     // Light fallback: only seed Global plans if the table is completely empty
     if (machines.length === 0 && Object.keys(whereClause).length === 0) {
