@@ -1,6 +1,4 @@
 {
-  "version": 2,
-  "outputDirectory": "frontend/build",
   "crons": [
     {
       "path": "/api/cron/roi",
@@ -10,10 +8,10 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "api/index.js"
+      "destination": "/api/index.js"
     },
     {
-      "source": "/((?!api/).*)",
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ]
