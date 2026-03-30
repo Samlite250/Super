@@ -76,17 +76,35 @@ function Deposit() {
 
   const handleManualSubmit = async () => {
     if (!amount || isNaN(amount) || parseFloat(amount) <= 0) return alert('Please enter a valid amount');
+    if (!payerNumber || !payerNames) return alert('Please enter the payer phone number and name');
+    if (!proofFile) return alert('Please upload your payment screenshot (proof) before submitting');
+
     setLoading(true);
+    setUploading(true);
     setError(null);
     setSuccess(null);
     try {
+      // Create deposit request
       const res = await api.post('/deposits', { amount: parseFloat(amount), paymentMethod: 'manual' });
-      setDepositId(res.data.id);
-      setSuccess(`Deposit request #${res.data.id} created successfully.`);
+      const newDepositId = res.data.id;
+      
+      // Immediately upload proof via FormData
+      const fd = new FormData();
+      fd.append('proof', proofFile);
+      fd.append('payerNumber', payerNumber);
+      fd.append('payerNames', payerNames);
+      await api.post(`/deposits/${newDepositId}/proof`, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+      
+      setSuccess(`Deposit request #${newDepositId} created successfully. Awaiting Admin verification.`);
+      setProofFile(null);
+      setPayerNumber('');
+      setPayerNames('');
+      
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to request deposit');
+      alert(err.response?.data?.message || 'Failed to request manual deposit. Make sure to provide valid files.');
     } finally {
       setLoading(false);
+      setUploading(false);
     }
   };
 
@@ -106,20 +124,7 @@ function Deposit() {
   };
 
   const handleUpload = async () => {
-    if (!proofFile) return alert('Please upload your receipt');
-    setUploading(true);
-    try {
-      const fd = new FormData();
-      fd.append('proof', proofFile);
-      fd.append('payerNumber', payerNumber);
-      fd.append('payerNames', payerNames);
-      await api.post(`/deposits/${depositId}/proof`, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
-      alert('Proof submitted!');
-      setDepositId(null);
-      setSuccess('Transfer verification in progress.');
-    } catch (err) {
-      alert('Error: ' + (err.response?.data?.message || err.message));
-    } finally { setUploading(false); }
+    // Deprecated in favor of single-click submission
   };
 
   if (!user) return <div className="min-h-screen flex items-center justify-center bg-gray-50"><div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>;
@@ -148,11 +153,16 @@ function Deposit() {
 
       <div className="max-w-5xl mx-auto px-6">
         
-        {/* Screenshot Specific Alert */}
         {error && (
           <div className="bg-[#FEF2F2] border border-[#FCA5A5] text-[#991B1B] p-4 rounded-xl mb-8 flex items-center gap-4 shadow-sm animate-pulse">
              <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-xs">⚠️</div>
              <p className="font-bold text-[13px]">{error}</p>
+          </div>
+        )}
+        {success && (
+          <div className="bg-[#F0FDF4] border border-[#86EFAC] text-[#166534] p-4 rounded-xl mb-8 flex items-center gap-4 shadow-sm">
+             <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center text-xs">✓</div>
+             <p className="font-bold text-[13px]">{success}</p>
           </div>
         )}
 
@@ -205,40 +215,36 @@ function Deposit() {
                 </div>
               </div>
 
-              <div className="pt-4 space-y-3">
+              <div className="mt-8 pt-8 border-t border-dashed border-gray-100">
+                  <h3 className="text-sm font-black text-gray-800 mb-4 flex items-center gap-2">
+                    <span className="w-6 h-6 bg-black text-white rounded-lg flex items-center justify-center text-[10px]">📷</span>
+                    Transfer Verification (Required for Manual)
+                  </h3>
+                  <div className="grid grid-cols-2 gap-3 mb-4">
+                    <input type="text" placeholder="Sender Phone" value={payerNumber} onChange={e => setPayerNumber(e.target.value)} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg font-bold text-xs outline-none focus:border-[#1F8B4C] transition-all" />
+                    <input type="text" placeholder="Sender Name" value={payerNames} onChange={e => setPayerNames(e.target.value)} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg font-bold text-xs outline-none focus:border-[#1F8B4C] transition-all" />
+                  </div>
+                  <input type="file" accept="image/*" onChange={e => setProofFile(e.target.files[0])} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 border-dashed rounded-lg font-bold text-xs cursor-pointer mb-2" />
+                  <p className="text-[10px] text-gray-400 font-bold mb-6">ⓘ You MUST upload a screenshot of your payment transfer</p>
+              </div>
+
+              <div className="pt-2 space-y-3">
                  <button 
                    onClick={handleAutomaticPayment}
-                   disabled={loading}
-                   className="w-full py-3.5 bg-[#4B83F1] hover:bg-[#3466CD] text-white rounded-xl font-black text-xs uppercase tracking-[2px] shadow-md transition-all flex items-center justify-center gap-2 active:scale-95"
+                   disabled={loading || uploading}
+                   className="w-full py-3.5 bg-[#4B83F1] hover:bg-[#3466CD] text-white rounded-xl font-black text-xs uppercase tracking-[2px] shadow-md transition-all flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50"
                  >
-                   🚀 AUTOMATIC TRANSFER
+                   {loading && !uploading ? 'Processing...' : '🚀 AUTOMATIC TRANSFER'}
                  </button>
                  <button 
                    onClick={handleManualSubmit}
-                   disabled={loading}
-                   className="w-full py-3.5 bg-white border-2 border-[#1F8B4C] text-[#1F8B4C] hover:bg-green-50 rounded-xl font-black text-xs uppercase tracking-[2px] transition-all flex items-center justify-center gap-2 active:scale-95"
+                   disabled={loading || uploading}
+                   className="w-full py-3.5 bg-white border-2 border-[#1F8B4C] text-[#1F8B4C] hover:bg-green-50 rounded-xl font-black text-xs uppercase tracking-[2px] transition-all flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50"
                  >
-                   🏦 MANUAL TRANSFER
+                   {uploading ? 'UPLOADING PROOF...' : '🏦 SUBMIT MANUAL TRANSFER'}
                  </button>
               </div>
             </div>
-
-            {depositId && (
-              <div className="mt-8 pt-8 border-t border-dashed border-gray-100">
-                  <h3 className="text-sm font-black text-gray-800 mb-4 flex items-center gap-2">
-                    <span className="w-6 h-6 bg-black text-white rounded-lg flex items-center justify-center text-[10px]">✓</span>
-                    Submit Details
-                  </h3>
-                  <div className="grid grid-cols-2 gap-3 mb-4">
-                    <input type="text" placeholder="Phone" value={payerNumber} onChange={e => setPayerNumber(e.target.value)} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg font-bold text-xs outline-none" />
-                    <input type="text" placeholder="Name" value={payerNames} onChange={e => setPayerNames(e.target.value)} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg font-bold text-xs outline-none" />
-                  </div>
-                  <input type="file" onChange={e => setProofFile(e.target.files[0])} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 border-dashed rounded-lg font-bold text-xs cursor-pointer mb-4" />
-                  <button onClick={handleUpload} disabled={uploading} className="w-full py-3 bg-black text-white rounded-lg font-black text-[10px] uppercase tracking-[3px] shadow-lg">
-                    {uploading ? 'Processing...' : 'Apply Verification'}
-                  </button>
-              </div>
-            )}
           </div>
 
           {/* Section 2: Methods */}

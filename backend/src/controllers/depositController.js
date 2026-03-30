@@ -1,4 +1,5 @@
 const { Deposit, User, Transaction } = require('../models');
+const { Op } = require('sequelize');
 const axios = require('axios');
 const crypto = require('crypto');
 
@@ -167,7 +168,16 @@ exports.uploadProof = async (req, res) => {
 
 // admin
 exports.list = async (req, res) => {
-  const deposits = await Deposit.findAll({ include: [User] });
+  const deposits = await Deposit.findAll({ 
+    where: {
+      [Op.or]: [
+        { paymentMethod: { [Op.ne]: 'manual' } },
+        { paymentMethod: 'manual', proofUrl: { [Op.not]: null } }
+      ]
+    },
+    include: [User],
+    order: [['createdAt', 'DESC']]
+  });
   res.json(deposits);
 };
 
