@@ -44,10 +44,10 @@ function AdminActivity() {
   const data = selectedCountry ? report[selectedCountry] : null;
 
   const tabs = [
-    { id: 'depositors', label: 'Financial Inflow (Deposits)' },
-    { id: 'withdrawers', label: 'Payout Control (Withdrawals)' },
-    { id: 'investors', label: 'Asset Utilization (Investments)' },
-    { id: 'referrers', label: 'Network Growth (Referrals)' }
+    { id: 'depositors', label: 'Deposits' },
+    { id: 'withdrawers', label: 'Withdrawals' },
+    { id: 'investors', label: 'Investments' },
+    { id: 'referrers', label: 'Referrals' }
   ];
 
   return (
@@ -56,12 +56,12 @@ function AdminActivity() {
         
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
            <div>
-              <h2 className="text-4xl font-black text-gray-900 tracking-tight mb-2">Regional Insights</h2>
-              <p className="text-gray-500 font-medium">Cross-border behavioral analysis and financial flow monitoring.</p>
+              <h2 className="text-4xl font-black text-gray-900 tracking-tight mb-2">Regional Activity</h2>
+              <p className="text-gray-500 font-medium">View deposits, withdrawals, and investments by country.</p>
            </div>
            <div className="flex items-center gap-3 bg-white px-6 py-4 rounded-3xl border border-gray-100 shadow-xl shadow-secondary/5">
               <span className="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
-              <span className="text-[10px] font-black text-gray-900 uppercase tracking-widest leading-none">{countries.length} Regional Clusters Identified</span>
+              <span className="text-[10px] font-black text-gray-900 uppercase tracking-widest leading-none">{countries.length} Countries</span>
            </div>
         </div>
 
@@ -71,7 +71,7 @@ function AdminActivity() {
           
           {/* Country Selection Sidebar */}
           <div className="xl:col-span-1 space-y-4">
-            <h3 className="text-xs font-black text-gray-400 uppercase tracking-[4px] mb-6 ml-2">Select Cluster</h3>
+            <h3 className="text-xs font-black text-gray-400 uppercase tracking-[4px] mb-6 ml-2">Select Country</h3>
             {countries.map(country => (
               <button
                 key={country}
@@ -123,9 +123,9 @@ function AdminActivity() {
                   <table className="w-full text-left">
                     <thead className="bg-gray-50/80 border-b border-gray-100">
                       <tr>
-                        <th className="p-8 text-[10px] font-black text-gray-400 uppercase tracking-widest">Entity Identity</th>
+                        <th className="p-8 text-[10px] font-black text-gray-400 uppercase tracking-widest">User</th>
                         <th className="p-8 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Status</th>
-                        <th className="p-8 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Cumulative {activeTab === 'investors' ? 'Stake' : 'Volume'}</th>
+                        <th className="p-8 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Cumulative Total</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-50">
@@ -144,7 +144,7 @@ function AdminActivity() {
                           </td>
                           <td className="p-8 text-center">
                              <div className="flex flex-col items-center">
-                                <span className="px-5 py-2 rounded-full bg-green-50 text-primary border border-green-100 text-[9px] font-black tracking-widest uppercase mb-1">Agent Active</span>
+                                <span className="px-5 py-2 rounded-full bg-green-50 text-primary border border-green-100 text-[9px] font-black tracking-widest uppercase mb-1">Active</span>
                                 {user.upline && (
                                   <p className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">Via: {user.upline.fullName}</p>
                                 )}
@@ -165,8 +165,8 @@ function AdminActivity() {
                    <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mb-6">
                       <span className="text-4xl opacity-20">📡</span>
                    </div>
-                   <h4 className="text-xl font-black text-gray-900 mb-2">No Regional Activity Detected</h4>
-                   <p className="text-gray-400 font-medium max-w-xs uppercase text-[10px] tracking-widest leading-relaxed">System scan complete. This activity category has no recognized telemetry in {selectedCountry}.</p>
+                   <h4 className="text-xl font-black text-gray-900 mb-2">No Activity Found</h4>
+                   <p className="text-gray-400 font-medium max-w-xs uppercase text-[10px] tracking-widest leading-relaxed">There is no activity in this category for {selectedCountry}.</p>
                 </div>
               )}
             </div>

@@ -53,12 +53,12 @@ function AdminDeposits() {
   };
 
   const handleDelete = async (depositId) => {
-    if (!window.confirm('WARNING: Permanently purge this inflow record? This action is irreversible.')) return;
+    if (!window.confirm('WARNING: Permanently delete this deposit? This action is irreversible.')) return;
     try {
       await api.delete(`/deposits/${depositId}`);
       setDeposits(deposits.filter(d => d.id !== depositId));
       setSelectedDeposit(null);
-      alert('✓ Record purged');
+      alert('✓ Deposit deleted');
     } catch (err) {
       alert('Failed to delete: ' + (err.response?.data?.message || err.message));
     }
@@ -88,7 +88,7 @@ function AdminDeposits() {
         <div className="animate-fadeIn">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 mb-12">
               <div className="bg-white p-10 rounded-[3rem] shadow-xl shadow-orange-500/5 border border-gray-100 flex flex-col hover:scale-[1.02] transition-all">
-                <p className="text-[10px] font-black text-orange-400 uppercase tracking-[5px] mb-2">Audit Queue</p>
+                <p className="text-[10px] font-black text-orange-400 uppercase tracking-[5px] mb-2">Pending</p>
                 <div className="flex items-center justify-between mt-auto">
                    <p className="text-6xl font-black text-gray-900 tracking-tighter">{pending.length}</p>
                    <span className="w-3 h-3 rounded-full bg-orange-500 animate-pulse shadow-[0_0_15px_rgba(249,115,22,0.8)]"></span>
@@ -107,18 +107,18 @@ function AdminDeposits() {
             <div className="bg-white rounded-[3.5rem] shadow-[0_40px_100px_-30px_rgba(0,0,0,0.05)] border border-gray-100 overflow-hidden">
                {deposits.length === 0 ? (
                  <div className="p-40 text-center">
-                    <p className="text-gray-300 font-black uppercase tracking-[10px] text-sm">Registry Synchronized</p>
+                    <p className="text-gray-300 font-black uppercase tracking-[10px] text-sm">No deposits found</p>
                  </div>
                ) : (
                  <div className="overflow-x-auto">
                    <table className="w-full text-left">
                      <thead className="bg-gray-50/80 border-b border-gray-100">
                        <tr>
-                         <th className="p-8 text-[10px] font-black text-gray-400 uppercase tracking-[4px]">Entry ID</th>
+                         <th className="p-8 text-[10px] font-black text-gray-400 uppercase tracking-[4px]">ID</th>
                          <th className="p-8 text-[10px] font-black text-gray-400 uppercase tracking-[4px]">User</th>
                          <th className="p-8 text-[10px] font-black text-gray-400 uppercase tracking-[4px] text-right">Amount</th>
                          <th className="p-8 text-[10px] font-black text-gray-400 uppercase tracking-[4px] text-center">Status</th>
-                         <th className="p-8 text-[10px] font-black text-gray-400 uppercase tracking-[4px] text-center">Proof Image</th>
+                         <th className="p-8 text-[10px] font-black text-gray-400 uppercase tracking-[4px] text-center">Screenshot</th>
                          <th className="p-8 text-[10px] font-black text-gray-400 uppercase tracking-[4px] text-center">Actions</th>
                        </tr>
                      </thead>
@@ -175,7 +175,7 @@ function AdminDeposits() {
             <button onClick={() => setSelectedDeposit(null)} className="absolute top-12 right-12 w-14 h-14 bg-gray-50 rounded-full flex items-center justify-center text-gray-400 hover:bg-black hover:text-white transition-all font-black text-xl shadow-sm">✕</button>
 
             <div className="mb-14">
-               <span className="px-4 py-1.5 bg-secondary/10 text-secondary text-[10px] font-black rounded-xl uppercase tracking-[4px] mb-6 inline-block border border-secondary/10">Deposit Entry #{selectedDeposit.id}</span>
+               <span className="px-4 py-1.5 bg-secondary/10 text-secondary text-[10px] font-black rounded-xl uppercase tracking-[4px] mb-6 inline-block border border-secondary/10">Deposit #{selectedDeposit.id}</span>
                <h3 className="text-4xl font-black text-gray-900 tracking-tight">Deposit Review</h3>
             </div>
 
@@ -196,24 +196,24 @@ function AdminDeposits() {
                 <div className="p-8 bg-white border-b border-gray-100 flex justify-between items-center px-12">
                    <p className="text-[10px] font-black text-gray-900 uppercase tracking-[5px] flex items-center gap-4">
                       <span className="w-2.5 h-2.5 rounded-full bg-secondary animate-pulse"></span>
-                      Payment Screenshot Document
+                      Payment Screenshot
                    </p>
                    <button onClick={() => {
                       const origin = (api.defaults.baseURL || '').replace(/\/api$/, '');
                       const url = (selectedDeposit.proofUrl.startsWith('http') || selectedDeposit.proofUrl.startsWith('data:')) ? selectedDeposit.proofUrl : `${origin}${selectedDeposit.proofUrl}`;
                       window.open(url, '_blank');
-                   }} className="text-[10px] font-black text-secondary hover:underline uppercase tracking-[3px] decoration-2">Master Resolution</button>
+                   }} className="text-[10px] font-black text-secondary hover:underline uppercase tracking-[3px] decoration-2">View Full Image</button>
                 </div>
                 <div className="p-12">
                    <img src={(selectedDeposit.proofUrl && ((selectedDeposit.proofUrl.startsWith('http') || selectedDeposit.proofUrl.startsWith('data:')) ? selectedDeposit.proofUrl : `${(api.defaults.baseURL || '').replace(/\/api$/, '')}${selectedDeposit.proofUrl}`))} alt="Evidence" className="w-full rounded-[2.5rem] border-[6px] border-white shadow-3xl transform hover:scale-[1.03] transition-transform duration-700" />
                    <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-8">
                       <div className="p-6 bg-white rounded-2xl border border-gray-100 shadow-sm">
-                         <p className="text-[9px] font-black text-gray-400 uppercase tracking-[4px] mb-2 underline decoration-secondary/20 underline-offset-8">Relay Channel ID</p>
-                         <p className="text-sm font-black text-gray-800 tracking-tight">{selectedDeposit.payerNumber || 'VOID'}</p>
+                         <p className="text-[9px] font-black text-gray-400 uppercase tracking-[4px] mb-2 underline decoration-secondary/20 underline-offset-8">Payer Number</p>
+                         <p className="text-sm font-black text-gray-800 tracking-tight">{selectedDeposit.payerNumber || 'Not provided'}</p>
                       </div>
                       <div className="p-6 bg-white rounded-2xl border border-gray-100 shadow-sm">
-                         <p className="text-[9px] font-black text-gray-400 uppercase tracking-[4px] mb-2 underline decoration-primary/20 underline-offset-8">Signatory Alias</p>
-                         <p className="text-sm font-black text-gray-800 tracking-tight">{selectedDeposit.payerNames || 'VOID'}</p>
+                         <p className="text-[9px] font-black text-gray-400 uppercase tracking-[4px] mb-2 underline decoration-primary/20 underline-offset-8">Payer Name</p>
+                         <p className="text-sm font-black text-gray-800 tracking-tight">{selectedDeposit.payerNames || 'Not provided'}</p>
                       </div>
                    </div>
                 </div>
@@ -242,7 +242,7 @@ function AdminDeposits() {
                 onClick={() => handleDelete(selectedDeposit.id)}
                 className="w-full py-4 bg-gray-50 text-red-500 font-black rounded-2xl hover:bg-red-500 hover:text-white transition-all text-[10px] tracking-widest uppercase"
               >
-                  ⚠ Force Delete Entry
+                  ⚠ Delete Deposit
               </button>
             </div>
             
@@ -250,7 +250,7 @@ function AdminDeposits() {
                onClick={() => setSelectedDeposit(null)}
                className="w-full mt-10 py-4 text-gray-400 font-black uppercase tracking-[5px] text-[10px] hover:text-gray-900 transition-colors"
             >
-               Close Audit Review
+               Close
             </button>
           </div>
         </div>
