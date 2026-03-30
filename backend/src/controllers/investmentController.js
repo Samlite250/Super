@@ -28,7 +28,14 @@ exports.invest = async (req, res) => {
   }
 };
 
+const { calculateDailyReturns } = require('../utils/cron');
+
 exports.listUser = async (req, res) => {
+  try {
+    await calculateDailyReturns(req.user.id);
+  } catch (err) {
+    console.error('Error syncing returns on listUser:', err);
+  }
   const inv = await Investment.findAll({ where: { userId: req.user.id }, include: [Machine] });
   res.json(inv);
 };

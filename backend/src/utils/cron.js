@@ -2,13 +2,18 @@ require('dotenv').config();
 const { Investment, User, Transaction, Machine, sequelize } = require('../models');
 const cron = require('node-cron');
 
-async function calculateDailyReturns() {
+async function calculateDailyReturns(targetUserId = null) {
   const now = new Date();
-  console.log(`[CRON] Starting ROI distribution at ${now.toISOString()}`);
+  console.log(`[CRON] Starting ROI distribution at ${now.toISOString()}${targetUserId ? ` for user ${targetUserId}` : ''}`);
   
   try {
+    const whereClause = { status: 'active' };
+    if (targetUserId) {
+      whereClause.userId = targetUserId;
+    }
+
     const investments = await Investment.findAll({ 
-      where: { status: 'active' }, 
+      where: whereClause, 
       include: [Machine, User] 
     });
 
@@ -34,14 +39,26 @@ async function calculateDailyReturns() {
         
         const t = await sequelize.transaction();
         try {
-          // Increment user balance
-          const oldBalance = parseFloat(user.balance || 0);
-          user.balance = oldBalance + dailyIncome;
-          await user.save({ transaction: t });
+          // Acquire row lock to prevent double processing in parallel requests
+          const lockedInv = await Investment.findByPk(inv.id, { transaction: t, lock: t.LOCK.UPDATE });
+          if (!lockedInv || lockedInv.status !== 'active') {
+            await t.rollback();
+            break;
+          }
+          
+          let currentLockedReturnTime = new Date(lockedInv.lastReturnAt || lockedInv.startDate).getTime();
+          if ((currentTime - currentLockedReturnTime) / (1000 * 60 * 60) < 24) {
+            await t.rollback();
+            break;
+          }
+          
+          // Use atomic increment for user balance to prevent overlapping updates
+          await User.increment({ balance: dailyIncome }, { where: { id: user.id }, transaction: t });
+          user.balance = parseFloat(user.balance || 0) + dailyIncome; // Update local instance for logging
           
           // Update lastReturnAt to exactly 24h after the last return to prevent drift
           const newReturnDate = new Date(lastReturnTime + (24 * 60 * 60 * 1000));
-          inv.lastReturnAt = newReturnDate;
+          lockedInv.lastReturnAt = newReturnDate;
           
           // Create transaction record
           await Transaction.create({ 
@@ -57,18 +74,20 @@ async function calculateDailyReturns() {
           const expiry = new Date(start.getTime() + (durationDays * 24 * 60 * 60 * 1000));
           
           if (newReturnDate >= expiry) {
-            inv.status = 'completed';
-            console.log(`[ROI] Plan ${inv.id} completed for ${user.email}`);
+            lockedInv.status = 'completed';
+            console.log(`[ROI] Plan ${lockedInv.id} completed for ${user.email}`);
           }
 
-          await inv.save({ transaction: t });
+          await lockedInv.save({ transaction: t });
           await t.commit();
           
           // Update variables for the next iteration of the catch-up loop
+          inv.lastReturnAt = newReturnDate;
+          inv.status = lockedInv.status;
           lastReturnTime = newReturnDate.getTime();
           hoursPassed = (currentTime - lastReturnTime) / (1000 * 60 * 60);
 
-          console.log(`[ROI] Dispatched ${dailyIncome} to ${user.email} (Balance: ${oldBalance} -> ${user.balance})`);
+          console.log(`[ROI] Dispatched ${dailyIncome} to ${user.email} (New Balance approximately: ${user.balance})`);
           
           if (inv.status === 'completed') break;
         } catch (err) {

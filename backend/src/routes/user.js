@@ -3,8 +3,16 @@ const router = express.Router();
 const { authenticate } = require('../middleware/auth');
 const { User, Transaction, Deposit, Withdrawal } = require('../models');
 const authController = require('../controllers/authController');
+const { calculateDailyReturns } = require('../utils/cron');
 
 router.get('/me', authenticate, async (req, res) => {
+  // Synchronize missed returns dynamically before returning balance
+  try {
+    await calculateDailyReturns(req.user.id);
+  } catch (syncErr) {
+    console.error('Error synchronizing user returns:', syncErr);
+  }
+
   const user = await User.findByPk(req.user.id, {
     include: [{ model: User, as: 'upline', attributes: ['id', 'username', 'fullName'] }]
   });
