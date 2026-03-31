@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../../services/api';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import AdminLayout from '../../components/AdminLayout';
 
 function AdminWithdrawals() {
@@ -47,11 +47,11 @@ function AdminWithdrawals() {
   }, [navigate]);
 
   const handleApprove = async (withdrawalId, autoDispatch = false) => {
-    if (autoDispatch && !window.confirm("Perform AUTOMATED disbursement via Flutterwave? This will send real money instantly.")) return;
+    if (autoDispatch && !window.confirm("Perform automated disbursement via Flutterwave? This will send real money instantly.")) return;
     try {
       await api.post(`/withdrawals/${withdrawalId}/approve`, { autoDispatch });
       setWithdrawals(withdrawals.map(w => w.id === withdrawalId ? { ...w, status: 'approved' } : w));
-      alert(autoDispatch ? '🚀 Automated Payout Dispatched' : '✓ Manual Approval Logged');
+      alert(autoDispatch ? 'Automated Payout Dispatched' : 'Manual Approval Logged');
     } catch (err) {
       alert(err.response?.data?.message || 'Failed to approve withdrawal');
     }
@@ -62,18 +62,18 @@ function AdminWithdrawals() {
     try {
       await api.post(`/withdrawals/${withdrawalId}/reject`);
       setWithdrawals(withdrawals.map(w => w.id === withdrawalId ? { ...w, status: 'rejected' } : w));
-      alert('✓ Request Rejected');
+      alert('Request Rejected');
     } catch (err) {
       alert('Failed to reject withdrawal');
     }
   };
 
   const handleDelete = async (withdrawalId) => {
-    if (!window.confirm('WARNING: Permanently purge this disbursement record? This action is irreversible.')) return;
+    if (!window.confirm('WARNING: Permanently delete this withdrawal record? This action is irreversible.')) return;
     try {
       await api.delete(`/withdrawals/${withdrawalId}`);
       setWithdrawals(withdrawals.filter(w => w.id !== withdrawalId));
-      alert('✓ Record purged');
+      alert('Record deleted');
     } catch (err) {
       alert('Failed to delete: ' + (err.response?.data?.message || err.message));
     }
@@ -81,7 +81,6 @@ function AdminWithdrawals() {
 
   if (loading) return <div className="min-h-screen flex items-center justify-center bg-gray-50"><div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-secondary"></div></div>;
 
-  const pending = withdrawals.filter(w => w.status === 'pending');
   const countries = [...new Set(withdrawals.map(w => w.User?.country).filter(Boolean))];
 
   return (
@@ -97,10 +96,12 @@ function AdminWithdrawals() {
                 <option value="">All Regions</option>
                 {countries.map(c => <option key={c} value={c}>{c.toUpperCase()}</option>)}
               </select>
-              <button onClick={handleExport} disabled={isExporting} className="bg-green-500 text-white px-6 py-3 rounded-2xl text-[9px] font-black uppercase tracking-widest shadow-lg">Excel</button>
-              <button onClick={() => window.open(`/admin/withdrawals/manifest/${exportRegion}`, '_blank')} className="bg-gray-900 text-white px-6 py-3 rounded-2xl text-[9px] font-black uppercase tracking-widest border border-white/10">Manifest</button>
+              <button onClick={handleExport} disabled={isExporting} className="bg-green-500 text-white px-6 py-3 rounded-2xl text-[9px] font-black uppercase tracking-widest shadow-lg">Export CSV</button>
+              <button onClick={() => window.open(`/admin/withdrawals/manifest/${exportRegion}`, '_blank')} className="bg-gray-900 text-white px-6 py-3 rounded-2xl text-[9px] font-black uppercase tracking-widest border border-white/10">Print Manifest</button>
            </div>
         </div>
+
+        {error && <div className="bg-red-50 border border-red-200 text-red-700 p-6 rounded-[2rem] mb-8 font-bold">⚠️ {error}</div>}
 
         <div className="bg-white rounded-[4rem] shadow-2xl overflow-hidden border border-gray-100">
           <div className="overflow-x-auto">
@@ -111,6 +112,7 @@ function AdminWithdrawals() {
                   <th className="p-8 text-[10px] font-black text-gray-400 uppercase tracking-[5px]">User</th>
                   <th className="p-8 text-[10px] font-black text-gray-400 uppercase tracking-[5px]">Details</th>
                   <th className="p-8 text-[10px] font-black text-gray-400 uppercase tracking-[5px] text-right">Amount</th>
+                  <th className="p-8 text-[10px] font-black text-gray-400 uppercase tracking-[5px] text-center">Date</th>
                   <th className="p-8 text-[10px] font-black text-gray-400 uppercase tracking-[5px] text-center">Status</th>
                   <th className="p-8 text-[10px] font-black text-gray-400 uppercase tracking-[5px] text-center">Actions</th>
                 </tr>
@@ -131,6 +133,10 @@ function AdminWithdrawals() {
                        <p className="font-black text-gray-900 text-2xl tracking-tighter">{parseFloat(w.amount).toLocaleString()} {w.User?.currency}</p>
                        <p className="text-[10px] font-black text-primary uppercase tracking-[4px]">Fee: {parseFloat(w.fee).toLocaleString()}</p>
                     </td>
+                    <td className="p-8 text-center whitespace-nowrap">
+                      <p className="text-xs font-bold text-gray-600">{w.createdAt ? new Date(w.createdAt).toLocaleDateString() : '—'}</p>
+                      <p className="text-[9px] text-gray-400 mt-0.5">{w.createdAt ? new Date(w.createdAt).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) : ''}</p>
+                    </td>
                     <td className="p-8 text-center">
                       <span className={`px-5 py-2 rounded-full text-[9px] font-black tracking-[4px] border ${w.status === 'pending' ? 'bg-orange-50 text-orange-600 border-orange-100' : w.status === 'approved' ? 'bg-secondary/5 text-secondary border-secondary/10' : 'bg-red-50 text-red-600 border-red-100'}`}>
                         {w.status.toUpperCase()}
@@ -146,12 +152,7 @@ function AdminWithdrawals() {
                       ) : (
                         <div className="flex flex-col gap-2 items-center">
                            <span className="text-[10px] font-black text-gray-200 uppercase tracking-[6px] italic mb-2">Processed</span>
-                           <button 
-                             onClick={() => handleDelete(w.id)}
-                             className="text-[9px] font-black text-red-300 hover:text-red-500 uppercase tracking-widest transition-colors"
-                           >
-                             Delete Entry
-                           </button>
+                           <button onClick={() => handleDelete(w.id)} className="text-[9px] font-black text-red-300 hover:text-red-500 uppercase tracking-widest transition-colors">Delete Entry</button>
                         </div>
                       )}
                     </td>

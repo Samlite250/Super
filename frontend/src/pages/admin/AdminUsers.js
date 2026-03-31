@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import api from '../../services/api';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import AdminLayout from '../../components/AdminLayout';
 
 function AdminUsers() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [search, setSearch] = useState('');
+  const [countryFilter, setCountryFilter] = useState('all');
   const navigate = useNavigate();
 
   useEffect(() => { document.title = "User Registry | Admin"; }, []);
@@ -32,11 +34,7 @@ function AdminUsers() {
       await api.post(`/admin/users/${userId}/${endpoint}`);
       setUsers(users.map(u => u.id === userId ? { ...u, blocked: !blocked } : u));
     } catch (err) {
-      if (err.response?.status === 403) {
-        alert('Admin only — please login');
-        navigate('/auth/admin-secure-v2');
-        return;
-      }
+      if (err.response?.status === 403) { alert('Admin only — please login'); navigate('/auth/admin-secure-v2'); return; }
       alert('Failed to update user');
     }
   };
@@ -46,33 +44,21 @@ function AdminUsers() {
     try {
       const res = await api.post(`/admin/users/${userId}/reset-password`);
       const temp = res.data?.tempPassword;
-      if (temp) {
-        alert('Password reset. Temporary password: ' + temp + '\nAn email was sent to the user.');
-      } else {
-        alert('Password reset. Email sent to user.');
-      }
+      alert(temp ? 'Password reset. Temporary password: ' + temp + '\nAn email was sent to the user.' : 'Password reset. Email sent to user.');
     } catch (err) {
-      if (err.response?.status === 403) {
-        alert('Admin only — please login');
-        navigate('/auth/admin-secure-v2');
-        return;
-      }
+      if (err.response?.status === 403) { alert('Admin only — please login'); navigate('/auth/admin-secure-v2'); return; }
       alert('Failed to reset password: ' + (err.response?.data?.message || err.message));
     }
   };
 
   const handleDelete = async (userId) => {
-    if (!window.confirm('CRITICAL ACTION: Are you sure you want to PERMANENTLY DELETE this user and all associated data (investments, deposits, etc.)? This cannot be undone.')) return;
+    if (!window.confirm('CRITICAL ACTION: Are you sure you want to PERMANENTLY DELETE this user and all associated data? This cannot be undone.')) return;
     try {
       await api.delete(`/admin/users/${userId}`);
       setUsers(users.filter(u => u.id !== userId));
       alert('User deleted successfully');
     } catch (err) {
-      if (err.response?.status === 403) {
-        alert('Admin only — please login');
-        navigate('/auth/admin-secure-v2');
-        return;
-      }
+      if (err.response?.status === 403) { alert('Admin only — please login'); navigate('/auth/admin-secure-v2'); return; }
       alert('Failed to delete user: ' + (err.response?.data?.message || err.message));
     }
   };
@@ -84,17 +70,8 @@ function AdminUsers() {
     setEditingUser(u.id);
     setEditForm({ fullName: u.fullName || '', email: u.email || '', phone: u.phone || '', country: u.country || '', balance: u.balance || 0, role: u.role || 'user' });
   };
-
-  const closeEdit = () => {
-    setEditingUser(null);
-    setEditForm({ fullName: '', email: '', phone: '', country: '', balance: 0, role: 'user' });
-  };
-
-  const handleEditChange = (e) => {
-    const { name, value } = e.target;
-    setEditForm({ ...editForm, [name]: value });
-  };
-
+  const closeEdit = () => { setEditingUser(null); setEditForm({ fullName: '', email: '', phone: '', country: '', balance: 0, role: 'user' }); };
+  const handleEditChange = (e) => { const { name, value } = e.target; setEditForm({ ...editForm, [name]: value }); };
   const submitEdit = async (e) => {
     e.preventDefault();
     try {
@@ -103,11 +80,7 @@ function AdminUsers() {
       closeEdit();
       alert('User updated');
     } catch (err) {
-      if (err.response?.status === 403) {
-        alert('Admin only — please login');
-        navigate('/auth/admin-secure-v2');
-        return;
-      }
+      if (err.response?.status === 403) { alert('Admin only — please login'); navigate('/auth/admin-secure-v2'); return; }
       alert('Failed to update user: ' + (err.response?.data?.message || err.message));
     }
   };
@@ -120,28 +93,64 @@ function AdminUsers() {
     );
   }
 
+  const countries = [...new Set(users.map(u => u.country).filter(Boolean))];
+  const filtered = users.filter(u => {
+    const q = search.toLowerCase();
+    const matchSearch = !search || (u.fullName || '').toLowerCase().includes(q) || (u.email || '').toLowerCase().includes(q) || (u.username || '').toLowerCase().includes(q);
+    const matchCountry = countryFilter === 'all' || u.country === countryFilter;
+    return matchSearch && matchCountry;
+  });
+  const activeCount = users.filter(u => !u.blocked).length;
+  const blockedCount = users.filter(u => u.blocked).length;
+
   return (
     <AdminLayout>
       <div className="p-8 lg:p-12 animate-fadeIn">
         
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
            <div>
               <h2 className="text-4xl font-black text-gray-900 tracking-tight mb-2">Users Manager</h2>
               <p className="text-gray-500 font-medium">Manage user accounts and balances.</p>
            </div>
-           <div className="flex items-center gap-3 bg-white px-6 py-4 rounded-3xl border border-gray-100 shadow-xl shadow-secondary/5">
-              <span className="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
-              <span className="text-[10px] font-black text-gray-900 uppercase tracking-widest leading-none">{users.length} Active Users</span>
+           <div className="flex items-center gap-4">
+             <div className="flex items-center gap-2 bg-white px-5 py-3 rounded-2xl border border-green-100 shadow-sm">
+               <span className="w-2 h-2 rounded-full bg-primary"></span>
+               <span className="text-[10px] font-black text-gray-900 uppercase tracking-widest">{activeCount} Active</span>
+             </div>
+             {blockedCount > 0 && (
+               <div className="flex items-center gap-2 bg-white px-5 py-3 rounded-2xl border border-red-100 shadow-sm">
+                 <span className="w-2 h-2 rounded-full bg-red-500"></span>
+                 <span className="text-[10px] font-black text-red-600 uppercase tracking-widest">{blockedCount} Blocked</span>
+               </div>
+             )}
            </div>
+        </div>
+
+        {/* Search + Filter Bar */}
+        <div className="bg-white rounded-[2rem] p-6 mb-8 shadow-sm border border-gray-100 flex flex-col sm:flex-row gap-4">
+          <input
+            type="text"
+            placeholder="Search by name, email or username..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="flex-1 px-5 py-3 bg-gray-50 border border-gray-200 rounded-2xl font-bold text-sm outline-none focus:border-secondary"
+          />
+          <select
+            value={countryFilter}
+            onChange={e => setCountryFilter(e.target.value)}
+            className="px-5 py-3 bg-gray-50 border border-gray-200 rounded-2xl font-black text-sm outline-none focus:border-secondary"
+          >
+            <option value="all">All Countries</option>
+            {countries.map(c => <option key={c} value={c}>{c}</option>)}
+          </select>
         </div>
         
         {error && <div className="bg-red-50 border border-red-200 text-red-700 p-6 rounded-[2rem] mb-8 font-bold shadow-sm animate-fadeIn">⚠️ {error}</div>}
         
         <div className="bg-white rounded-[3rem] shadow-2xl shadow-black/5 border border-gray-100 overflow-hidden">
-           
-           {users.length === 0 ? (
-             <div className="p-32 text-center text-center">
-                <p className="text-gray-300 font-black uppercase tracking-[8px] text-sm">Registry Clear</p>
+           {filtered.length === 0 ? (
+             <div className="p-32 text-center">
+                <p className="text-gray-300 font-black uppercase tracking-[8px] text-sm">{search || countryFilter !== 'all' ? 'No users match your search' : 'Registry Clear'}</p>
              </div>
            ) : (
              <div className="overflow-x-auto">
@@ -156,7 +165,7 @@ function AdminUsers() {
                    </tr>
                  </thead>
                  <tbody className="divide-y divide-gray-50">
-                   {users.map(u => (
+                   {filtered.map(u => (
                      <tr key={u.id} className="hover:bg-gray-50/50 transition-colors group">
                        <td className="p-6">
                           <div className="flex items-center gap-5">
@@ -179,7 +188,7 @@ function AdminUsers() {
                          <span className={`px-4 py-2 rounded-full text-[9px] font-black tracking-widest border transition-all ${
                            u.blocked ? 'bg-red-50 text-red-600 border-red-100 shadow-[0_5px_15px_rgba(220,38,38,0.1)]' : 'bg-green-50 text-primary border-green-100 shadow-[0_5px_15px_rgba(34,197,94,0.1)]'
                          }`}>
-                           {u.blocked ? 'VOIDED' : 'OPERATIONAL'}
+                           {u.blocked ? 'BLOCKED' : 'ACTIVE'}
                          </span>
                        </td>
                        <td className="p-6 text-center">
@@ -207,14 +216,11 @@ function AdminUsers() {
         </div>
       </div>
 
-      {/* Edit Modal - Enhanced Nexus Theme */}
       {editingUser && (
         <div className="fixed inset-0 bg-gray-950/40 backdrop-blur-2xl flex items-center justify-center z-[100] p-4 animate-fadeIn">
           <div className="bg-white p-12 lg:p-14 rounded-[4rem] w-full max-w-2xl shadow-[0_40px_100px_-20px_rgba(0,0,0,0.5)] border border-white/20 relative">
             <button onClick={closeEdit} className="absolute top-10 right-10 w-12 h-12 bg-gray-50 flex items-center justify-center rounded-full text-gray-400 hover:bg-black hover:text-white transition-all font-black text-xl">✕</button>
-            <h3 className="text-3xl font-black text-gray-900 mb-10 decoration-secondary underline underline-offset-[14px] decoration-4">
-               Edit User
-            </h3>
+            <h3 className="text-3xl font-black text-gray-900 mb-10 decoration-secondary underline underline-offset-[14px] decoration-4">Edit User</h3>
             <form onSubmit={submitEdit} className="space-y-8">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                  <div className="space-y-2">
@@ -243,44 +249,34 @@ function AdminUsers() {
                 </div>
                 <div className="space-y-2">
                     <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[4px] ml-1">User Role</label>
-                    <select name="role" value={editForm.role} onChange={handleEditChange} className="w-full px-6 py-5 bg-gray-900 border border-white/10 rounded-[1.5rem] focus:ring-2 focus:ring-secondary outline-none transition-all font-black text-white hover:bg-black transition-all cursor-pointer appearance-none text-xs tracking-widest">
-                      <option value="user">Standard Agent</option>
-                      <option value="admin">Nexus Administrator</option>
+                    <select name="role" value={editForm.role} onChange={handleEditChange} className="w-full px-6 py-5 bg-gray-900 border border-white/10 rounded-[1.5rem] focus:ring-2 focus:ring-secondary outline-none transition-all font-black text-white cursor-pointer appearance-none text-xs tracking-widest">
+                      <option value="user">Standard User</option>
+                      <option value="admin">Administrator</option>
                     </select>
                 </div>
               </div>
-
-              {/* Network Structure Section */}
               <div className="pt-8 border-t border-gray-100 space-y-6">
-                <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[4px]">Network Architecture</h4>
-                
+                <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[4px]">Referral Network</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                    <div className="bg-gray-50 p-6 rounded-3xl border border-gray-100">
-                      <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-3">Upline Referrer</p>
+                      <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-3">Referred By</p>
                       {users.find(u => u.id === editingUser)?.upline ? (
                         <div className="flex items-center gap-3">
-                           <div className="w-8 h-8 rounded-full bg-secondary/20 text-secondary flex items-center justify-center font-black text-[10px]">
-                              {users.find(u => u.id === editingUser).upline.fullName?.[0]}
-                           </div>
+                           <div className="w-8 h-8 rounded-full bg-secondary/20 text-secondary flex items-center justify-center font-black text-[10px]">{users.find(u => u.id === editingUser).upline.fullName?.[0]}</div>
                            <div>
                               <p className="text-sm font-black text-gray-900">{users.find(u => u.id === editingUser).upline.fullName}</p>
-                              <p className="text-[10px] text-gray-400 font-bold tracking-tight">@{users.find(u => u.id === editingUser).upline.username}</p>
+                              <p className="text-[10px] text-gray-400 font-bold">@{users.find(u => u.id === editingUser).upline.username}</p>
                            </div>
                         </div>
-                      ) : (
-                        <p className="text-[10px] font-bold text-gray-300 italic">Organic Entry (No Referrer)</p>
-                      )}
+                      ) : <p className="text-[10px] font-bold text-gray-300 italic">No Referrer</p>}
                    </div>
-
                    <div className="bg-gray-50 p-6 rounded-3xl border border-gray-100">
-                      <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-3">Downline Network ({users.find(u => u.id === editingUser)?.downline?.length || 0})</p>
+                      <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-3">Referred Users ({users.find(u => u.id === editingUser)?.downline?.length || 0})</p>
                       {users.find(u => u.id === editingUser)?.downline?.length > 0 ? (
-                        <div className="space-y-3 max-h-32 overflow-y-auto pr-2 custom-scrollbar">
+                        <div className="space-y-3 max-h-32 overflow-y-auto">
                            {users.find(u => u.id === editingUser).downline.map(d => (
                               <div key={d.id} className="flex items-center gap-2 bg-white p-2 rounded-xl border border-gray-100">
-                                 <div className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center font-extrabold text-[8px]">
-                                    {d.fullName?.[0]}
-                                 </div>
+                                 <div className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center font-extrabold text-[8px]">{d.fullName?.[0]}</div>
                                  <div className="overflow-hidden">
                                     <p className="text-[10px] font-black text-gray-800 truncate">{d.fullName}</p>
                                     <p className="text-[8px] text-gray-400 font-bold truncate">@{d.username}</p>
@@ -288,13 +284,10 @@ function AdminUsers() {
                               </div>
                            ))}
                         </div>
-                      ) : (
-                        <p className="text-[10px] font-bold text-gray-300 italic">No Referred Users</p>
-                      )}
+                      ) : <p className="text-[10px] font-bold text-gray-300 italic">No Referred Users</p>}
                    </div>
                 </div>
               </div>
-
               <div className="flex gap-4 pt-10 border-t border-gray-50">
                 <button type="button" onClick={closeEdit} className="flex-1 py-5 bg-gray-50 text-gray-400 font-black rounded-3xl hover:bg-gray-100 transition-all uppercase tracking-[4px] text-[10px]">Cancel</button>
                 <button type="submit" className="flex-1 py-5 bg-gray-900 text-white font-black rounded-3xl shadow-[0_20px_40px_-10px_rgba(0,0,0,0.3)] hover:bg-black transition-all uppercase tracking-[4px] text-[10px]">Save Changes</button>

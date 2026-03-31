@@ -144,7 +144,9 @@ function AdminActivity() {
                           </td>
                           <td className="p-8 text-center">
                              <div className="flex flex-col items-center">
-                                <span className="px-5 py-2 rounded-full bg-green-50 text-primary border border-green-100 text-[9px] font-black tracking-widest uppercase mb-1">Active</span>
+                                <span className={`px-5 py-2 rounded-full border text-[9px] font-black tracking-widest uppercase mb-1 ${
+                                  user.blocked ? 'bg-red-50 text-red-600 border-red-100' : 'bg-green-50 text-primary border-green-100'
+                                }`}>{user.blocked ? 'Blocked' : 'Active'}</span>
                                 {user.upline && (
                                   <p className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">Via: {user.upline.fullName}</p>
                                 )}

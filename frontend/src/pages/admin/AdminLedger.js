@@ -26,6 +26,31 @@ function AdminLedger() {
     fetchTransactions();
   }, [navigate]);
 
+  const handleExportCSV = () => {
+    if (filtered.length === 0) return alert('No transactions to export.');
+    const headers = ['ID', 'User', 'Email', 'Type', 'Amount', 'Currency', 'Description', 'Date'];
+    const rows = filtered.map(tx => [
+      tx.id,
+      tx.User?.fullName || 'System',
+      tx.User?.email || '',
+      tx.type || '',
+      parseFloat(tx.amount || 0).toFixed(2),
+      tx.currency || 'FBu',
+      `"${(tx.description || '').replace(/"/g, "'")}"`,
+      tx.createdAt ? new Date(tx.createdAt).toLocaleString() : ''
+    ]);
+    const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Ledger_${typeFilter}_${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -61,31 +86,27 @@ function AdminLedger() {
     return icons[type] || '💱';
   };
 
-  // summary stats
-  const totalIn = filtered
-    .filter(t => ['deposit', 'roi', 'referral'].includes(t.type))
-    .reduce((s, t) => s + parseFloat(t.amount || 0), 0);
-  const totalOut = filtered
-    .filter(t => ['withdrawal', 'investment'].includes(t.type))
-    .reduce((s, t) => s + parseFloat(t.amount || 0), 0);
+  const totalIn = filtered.filter(t => ['deposit', 'roi', 'referral'].includes(t.type)).reduce((s, t) => s + parseFloat(t.amount || 0), 0);
+  const totalOut = filtered.filter(t => ['withdrawal', 'investment'].includes(t.type)).reduce((s, t) => s + parseFloat(t.amount || 0), 0);
 
   return (
     <AdminLayout>
       <div className="p-8 lg:p-12 animate-fadeIn">
 
-        {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
           <div>
             <h2 className="text-4xl font-black text-gray-900 tracking-tight mb-2">Transaction Ledger</h2>
             <p className="text-gray-500 font-medium">Full internal money movement log — deposits, ROI, referrals, withdrawals.</p>
           </div>
-          <div className="flex items-center gap-3 bg-white px-6 py-4 rounded-3xl border border-gray-100 shadow-xl shadow-secondary/5">
-            <span className="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
-            <span className="text-[10px] font-black text-gray-900 uppercase tracking-widest">{filtered.length} Transactions</span>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 bg-white px-6 py-4 rounded-3xl border border-gray-100 shadow-xl shadow-secondary/5">
+              <span className="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+              <span className="text-[10px] font-black text-gray-900 uppercase tracking-widest">{filtered.length} Transactions</span>
+            </div>
+            <button onClick={handleExportCSV} className="bg-green-500 text-white px-6 py-4 rounded-3xl text-[9px] font-black uppercase tracking-widest shadow-lg hover:bg-green-600 transition-all">Export CSV</button>
           </div>
         </div>
 
-        {/* Summary */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
           <div className="bg-white p-8 rounded-[2.5rem] shadow-xl border border-gray-100">
             <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Total Records</p>
@@ -101,28 +122,14 @@ function AdminLedger() {
           </div>
         </div>
 
-        {/* Filters */}
         <div className="bg-white rounded-[2rem] p-6 mb-6 shadow-sm border border-gray-100 flex flex-col sm:flex-row gap-4">
-          <input
-            type="text"
-            placeholder="Search by user name, email or description..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            className="flex-1 px-5 py-3 bg-gray-50 border border-gray-200 rounded-2xl font-bold text-sm outline-none focus:border-secondary"
-          />
-          <select
-            value={typeFilter}
-            onChange={e => setTypeFilter(e.target.value)}
-            className="px-5 py-3 bg-gray-50 border border-gray-200 rounded-2xl font-black text-sm outline-none focus:border-secondary uppercase"
-          >
+          <input type="text" placeholder="Search by user name, email or description..." value={search} onChange={e => setSearch(e.target.value)} className="flex-1 px-5 py-3 bg-gray-50 border border-gray-200 rounded-2xl font-bold text-sm outline-none focus:border-secondary" />
+          <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)} className="px-5 py-3 bg-gray-50 border border-gray-200 rounded-2xl font-black text-sm outline-none focus:border-secondary uppercase">
             <option value="all">All Types</option>
-            {txTypes.map(t => (
-              <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>
-            ))}
+            {txTypes.map(t => (<option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>))}
           </select>
         </div>
 
-        {/* Table */}
         <div className="bg-white rounded-[3rem] shadow-2xl shadow-black/5 border border-gray-100 overflow-hidden">
           {filtered.length === 0 ? (
             <div className="p-32 text-center">
@@ -174,7 +181,6 @@ function AdminLedger() {
             </div>
           )}
         </div>
-
       </div>
     </AdminLayout>
   );

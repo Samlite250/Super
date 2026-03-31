@@ -6,6 +6,7 @@ function AdminManifest() {
     const { country } = useParams();
     const [withdrawals, setWithdrawals] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [statusFilter, setStatusFilter] = useState('pending');
 
     useEffect(() => {
         const load = async () => {
@@ -14,7 +15,6 @@ function AdminManifest() {
                 const filtered = res.data.filter(w => 
                     (!country || w.User?.country?.toLowerCase() === country.toLowerCase())
                 );
-
                 setWithdrawals(filtered);
             } catch (err) {
                 console.error(err);
@@ -59,14 +59,24 @@ function AdminManifest() {
                     </div>
                 </div>
 
-                <div className="mb-10 flex justify-between items-center bg-gray-50 p-6 rounded-2xl border border-gray-200">
+                <div className="mb-10 flex flex-wrap justify-between items-center gap-4 bg-gray-50 p-6 rounded-2xl border border-gray-200">
                     <div>
                         <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Assigned Region</p>
                         <p className="text-2xl font-black uppercase tracking-tighter">{country || 'Global Master Queue'}</p>
                     </div>
-                    <div className="text-right">
-                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Total Records</p>
-                        <p className="text-2xl font-black uppercase tracking-tighter">{withdrawals.length}</p>
+                    <div className="flex items-center gap-4">
+                        <div>
+                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Filter Status</p>
+                            <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs font-black uppercase tracking-widest outline-none">
+                                <option value="all">All</option>
+                                <option value="pending">Pending Only</option>
+                                <option value="approved">Approved Only</option>
+                            </select>
+                        </div>
+                        <div className="text-right">
+                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Total Records</p>
+                            <p className="text-2xl font-black uppercase tracking-tighter">{withdrawals.filter(w => statusFilter === 'all' || w.status === statusFilter).length}</p>
+                        </div>
                     </div>
                 </div>
 
@@ -84,7 +94,7 @@ function AdminManifest() {
                         </tr>
                     </thead>
                     <tbody className="divide-y-2 divide-gray-100">
-                        {withdrawals.map((w) => (
+                        {withdrawals.filter(w => statusFilter === 'all' || w.status === statusFilter).map((w) => (
                             <tr key={w.id} className="hover:bg-gray-50">
                                 <td className="p-4 font-mono text-[10px] font-black text-gray-400">#WF-{w.id.toString().padStart(4, '0')}</td>
                                 <td className="p-4 font-black uppercase text-xs tracking-tight">{w.User?.fullName}</td>

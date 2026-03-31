@@ -31,7 +31,7 @@ function AdminInvestments() {
     try {
       await api.delete(`/investments/${invId}`);
       setInvestments(investments.map(i => i.id === invId ? { ...i, status: 'terminated' } : i));
-      alert('✓ Investment terminated');
+      alert('Investment terminated');
     } catch (err) {
       alert('Failed: ' + (err.response?.data?.message || err.message));
     }
@@ -58,6 +58,20 @@ function AdminInvestments() {
   const totalVolume = investments.filter(i => i.status === 'active').reduce((s, i) => s + parseFloat(i.amount || 0), 0);
   const dailyPayout = investments.filter(i => i.status === 'active').reduce((s, i) => s + parseFloat(i.dailyIncome || 0), 0);
 
+  const getEndDate = (inv) => {
+    if (!inv.startDate || !inv.Machine?.durationDays) return null;
+    const end = new Date(inv.startDate);
+    end.setDate(end.getDate() + parseInt(inv.Machine.durationDays));
+    return end;
+  };
+
+  const getDaysLeft = (inv) => {
+    const end = getEndDate(inv);
+    if (!end) return null;
+    const diff = Math.ceil((end - new Date()) / (1000 * 60 * 60 * 24));
+    return diff;
+  };
+
   const statusColor = (s) => {
     if (s === 'active') return 'bg-green-50 text-primary border-green-100';
     if (s === 'completed') return 'bg-blue-50 text-secondary border-blue-100';
@@ -68,7 +82,6 @@ function AdminInvestments() {
     <AdminLayout>
       <div className="p-8 lg:p-12 animate-fadeIn">
 
-        {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
           <div>
             <h2 className="text-4xl font-black text-gray-900 tracking-tight mb-2">Investments Manager</h2>
@@ -80,7 +93,6 @@ function AdminInvestments() {
           </div>
         </div>
 
-        {/* KPI Summary */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12">
           <div className="bg-white p-8 rounded-[2.5rem] shadow-xl border border-gray-100">
             <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Active Investments</p>
@@ -96,20 +108,9 @@ function AdminInvestments() {
           </div>
         </div>
 
-        {/* Filters */}
         <div className="bg-white rounded-[2rem] p-6 mb-6 shadow-sm border border-gray-100 flex flex-col sm:flex-row gap-4">
-          <input
-            type="text"
-            placeholder="Search by user name, email or plan..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            className="flex-1 px-5 py-3 bg-gray-50 border border-gray-200 rounded-2xl font-bold text-sm outline-none focus:border-secondary"
-          />
-          <select
-            value={statusFilter}
-            onChange={e => setStatusFilter(e.target.value)}
-            className="px-5 py-3 bg-gray-50 border border-gray-200 rounded-2xl font-black text-sm outline-none focus:border-secondary"
-          >
+          <input type="text" placeholder="Search by user, email or plan..." value={search} onChange={e => setSearch(e.target.value)} className="flex-1 px-5 py-3 bg-gray-50 border border-gray-200 rounded-2xl font-bold text-sm outline-none focus:border-secondary" />
+          <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="px-5 py-3 bg-gray-50 border border-gray-200 rounded-2xl font-black text-sm outline-none focus:border-secondary">
             <option value="all">All Statuses</option>
             <option value="active">Active</option>
             <option value="completed">Completed</option>
@@ -117,7 +118,6 @@ function AdminInvestments() {
           </select>
         </div>
 
-        {/* Table */}
         <div className="bg-white rounded-[3rem] shadow-2xl shadow-black/5 border border-gray-100 overflow-hidden">
           {filtered.length === 0 ? (
             <div className="p-32 text-center">
@@ -134,59 +134,68 @@ function AdminInvestments() {
                     <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Amount</th>
                     <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Daily ROI</th>
                     <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Start Date</th>
+                    <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">End Date</th>
                     <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Status</th>
                     <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
-                  {filtered.map(inv => (
-                    <tr key={inv.id} className="hover:bg-gray-50/50 transition-colors group">
-                      <td className="p-6 font-mono text-xs font-black text-gray-300">#{inv.id}</td>
-                      <td className="p-6">
-                        <p className="font-extrabold text-gray-900 tracking-tight">{inv.User?.fullName || 'Anonymous'}</p>
-                        <p className="text-[10px] font-black text-secondary uppercase tracking-widest mt-0.5">{inv.User?.email}</p>
-                      </td>
-                      <td className="p-6">
-                        <p className="font-bold text-gray-800 text-sm">{inv.Machine?.name || '—'}</p>
-                        <p className="text-[10px] text-gray-400 font-bold">{inv.Machine?.durationDays}d plan</p>
-                      </td>
-                      <td className="p-6 text-right">
-                        <p className="font-black text-primary text-lg tabular-nums">{parseFloat(inv.amount).toLocaleString()}</p>
-                        <p className="text-[10px] text-gray-400 font-bold uppercase">{inv.User?.currency || 'FBu'}</p>
-                      </td>
-                      <td className="p-6 text-center">
-                        <span className="px-4 py-2 bg-gray-900 text-secondary rounded-xl text-xs font-black">
-                          +{parseFloat(inv.dailyIncome).toLocaleString()}/day
-                        </span>
-                      </td>
-                      <td className="p-6 text-center text-sm font-bold text-gray-500">
-                        {inv.startDate ? new Date(inv.startDate).toLocaleDateString() : '—'}
-                      </td>
-                      <td className="p-6 text-center">
-                        <span className={`px-4 py-2 rounded-full text-[9px] font-black tracking-widest border ${statusColor(inv.status)}`}>
-                          {(inv.status || 'active').toUpperCase()}
-                        </span>
-                      </td>
-                      <td className="p-6 text-center">
-                        {inv.status === 'active' ? (
-                          <button
-                            onClick={() => handleTerminate(inv.id)}
-                            className="px-5 py-2 bg-red-50 text-red-500 hover:bg-red-500 hover:text-white rounded-xl font-black text-[9px] uppercase tracking-widest transition-all border border-red-100"
-                          >
-                            Terminate
-                          </button>
-                        ) : (
-                          <span className="text-gray-300 text-[10px] font-black uppercase tracking-widest">—</span>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
+                  {filtered.map(inv => {
+                    const endDate = getEndDate(inv);
+                    const daysLeft = getDaysLeft(inv);
+                    return (
+                      <tr key={inv.id} className="hover:bg-gray-50/50 transition-colors group">
+                        <td className="p-6 font-mono text-xs font-black text-gray-300">#{inv.id}</td>
+                        <td className="p-6">
+                          <p className="font-extrabold text-gray-900 tracking-tight">{inv.User?.fullName || 'Anonymous'}</p>
+                          <p className="text-[10px] font-black text-secondary uppercase tracking-widest mt-0.5">{inv.User?.email}</p>
+                        </td>
+                        <td className="p-6">
+                          <p className="font-bold text-gray-800 text-sm">{inv.Machine?.name || '—'}</p>
+                          <p className="text-[10px] text-gray-400 font-bold">{inv.Machine?.durationDays}d plan</p>
+                        </td>
+                        <td className="p-6 text-right">
+                          <p className="font-black text-primary text-lg tabular-nums">{parseFloat(inv.amount).toLocaleString()}</p>
+                          <p className="text-[10px] text-gray-400 font-bold uppercase">{inv.User?.currency || 'FBu'}</p>
+                        </td>
+                        <td className="p-6 text-center">
+                          <span className="px-4 py-2 bg-gray-900 text-secondary rounded-xl text-xs font-black">+{parseFloat(inv.dailyIncome).toLocaleString()}/day</span>
+                        </td>
+                        <td className="p-6 text-center text-sm font-bold text-gray-500">
+                          {inv.startDate ? new Date(inv.startDate).toLocaleDateString() : '—'}
+                        </td>
+                        <td className="p-6 text-center whitespace-nowrap">
+                          {endDate ? (
+                            <div>
+                              <p className="text-xs font-bold text-gray-600">{endDate.toLocaleDateString()}</p>
+                              {inv.status === 'active' && (
+                                <p className={`text-[9px] font-black mt-0.5 ${daysLeft <= 3 ? 'text-red-500' : daysLeft <= 7 ? 'text-orange-500' : 'text-gray-400'}`}>
+                                  {daysLeft > 0 ? `${daysLeft}d left` : 'Expired'}
+                                </p>
+                              )}
+                            </div>
+                          ) : '—'}
+                        </td>
+                        <td className="p-6 text-center">
+                          <span className={`px-4 py-2 rounded-full text-[9px] font-black tracking-widest border ${statusColor(inv.status)}`}>
+                            {(inv.status || 'active').toUpperCase()}
+                          </span>
+                        </td>
+                        <td className="p-6 text-center">
+                          {inv.status === 'active' ? (
+                            <button onClick={() => handleTerminate(inv.id)} className="px-5 py-2 bg-red-50 text-red-500 hover:bg-red-500 hover:text-white rounded-xl font-black text-[9px] uppercase tracking-widest transition-all border border-red-100">Terminate</button>
+                          ) : (
+                            <span className="text-gray-300 text-[10px] font-black uppercase tracking-widest">—</span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
           )}
         </div>
-
       </div>
     </AdminLayout>
   );
