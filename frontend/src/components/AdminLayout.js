@@ -20,7 +20,7 @@ const AdminLayout = ({ children }) => {
     { path: '/admin/investments',   label: 'Investments',          icon: '📈' },
     { path: '/admin/ledger',        label: 'Transaction Ledger',   icon: '📋' },
     { path: '/admin/activity',      label: 'Regional Activity',    icon: '🌍' },
-    { path: '/admin/machines',      label: 'Farm Packages',        icon: '🚜' },
+    { path: '/admin/machines',      label: 'Investment Plans',     icon: '🚜' },
     { path: '/admin/settings',      label: 'Settings',             icon: '⚙️' },
   ];
 
@@ -79,9 +79,9 @@ const AdminLayout = ({ children }) => {
         <div className="p-6 mt-auto border-t border-white/5 bg-black/10">
           <div className="bg-gray-800/50 p-4 rounded-3xl border border-white/5 mb-4">
              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-secondary/20 border border-secondary/30 flex items-center justify-center text-xs font-black text-secondary">SA</div>
+                <div className="w-8 h-8 rounded-full bg-secondary/20 border border-secondary/30 flex items-center justify-center text-xs font-black text-secondary">A</div>
                 <div className="overflow-hidden">
-                   <p className="text-xs font-black text-white truncate">System Admin</p>
+                   <p className="text-xs font-black text-white truncate">Admin</p>
                    <p className="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Administrator</p>
                 </div>
              </div>
