@@ -38,9 +38,9 @@ const AdminLayout = ({ children }) => {
     { path: '/admin/withdrawals', label: 'Withdrawals',        icon: '🏦', badge: pendingStats.withdrawals },
     { path: '/admin/investments', label: 'Investments',        icon: '📈' },
     { path: '/admin/ledger',      label: 'Transaction Ledger', icon: '📋' },
-    { path: '/admin/activity',    label: 'Regional Activity',  icon: '🌍' },
-    { path: '/admin/machines',    label: 'Investment Plans',   icon: '🚜' },
-    { path: '/admin/settings',    label: 'Settings',           icon: '⚙️' },
+    { path: '/admin/activity',    label: 'Regional Activity',  icon: '🌐' },
+    { path: '/admin/machines',    label: 'Farm Packages',      icon: '🚜' },
+    { path: '/admin/settings',    label: 'Global Settings',    icon: '⚙️' },
   ];
 
   return (

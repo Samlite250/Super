@@ -4,20 +4,36 @@ const axios = require('axios');
 
 exports.request = async (req, res) => {
   const { amount, phone, network } = req.body;
-  if (parseFloat(amount) > parseFloat(req.user.balance))
-    return res.status(400).json({ message: 'Insufficient balance' });
-  const fee = parseFloat(process.env.WITHDRAWAL_FEE || 0) * parseFloat(amount);
+  const user = req.user;
+  const amt = parseFloat(amount);
+  const fee = parseFloat(process.env.WITHDRAWAL_FEE || 0) * amt;
+  const totalDeduct = amt + fee;
+
+  if (totalDeduct > parseFloat(user.balance))
+    return res.status(400).json({ message: 'Insufficient balance (including fees)' });
+
   const withdrawal = await Withdrawal.create({
-    userId: req.user.id,
-    amount,
+    userId: user.id,
+    amount: amt,
     phone,
     network,
     fee,
     status: 'pending',
   });
 
+  // Deduct balance immediately to prevent double-spending
+  user.balance = parseFloat(user.balance) - totalDeduct;
+  await user.save();
+
+  await Transaction.create({
+    userId: user.id,
+    type: 'withdrawal_request',
+    amount: amt,
+    description: `Withdrawal request #${withdrawal.id} (${network})`
+  });
+
   // Notify user of initiation
-  sendWithdrawalRequestEmail(req.user.email, amount, req.user.currency, network);
+  sendWithdrawalRequestEmail(user.email, amt, user.currency, network);
 
   res.json(withdrawal);
 };
@@ -90,14 +106,13 @@ exports.approve = async (req, res) => {
     withdrawal.status = 'approved';
     await withdrawal.save();
 
-    user.balance = parseFloat(user.balance) - totalDeduct;
-    await user.save();
+    // Balance already deducted at request stage
 
     await Transaction.create({ 
       userId: user.id, 
-      type: 'withdrawal', 
+      type: 'withdrawal_approved', 
       amount: withdrawal.amount, 
-      description: `Withdrawal approved ${autoDispatch ? '(Automated)' : '(Manual)'}` 
+      description: `Withdrawal #${withdrawal.id} approved ${autoDispatch ? '(Automated)' : '(Manual)'}` 
     });
 
     sendWithdrawalApprovalEmail(user.email, withdrawal.amount, user.currency);
@@ -112,11 +127,31 @@ exports.approve = async (req, res) => {
 
 exports.reject = async (req, res) => {
   const { id } = req.params;
-  const withdrawal = await Withdrawal.findByPk(id);
-  if (!withdrawal) return res.status(404).json({ message: 'Not found' });
-  withdrawal.status = 'rejected';
-  await withdrawal.save();
-  res.json(withdrawal);
+  try {
+    const withdrawal = await Withdrawal.findByPk(id, { include: [User] });
+    if (!withdrawal) return res.status(404).json({ message: 'Not found' });
+    if (withdrawal.status !== 'pending') return res.status(400).json({ message: 'Already processed' });
+
+    withdrawal.status = 'rejected';
+    await withdrawal.save();
+
+    // Refund balance
+    const user = withdrawal.User;
+    const totalRefund = parseFloat(withdrawal.amount) + parseFloat(withdrawal.fee);
+    user.balance = parseFloat(user.balance) + totalRefund;
+    await user.save();
+
+    await Transaction.create({
+      userId: user.id,
+      type: 'withdrawal_refund',
+      amount: totalRefund,
+      description: `Refund for rejected withdrawal #${withdrawal.id}`
+    });
+
+    res.json(withdrawal);
+  } catch (err) {
+    res.status(500).json({ message: 'Reject failed' });
+  }
 };
 
 exports.exportWithdrawals = async (req, res) => {

@@ -36,7 +36,7 @@ function AdminMachines() {
   const [toast, setToast] = useState(null);
   const navigate = useNavigate();
 
-  useEffect(() => { document.title = 'Asset Lab | Admin'; }, []);
+  useEffect(() => { document.title = 'Farm Packages | Admin'; }, []);
 
   const showToast = (msg, type = 'success') => {
     setToast({ msg, type });
@@ -151,7 +151,7 @@ function AdminMachines() {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="flex flex-col items-center gap-3">
           <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-secondary"></div>
-          <p className="text-xs text-gray-400 font-medium">Loading Asset Lab...</p>
+          <p className="text-xs text-gray-400 font-medium">Loading Farm Packages...</p>
         </div>
       </div>
     );
@@ -163,7 +163,7 @@ function AdminMachines() {
         <div className="p-8">
           <div className="bg-red-50 border border-red-200 rounded-2xl p-8 text-center max-w-xl mx-auto mt-10">
             <p className="text-3xl mb-3">⚠️</p>
-            <h3 className="text-lg font-black text-red-700 mb-2">Failed to Load Plans</h3>
+            <h3 className="text-lg font-black text-red-700 mb-2">Failed to Load Packages</h3>
             <p className="text-sm text-red-600 font-medium mb-4">{fetchError}</p>
             <p className="text-xs text-gray-500 mb-6">
               If this is a new deployment, the <strong>country</strong> column may be missing from the database.
@@ -197,15 +197,15 @@ function AdminMachines() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
           <div>
-            <h2 className="text-3xl font-black text-gray-900 tracking-tight">Asset Lab</h2>
-            <p className="text-xs font-semibold text-gray-400 mt-1 uppercase tracking-widest">Investment Plans Management</p>
+            <h2 className="text-3xl font-black text-gray-900 tracking-tight">Farm Packages</h2>
+            <p className="text-xs font-semibold text-gray-400 mt-1 uppercase tracking-widest">Investment Inventory Management</p>
           </div>
           <div className="flex items-center gap-3 flex-wrap">
             <button
               onClick={showForm ? closeForm : openAdd}
               className={`px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all ${showForm ? 'bg-red-500 text-white' : 'bg-gray-900 text-white shadow-lg hover:bg-black active:scale-95'}`}
             >
-              {showForm ? '✕ Cancel' : `+ Deploy ${activeCountry.flag} ${activeCountry.label} Plan`}
+              {showForm ? '✕ Cancel' : `+ Deploy ${activeCountry.flag} ${activeCountry.label} Package`}
             </button>
           </div>
         </div>
@@ -240,9 +240,9 @@ function AdminMachines() {
           <div className={`${activeCountry.color} rounded-2xl p-4 mb-6 flex items-center gap-4 shadow-md`}>
             <span className="text-4xl">{activeCountry.flag}</span>
             <div>
-              <p className="font-black text-white text-base">{activeCountry.label} — Country-Specific Plans</p>
+              <p className="font-black text-white text-base">{activeCountry.label} — Regional Packages</p>
               <p className="text-white/70 text-xs font-medium mt-0.5">
-                Plans here are shown <strong className="text-white">exclusively</strong> to {activeCountry.label}n users, with prices in <strong className="text-white">{activeCountry.currency}</strong>. They appear alongside Global plans.
+                Packages here are shown <strong className="text-white">exclusively</strong> to {activeCountry.label}n users, with prices in <strong className="text-white">{activeCountry.currency}</strong>. They appear alongside Global packages.
               </p>
             </div>
           </div>
@@ -253,7 +253,7 @@ function AdminMachines() {
           <div className="bg-white rounded-[2rem] border border-gray-100 p-8 mb-10 shadow-xl animate-scaleUp">
             <div className="flex items-center justify-between mb-6 pb-4 border-b-2 border-gray-50">
               <h3 className="text-xl font-black text-gray-900">
-                {editingId ? '✏️ Edit Plan' : '🚀 New Plan'} — {activeCountry.flag} {activeCountry.label}
+                {editingId ? '✏️ Edit Package' : '🚀 New Package'} — {activeCountry.flag} {activeCountry.label}
               </h3>
               {formData.premium && (
                 <span className="px-3 py-1 rounded-full bg-secondary text-white text-[10px] font-black uppercase tracking-widest">Elite</span>
@@ -297,7 +297,7 @@ function AdminMachines() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div>
-                    <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Plan Name</label>
+                    <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Package Name</label>
                     <input name="name" value={formData.name} onChange={handleInput} placeholder="e.g. Tractor X200" className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl font-bold text-sm focus:ring-1 focus:ring-secondary outline-none" required />
                   </div>
                   <div>
@@ -332,8 +332,8 @@ function AdminMachines() {
                   <div className="flex items-center gap-3">
                     <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-base ${formData.premium ? 'bg-secondary text-white' : 'bg-white/10 text-gray-500'}`}>⭐</div>
                     <div>
-                      <p className="text-xs font-black text-white">Elite Cluster Protocol</p>
-                      <p className="text-[10px] text-gray-400 font-medium mt-0.5">Mark as premium tier plan</p>
+                      <p className="text-xs font-black text-white">Premium Farm Package</p>
+                      <p className="text-[10px] text-gray-400 font-medium mt-0.5">Mark as high-priority elite offer</p>
                     </div>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
@@ -350,7 +350,7 @@ function AdminMachines() {
                   {saving ? (
                     <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> Saving...</>
                   ) : (
-                    editingId ? '✓ Save Changes' : '🚀 Deploy Plan'
+                    editingId ? '✓ Save Changes' : '🚀 Deploy Package'
                   )}
                 </button>
               </div>
@@ -362,7 +362,7 @@ function AdminMachines() {
         {!showForm && (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
             {[
-              { label: 'Total Plans', value: tabMachines.length, icon: '📋' },
+              { label: 'Total Packages', value: tabMachines.length, icon: '📋' },
               { label: 'Standard', value: tabMachines.filter(m => !m.premium).length, icon: '🔵' },
               { label: 'Elite', value: tabMachines.filter(m => m.premium).length, icon: '⭐' },
               { label: 'Currency', value: activeCountry.currency, icon: '💱' },
@@ -384,13 +384,13 @@ function AdminMachines() {
             {tabMachines.length === 0 ? (
               <div className="bg-white rounded-[3rem] border-2 border-dashed border-gray-100 p-20 text-center">
                 <p className="text-4xl mb-4">{activeCountry.flag}</p>
-                <p className="text-gray-300 font-black uppercase tracking-[6px] text-xs mb-4">No Plans Yet</p>
-                <p className="text-gray-400 text-sm font-medium mb-6">No plans configured for {activeCountry.label} users.</p>
+                <p className="text-gray-300 font-black uppercase tracking-[6px] text-xs mb-4">No Packages Yet</p>
+                <p className="text-gray-400 text-sm font-medium mb-6">No investment packages configured for {activeCountry.label} users.</p>
                 <button
                   onClick={openAdd}
                   className="px-8 py-3 bg-gray-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-black transition-all"
                 >
-                  + Add First Plan
+                  + Add First Package
                 </button>
               </div>
             ) : (
