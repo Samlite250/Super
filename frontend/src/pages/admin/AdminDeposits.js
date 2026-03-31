@@ -8,6 +8,10 @@ function AdminDeposits() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedDeposit, setSelectedDeposit] = useState(null);
+  const [showGateways, setShowGateways] = useState(false);
+  const [paymentProcedures, setPaymentProcedures] = useState({});
+  const [editingProcedure, setEditingProcedure] = useState(null);
+  const [procedureForm, setProcedureForm] = useState({ country: '', method: '', instructions: '', accountDetails: '' });
   const navigate = useNavigate();
 
   useEffect(() => { document.title = "Deposits Management | Admin"; }, []);
@@ -15,8 +19,12 @@ function AdminDeposits() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await api.get('/deposits');
-        setDeposits(res.data);
+        const [depRes, setRes] = await Promise.all([
+          api.get('/deposits'),
+          api.get('/settings')
+        ]);
+        setDeposits(depRes.data);
+        setPaymentProcedures(setRes.data.paymentProcedures || {});
       } catch (err) {
         setError('Failed to load deposits');
         navigate('/auth/admin-secure-v2');
@@ -46,9 +54,7 @@ function AdminDeposits() {
         setDeposits(deposits.map(d => d.id === depositId ? { ...d, status: 'rejected' } : d));
         setSelectedDeposit(null);
         alert('Deposit rejected');
-      } catch (err) {
-        alert('Failed to reject deposit');
-      }
+      } catch (err) { alert('Failed to reject deposit'); }
     }
   };
 
@@ -59,6 +65,50 @@ function AdminDeposits() {
       setDeposits(deposits.filter(d => d.id !== depositId));
       setSelectedDeposit(null);
       alert('Deposit deleted');
+    } catch (err) {
+      alert('Failed to delete: ' + (err.response?.data?.message || err.message));
+    }
+  };
+
+  // ─── Gateway Handlers ────────────────────────────────────────────────────────
+  const handleEditProcedure = (countryKey) => {
+    const proc = paymentProcedures[countryKey];
+    if (!proc) return;
+    setProcedureForm({
+      country: proc.country || countryKey,
+      method: proc.method || '',
+      instructions: proc.instructions || '',
+      accountDetails: proc.accountDetails || ''
+    });
+    setEditingProcedure(countryKey);
+  };
+
+  const handleSaveProcedure = async () => {
+    if (!procedureForm.country) return alert('Please enter a country name');
+    try {
+      await api.post('/admin/gateways', procedureForm);
+      const copy = { ...paymentProcedures };
+      if (editingProcedure && editingProcedure !== procedureForm.country) delete copy[editingProcedure];
+      copy[procedureForm.country] = { ...procedureForm };
+      setPaymentProcedures(copy);
+      setProcedureForm({ country: '', method: '', instructions: '', accountDetails: '' });
+      setEditingProcedure(null);
+      alert('Gateway saved successfully');
+    } catch (err) { alert('Failed: ' + (err.response?.data?.message || err.message)); }
+  };
+
+  const handleDeleteProcedure = async (countryKey) => {
+    if (!window.confirm(`Delete gateway for ${countryKey}? This cannot be undone.`)) return;
+    try {
+      await api.delete('/admin/gateways', { data: { country: countryKey } });
+      const copy = { ...paymentProcedures };
+      delete copy[countryKey];
+      setPaymentProcedures(copy);
+      if (editingProcedure === countryKey) {
+        setProcedureForm({ country: '', method: '', instructions: '', accountDetails: '' });
+        setEditingProcedure(null);
+      }
+      alert('Gateway deleted');
     } catch (err) {
       alert('Failed to delete: ' + (err.response?.data?.message || err.message));
     }
@@ -79,13 +129,116 @@ function AdminDeposits() {
   return (
     <AdminLayout>
       <div className="p-8 lg:p-12 animate-fadeIn">
-        
-        <div className="flex flex-col mb-12 gap-2">
-           <h2 className="text-4xl font-black text-gray-900 tracking-tight mb-2">Deposits Management</h2>
-           <p className="text-gray-500 font-medium">Review pending user funding requests and manage approvals.</p>
+
+        {/* Header + Tab Toggle */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-8">
+           <div>
+              <h2 className="text-4xl font-black text-gray-900 tracking-tight mb-2">Deposits Management</h2>
+              <p className="text-gray-500 font-medium">Review funding requests and manage country payment gateways.</p>
+           </div>
+           <div className="flex bg-white p-2 rounded-[1.5rem] border border-gray-100 shadow-2xl shadow-black/5">
+              <button
+                 onClick={() => setShowGateways(false)}
+                 className={`px-8 py-3.5 rounded-2xl font-black text-[10px] uppercase tracking-[3px] transition-all ${
+                   !showGateways ? 'bg-primary text-white shadow-xl shadow-green-500/20' : 'text-gray-400 hover:text-primary'
+                 }`}
+              >
+                 📦 Deposits Log
+              </button>
+              <button
+                 onClick={() => setShowGateways(true)}
+                 className={`px-8 py-3.5 rounded-2xl font-black text-[10px] uppercase tracking-[3px] transition-all ${
+                   showGateways ? 'bg-secondary text-white shadow-xl shadow-blue-500/20' : 'text-gray-400 hover:text-secondary'
+                 }`}
+              >
+                 ⚙️ Country Gateways
+              </button>
+           </div>
         </div>
 
-        <div className="animate-fadeIn">
+        {error && <div className="bg-red-50 border border-red-200 text-red-700 p-6 rounded-[2rem] mb-8 font-bold">⚠️ {error}</div>}
+
+        {/* ─── GATEWAYS TAB ─────────────────────────────────────────────────── */}
+        {showGateways && (
+          <div className="animate-fadeIn">
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
+
+              {/* Add / Edit Form */}
+              <div className="lg:col-span-2 bg-white rounded-[3rem] shadow-2xl border border-gray-100 p-12">
+                <h3 className="text-xl font-black text-gray-900 mb-10 decoration-secondary underline underline-offset-[14px] decoration-4">
+                   {editingProcedure ? `Editing: ${editingProcedure}` : 'Add Country Gateway'}
+                </h3>
+                <div className="space-y-6">
+                  <div className="space-y-2">
+                     <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[4px] ml-1">Country Name</label>
+                     <input type="text" placeholder="e.g. Burundi" value={procedureForm.country} onChange={(e) => setProcedureForm({ ...procedureForm, country: e.target.value })} className="w-full px-6 py-5 bg-gray-50 border border-gray-100 rounded-3xl focus:ring-2 focus:ring-secondary outline-none transition-all font-black text-gray-900" />
+                  </div>
+                  <div className="space-y-2">
+                     <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[4px] ml-1">Payment Method</label>
+                     <input type="text" placeholder="e.g. Lumicash, MTN MoMo" value={procedureForm.method} onChange={(e) => setProcedureForm({ ...procedureForm, method: e.target.value })} className="w-full px-6 py-5 bg-gray-50 border border-gray-100 rounded-3xl focus:ring-2 focus:ring-secondary outline-none transition-all font-black text-gray-900" />
+                  </div>
+                  <div className="space-y-2">
+                     <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[4px] ml-1">Payment Instructions</label>
+                     <textarea placeholder="Step-by-step instructions shown to the user when depositing..." value={procedureForm.instructions} onChange={(e) => setProcedureForm({ ...procedureForm, instructions: e.target.value })} className="w-full px-6 py-5 bg-gray-50 border border-gray-100 rounded-3xl focus:ring-2 focus:ring-secondary outline-none transition-all font-bold text-gray-700 h-32 resize-none" />
+                  </div>
+                  <div className="space-y-2">
+                     <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[4px] ml-1">Account Number / Phone</label>
+                     <textarea placeholder="Mobile money number, merchant ID, or account details..." value={procedureForm.accountDetails} onChange={(e) => setProcedureForm({ ...procedureForm, accountDetails: e.target.value })} className="w-full px-6 py-5 bg-gray-50 border border-gray-100 rounded-3xl focus:ring-2 focus:ring-secondary outline-none transition-all font-bold text-gray-700 h-24 resize-none" />
+                  </div>
+                  <div className="flex gap-4 pt-6">
+                    <button
+                      onClick={handleSaveProcedure}
+                      className="flex-1 bg-gray-900 text-white py-5 rounded-[1.5rem] font-black text-[12px] uppercase tracking-[3px] hover:bg-black transition-all shadow-2xl"
+                    >
+                      {editingProcedure ? 'Save Changes' : 'Add Gateway'}
+                    </button>
+                    {editingProcedure && (
+                      <button onClick={() => { setProcedureForm({ country: '', method: '', instructions: '', accountDetails: '' }); setEditingProcedure(null); }} className="px-8 py-5 bg-gray-100 text-gray-400 font-black text-[10px] uppercase tracking-widest rounded-[1.5rem] hover:bg-gray-200 transition-colors">Cancel</button>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Configured Gateways List */}
+              <div className="lg:col-span-3 space-y-5 overflow-y-auto max-h-[850px]">
+                {Object.keys(paymentProcedures).length === 0 && (
+                  <div className="bg-white rounded-[3rem] border-2 border-dashed border-gray-100 p-20 text-center">
+                    <p className="text-4xl mb-4">🌍</p>
+                    <p className="text-gray-300 font-black uppercase tracking-[6px] text-sm mb-2">No gateways configured</p>
+                    <p className="text-gray-400 text-sm">Add a country gateway to define how users in that country should deposit funds.</p>
+                  </div>
+                )}
+                {Object.entries(paymentProcedures).map(([country, proc]) => (
+                  <div key={country} className="bg-white p-10 rounded-[3rem] shadow-sm border border-gray-100 flex justify-between items-start group hover:shadow-2xl hover:-translate-y-1 transition-all">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-4 mb-6">
+                         <span className="px-4 py-1.5 bg-secondary text-white text-[9px] font-black rounded-lg uppercase tracking-[3px] leading-none shadow-lg shadow-blue-500/20">{proc.method}</span>
+                         <h4 className="font-black text-gray-900 text-2xl tracking-tight uppercase">{proc.country || country}</h4>
+                      </div>
+                      <p className="text-sm text-gray-500 font-medium mb-8 leading-relaxed italic pr-16">{proc.instructions}</p>
+                      <div className="bg-gray-50 p-6 rounded-3xl border border-gray-100 inline-flex flex-col min-w-[280px]">
+                         <p className="text-[10px] font-black text-gray-400 uppercase tracking-[4px] mb-2">Account Details</p>
+                         <p className="text-sm font-black text-gray-800 tracking-tight">{proc.accountDetails}</p>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-3 ml-6">
+                      <button onClick={() => handleEditProcedure(country)} className="p-4 bg-gray-50 text-gray-300 hover:bg-secondary hover:text-white rounded-2xl transition-all border border-gray-100 hover:border-transparent" title="Edit">
+                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                      </button>
+                      <button onClick={() => handleDeleteProcedure(country)} className="p-4 bg-gray-50 text-gray-300 hover:bg-red-500 hover:text-white rounded-2xl transition-all border border-gray-100 hover:border-transparent" title="Delete">
+                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ─── DEPOSITS LOG TAB ─────────────────────────────────────────────── */}
+        {!showGateways && (
+          <div className="animate-fadeIn">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 mb-12">
               <div className="bg-white p-10 rounded-[3rem] shadow-xl shadow-orange-500/5 border border-gray-100 flex flex-col hover:scale-[1.02] transition-all">
                 <p className="text-[10px] font-black text-orange-400 uppercase tracking-[5px] mb-2">Pending</p>
@@ -150,11 +303,7 @@ function AdminDeposits() {
                            <td className="p-8 text-center">
                              {d.proofUrl ? (
                                <div className="relative inline-block group/img">
-                                   <img 
-                                     src={d.proofUrl.startsWith('http') || d.proofUrl.startsWith('data:') ? d.proofUrl : `${(api.defaults.baseURL || '').replace(/\/api$/, '')}${d.proofUrl}`} 
-                                     alt="proof" 
-                                    className="w-16 h-12 object-cover rounded-2xl mx-auto shadow-xl ring-4 ring-white cursor-pointer hover:scale-[1.4] hover:shadow-2xl transition-all duration-500" 
-                                  />
+                                   <img src={d.proofUrl.startsWith('http') || d.proofUrl.startsWith('data:') ? d.proofUrl : `${(api.defaults.baseURL || '').replace(/\/api$/, '')}${d.proofUrl}`} alt="proof" className="w-16 h-12 object-cover rounded-2xl mx-auto shadow-xl ring-4 ring-white cursor-pointer hover:scale-[1.4] hover:shadow-2xl transition-all duration-500" />
                                </div>
                              ) : (
                                <div className="text-gray-200 text-xl">∅</div>
@@ -171,70 +320,53 @@ function AdminDeposits() {
                )}
             </div>
           </div>
+        )}
       </div>
 
+      {/* Review Modal */}
       {selectedDeposit && (
         <div className="fixed inset-0 bg-gray-950/40 backdrop-blur-2xl flex items-center justify-center z-[100] p-6 animate-fadeIn">
           <div className="bg-white rounded-[4rem] max-w-2xl w-full max-h-[90vh] overflow-y-auto p-14 shadow-[0_50px_120px_-20px_rgba(0,0,0,0.6)] border border-white/20 relative">
             <button onClick={() => setSelectedDeposit(null)} className="absolute top-12 right-12 w-14 h-14 bg-gray-50 rounded-full flex items-center justify-center text-gray-400 hover:bg-black hover:text-white transition-all font-black text-xl shadow-sm">✕</button>
-
             <div className="mb-14">
                <span className="px-4 py-1.5 bg-secondary/10 text-secondary text-[10px] font-black rounded-xl uppercase tracking-[4px] mb-6 inline-block border border-secondary/10">Deposit #{selectedDeposit.id}</span>
                <h3 className="text-4xl font-black text-gray-900 tracking-tight">Deposit Review</h3>
             </div>
-
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-14">
-              <div className="bg-gray-50/50 p-8 rounded-[2rem] border border-gray-100 group hover:bg-secondary/5 hover:border-secondary/20 transition-all">
+              <div className="bg-gray-50/50 p-8 rounded-[2rem] border border-gray-100 hover:bg-secondary/5 hover:border-secondary/20 transition-all">
                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-[4px] mb-3">User</p>
                 <p className="font-black text-gray-900 text-2xl tracking-tight">{selectedDeposit.User?.username}</p>
                 <p className="text-[10px] text-secondary font-black uppercase tracking-widest mt-1 opacity-60">{selectedDeposit.User?.email}</p>
               </div>
-              <div className="bg-gray-50/50 p-8 rounded-[2rem] border border-gray-100 group hover:bg-primary/5 hover:border-primary/20 transition-all">
+              <div className="bg-gray-50/50 p-8 rounded-[2rem] border border-gray-100 hover:bg-primary/5 hover:border-primary/20 transition-all">
                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-[4px] mb-3">Amount Requested</p>
                 <p className="font-black text-primary text-3xl tabular-nums tracking-tighter">{selectedDeposit.currency} {parseFloat(selectedDeposit.amount).toLocaleString()}</p>
               </div>
             </div>
-
             {selectedDeposit.proofUrl && (
               <div className="mb-14 bg-gray-50 rounded-[3rem] border border-gray-200 overflow-hidden shadow-sm">
                 <div className="p-8 bg-white border-b border-gray-100 flex justify-between items-center px-12">
-                   <p className="text-[10px] font-black text-gray-900 uppercase tracking-[5px] flex items-center gap-4">
-                      <span className="w-2.5 h-2.5 rounded-full bg-secondary animate-pulse"></span>
-                      Payment Screenshot
-                   </p>
-                   <button onClick={() => {
-                      const origin = (api.defaults.baseURL || '').replace(/\/api$/, '');
-                      const url = (selectedDeposit.proofUrl.startsWith('http') || selectedDeposit.proofUrl.startsWith('data:')) ? selectedDeposit.proofUrl : `${origin}${selectedDeposit.proofUrl}`;
-                      window.open(url, '_blank');
-                   }} className="text-[10px] font-black text-secondary hover:underline uppercase tracking-[3px] decoration-2">View Full Image</button>
+                   <p className="text-[10px] font-black text-gray-900 uppercase tracking-[5px] flex items-center gap-4"><span className="w-2.5 h-2.5 rounded-full bg-secondary animate-pulse"></span>Payment Screenshot</p>
+                   <button onClick={() => { const origin = (api.defaults.baseURL || '').replace(/\/api$/, ''); const url = (selectedDeposit.proofUrl.startsWith('http') || selectedDeposit.proofUrl.startsWith('data:')) ? selectedDeposit.proofUrl : `${origin}${selectedDeposit.proofUrl}`; window.open(url, '_blank'); }} className="text-[10px] font-black text-secondary hover:underline uppercase tracking-[3px] decoration-2">View Full Image</button>
                 </div>
                 <div className="p-12">
                    <img src={(selectedDeposit.proofUrl && ((selectedDeposit.proofUrl.startsWith('http') || selectedDeposit.proofUrl.startsWith('data:')) ? selectedDeposit.proofUrl : `${(api.defaults.baseURL || '').replace(/\/api$/, '')}${selectedDeposit.proofUrl}`))} alt="Evidence" className="w-full rounded-[2.5rem] border-[6px] border-white shadow-3xl transform hover:scale-[1.03] transition-transform duration-700" />
                    <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-8">
-                      <div className="p-6 bg-white rounded-2xl border border-gray-100 shadow-sm">
-                         <p className="text-[9px] font-black text-gray-400 uppercase tracking-[4px] mb-2">Payer Number</p>
-                         <p className="text-sm font-black text-gray-800 tracking-tight">{selectedDeposit.payerNumber || 'Not provided'}</p>
-                      </div>
-                      <div className="p-6 bg-white rounded-2xl border border-gray-100 shadow-sm">
-                         <p className="text-[9px] font-black text-gray-400 uppercase tracking-[4px] mb-2">Payer Name</p>
-                         <p className="text-sm font-black text-gray-800 tracking-tight">{selectedDeposit.payerNames || 'Not provided'}</p>
-                      </div>
+                      <div className="p-6 bg-white rounded-2xl border border-gray-100 shadow-sm"><p className="text-[9px] font-black text-gray-400 uppercase tracking-[4px] mb-2">Payer Number</p><p className="text-sm font-black text-gray-800 tracking-tight">{selectedDeposit.payerNumber || 'Not provided'}</p></div>
+                      <div className="p-6 bg-white rounded-2xl border border-gray-100 shadow-sm"><p className="text-[9px] font-black text-gray-400 uppercase tracking-[4px] mb-2">Payer Name</p><p className="text-sm font-black text-gray-800 tracking-tight">{selectedDeposit.payerNames || 'Not provided'}</p></div>
                    </div>
                 </div>
               </div>
             )}
-
             {selectedDeposit.status === 'pending' && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <button onClick={() => handleApprove(selectedDeposit.id)} className="py-6 bg-primary text-white font-black rounded-3xl shadow-[0_20px_40px_-10px_rgba(34,197,94,0.4)] hover:scale-[1.02] active:scale-95 transition-all text-[12px] tracking-[4px] uppercase">Approve Deposit</button>
                 <button onClick={() => handleReject(selectedDeposit.id)} className="py-6 bg-red-600 text-white font-black rounded-3xl shadow-[0_20px_40px_-10px_rgba(220,38,38,0.4)] hover:scale-[1.02] active:scale-95 transition-all text-[12px] tracking-[4px] uppercase">Reject Request</button>
               </div>
             )}
-            
             <div className="mt-6">
               <button onClick={() => handleDelete(selectedDeposit.id)} className="w-full py-4 bg-gray-50 text-red-500 font-black rounded-2xl hover:bg-red-500 hover:text-white transition-all text-[10px] tracking-widest uppercase">⚠ Delete Deposit</button>
             </div>
-            
             <button onClick={() => setSelectedDeposit(null)} className="w-full mt-10 py-4 text-gray-400 font-black uppercase tracking-[5px] text-[10px] hover:text-gray-900 transition-colors">Close</button>
           </div>
         </div>
