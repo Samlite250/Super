@@ -20,5 +20,8 @@ router.post('/payment-options/upload', authenticate, authorizeAdmin, upload.sing
 // social links
 router.get('/social-links', settingsController.getSocialLinks);
 router.post('/social-links', authenticate, authorizeAdmin, settingsController.setSocialLinks);
+// crypto wallets
+router.get('/crypto-wallets', settingsController.getCryptoWallets);
+router.post('/crypto-wallets', authenticate, authorizeAdmin, settingsController.setCryptoWallets);
 
 module.exports = router;

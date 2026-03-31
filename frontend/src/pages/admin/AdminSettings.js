@@ -11,6 +11,7 @@ function AdminSettings() {
   });
   const [supportEmail, setSupportEmail] = useState('support@tracova.com');
   const [autoDepositEnabled, setAutoDepositEnabled] = useState(true);
+  const [cryptoWallets, setCryptoWallets] = useState({ trc20: '', enabled: false });
   const [loading, setLoading] = useState(true);
   const [newOpt, setNewOpt] = useState({ name: '', type: '', account: '', active: true, logo: '' });
   const [saving, setSaving] = useState(false);
@@ -22,13 +23,15 @@ function AdminSettings() {
   useEffect(() => {
     async function load() {
       try {
-        const [optRes, socRes, setRes] = await Promise.all([
+        const [optRes, socRes, setRes, cryptoRes] = await Promise.all([
           api.get('/settings/payment-options'),
           api.get('/settings/social-links'),
-          api.get('/settings')
+          api.get('/settings'),
+          api.get('/settings/crypto-wallets')
         ]);
         setOptions(optRes.data || []);
         setSocialLinks(socRes.data || { whatsapp: '', telegram: '', whatsapp_verification: '' });
+        if (cryptoRes.data) setCryptoWallets({ trc20: cryptoRes.data.trc20 || '', enabled: cryptoRes.data.enabled || false });
         if (setRes.data) {
           const s = setRes.data;
           if (s.supportEmail) setSupportEmail(s.supportEmail);
@@ -52,6 +55,19 @@ function AdminSettings() {
     }
     load();
   }, [navigate]);
+
+
+  const saveCryptoWallets = async () => {
+    try {
+      setSavingSocial(true);
+      await api.post('/settings/crypto-wallets', cryptoWallets);
+      alert('Crypto wallet settings saved!');
+    } catch (err) {
+      alert('Failed to save crypto wallet');
+    } finally {
+      setSavingSocial(false);
+    }
+  };
 
   const saveRewards = async () => {
     try {
@@ -223,7 +239,44 @@ function AdminSettings() {
                  </div>
               </div>
 
-              {/* Signup Bonuses */}
+              {/* Crypto Wallet */}
+              <div className="bg-gray-900 p-10 rounded-[4rem] shadow-2xl border border-white/5 text-white">
+                  <h3 className="text-xl font-black mb-2 flex items-center gap-4">
+                     <span className="text-2xl">₮</span> USDT (TRC-20) Wallet
+                  </h3>
+                  <p className="text-gray-500 text-xs font-bold mb-8">Users can deposit crypto to this address. You verify the transaction hash and approve manually.</p>
+                  <div className="space-y-5">
+                    <div className="flex items-center justify-between p-5 bg-white/5 rounded-2xl border border-white/10">
+                      <div>
+                        <p className="text-[10px] font-black text-secondary uppercase tracking-widest mb-1">Enable Crypto Payments</p>
+                        <p className="text-[10px] text-gray-500 font-medium">Show USDT option to users on deposit page</p>
+                      </div>
+                      <button onClick={() => setCryptoWallets(w => ({...w, enabled: !w.enabled}))} className={`w-14 h-7 rounded-full relative transition-all ${cryptoWallets.enabled ? 'bg-secondary' : 'bg-white/10'}`}>
+                        <div className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow-lg transition-all ${cryptoWallets.enabled ? 'left-8' : 'left-1'}`}></div>
+                      </button>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">TRC-20 Wallet Address</label>
+                      <input
+                        type="text"
+                        placeholder="TXxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                        value={cryptoWallets.trc20}
+                        onChange={e => setCryptoWallets(w => ({...w, trc20: e.target.value}))}
+                        className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl text-white text-xs outline-none focus:border-secondary/50 font-mono tracking-wide"
+                      />
+                      {cryptoWallets.trc20 && (
+                        <div className="flex justify-center pt-2">
+                          <img
+                            src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(cryptoWallets.trc20)}&bgcolor=1f2937&color=ffffff&margin=10`}
+                            alt="QR Code"
+                            className="rounded-2xl border border-white/10"
+                          />
+                        </div>
+                      )}
+                    </div>
+                    <button onClick={saveCryptoWallets} disabled={savingSocial} className="w-full py-4 bg-secondary text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-blue-400 transition-all">Save Crypto Settings</button>
+                  </div>
+              </div>
               <div className="bg-[#0f172a] p-10 rounded-[4rem] shadow-2xl border border-white/10 text-white">
                   <h3 className="text-xl font-black mb-8 flex items-center gap-4">
                      <span className="text-2xl text-yellow-400">🎁</span> Signup Bonuses

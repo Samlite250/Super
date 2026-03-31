@@ -219,3 +219,30 @@ exports.setSocialLinks = async (req, res) => {
   }
 };
 
+// ─── Crypto Wallets ───────────────────────────────────────────────────────────
+exports.getCryptoWallets = async (req, res) => {
+  try {
+    const setting = await Setting.findByPk('cryptoWallets');
+    const wallets = setting && setting.value ? JSON.parse(setting.value) : {};
+    res.json(wallets);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to load crypto wallets' });
+  }
+};
+
+exports.setCryptoWallets = async (req, res) => {
+  try {
+    const wallets = req.body; // e.g. { trc20: 'TXXX...', enabled: true }
+    const value = JSON.stringify(wallets);
+    let setting = await Setting.findByPk('cryptoWallets');
+    if (setting) {
+      setting.value = value;
+      await setting.save();
+    } else {
+      setting = await Setting.create({ key: 'cryptoWallets', value });
+    }
+    res.json({ success: true, wallets: JSON.parse(setting.value) });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to save crypto wallets' });
+  }
+};
