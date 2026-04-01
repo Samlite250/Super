@@ -630,13 +630,13 @@ function Dashboard() {
                          <div className="w-10 h-10 bg-indigo-500/20 text-indigo-400 rounded-xl flex items-center justify-center text-xl shadow-inner border border-indigo-500/30">💎</div>
                          <div>
                             <h4 className="text-white font-black text-sm uppercase tracking-tight mb-1">High-Yield Commission</h4>
-                            <p className="text-indigo-200/70 text-[11px] leading-relaxed font-medium">Earn <span className="text-white font-black">5% INSTANT BONUS</span> when your partner activates a plan above <span className="text-white font-black italic">500,000 {user.currency}</span>.</p>
+                            <p className="text-indigo-200/70 text-[11px] leading-relaxed font-medium">Earn <span className="text-white font-black">10% INSTANT BONUS</span> when your partner activates any plan including those above <span className="text-white font-black italic">1,000,000 {user.currency}</span>.</p>
                          </div>
                       </div>
                       <div className="mt-4 flex items-center justify-between">
-                         <span className="text-[9px] font-black text-indigo-400/50 uppercase tracking-[2px]">Premium Tier</span>
+                         <span className="text-[9px] font-black text-indigo-400/50 uppercase tracking-[2px]">Whale Catching</span>
                          <div className="h-1 w-20 bg-indigo-500/20 rounded-full overflow-hidden">
-                            <div className="h-full w-2/3 bg-indigo-400"></div>
+                            <div className="h-full w-full bg-indigo-400"></div>
                          </div>
                       </div>
                    </div>
@@ -658,6 +658,46 @@ function Dashboard() {
                       </div>
                    </div>
                 </div>
+
+                {/* Referral Earnings Table - Encouraging High Capital */}
+                 <div className="bg-white rounded-[2rem] border border-gray-100 shadow-xl overflow-hidden mb-10 transition-all hover:shadow-2xl hover:border-green-100">
+                    <div className="bg-gray-900 text-white p-8 relative overflow-hidden">
+                       <div className="absolute top-0 right-0 w-32 h-32 bg-green-500 rounded-full opacity-10 blur-2xl"></div>
+                       <h3 className="text-xl font-black tracking-tight mb-1">Referral Rewards Guide</h3>
+                       <p className="text-gray-400 text-[10px] uppercase font-bold tracking-[3px]">Earn 10% instant bonus on every invitee investment</p>
+                    </div>
+                    <div className="p-0">
+                       <table className="w-full text-left border-collapse text-sm">
+                          <thead className="bg-gray-50 border-b border-gray-100">
+                             <tr>
+                                <th className="p-5 font-black text-gray-400 uppercase text-[10px] tracking-widest text-[#1F8B4C]">Invitee Startup Capital</th>
+                                <th className="p-5 font-black text-gray-400 uppercase text-[10px] tracking-widest text-right">Your Instant Reward</th>
+                             </tr>
+                          </thead>
+                          <tbody className="divide-y divide-gray-50">
+                             {[50000, 100000, 500000, 1000000, 5000000, 10000000, 50000000].map(amt => (
+                                <tr key={amt} className="hover:bg-green-50/30 transition-colors group">
+                                   <td className="p-5 font-bold text-gray-700">
+                                      {amt.toLocaleString()} <span className="text-[10px] text-gray-400 font-bold ml-1">{user.currency}</span>
+                                   </td>
+                                   <td className="p-5 text-right font-black text-green-600 group-hover:scale-105 transition-transform origin-right">
+                                      + {(amt * 0.1).toLocaleString()} <span className="text-[10px] text-green-800/40 font-bold ml-1">{user.currency}</span>
+                                   </td>
+                                </tr>
+                             ))}
+                          </tbody>
+                       </table>
+                       <div className="p-6 bg-gray-50 border-t border-gray-100 text-center">
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center justify-center gap-4">
+                             <span>Unlimited invites</span>
+                             <span className="w-1 h-1 bg-slate-300 rounded-full"></span>
+                             <span>Paid instantly to wallet</span>
+                             <span className="w-1 h-1 bg-slate-300 rounded-full"></span>
+                             <span>No withdrawal limit</span>
+                          </p>
+                       </div>
+                    </div>
+                 </div>
 
                 <div>
                   <h3 className="font-bold text-gray-800 text-lg mb-4">Downline Structure ({referrals.length})</h3>
