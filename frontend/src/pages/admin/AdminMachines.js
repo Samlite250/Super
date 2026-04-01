@@ -12,7 +12,8 @@ const COUNTRIES = [
 ];
 
 const EMPTY_FORM = {
-  name: '', description: '', priceFBu: '', durationDays: '', dailyPercent: '', premium: false, country: 'Global'
+  name: '', description: '', priceFBu: '', durationDays: '', dailyPercent: '', premium: false, country: 'Global',
+  type: 'normal', payoutType: 'daily'
 };
 
 const getMachineImage = (img) => {
@@ -81,6 +82,8 @@ function AdminMachines() {
       dailyPercent: m.dailyPercent,
       premium: m.premium || false,
       country: m.country || 'Global',
+      type: m.type || 'normal',
+      payoutType: m.payoutType || 'daily',
     });
     setImageFile(null);
     setImagePreview(m.imageUrl ? getMachineImage(m.imageUrl) : null);
@@ -322,6 +325,23 @@ function AdminMachines() {
                   </div>
                 </div>
 
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div>
+                    <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Plan Type</label>
+                    <select name="type" value={formData.type} onChange={handleInput} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl font-bold text-sm focus:ring-1 focus:ring-secondary outline-none">
+                      <option value="normal">Normal Plan</option>
+                      <option value="hot">Hot Plan (Short-time)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Payout Logic</label>
+                    <select name="payoutType" value={formData.payoutType} onChange={handleInput} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl font-bold text-sm focus:ring-1 focus:ring-secondary outline-none">
+                      <option value="daily">Daily ROI Distribution</option>
+                      <option value="total">Total Payout at End (Hot Plan Style)</option>
+                    </select>
+                  </div>
+                </div>
+
                 <div>
                   <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Description</label>
                   <textarea name="description" value={formData.description} onChange={handleInput} placeholder="Brief plan description..." className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl font-medium text-sm h-24 resize-none focus:ring-1 focus:ring-secondary outline-none" required />
@@ -416,11 +436,18 @@ function AdminMachines() {
                           </div>
                         </div>
 
-                        {m.premium && (
-                          <div className="absolute top-3 right-3 bg-secondary px-2.5 py-1 rounded-xl">
-                            <span className="text-white text-[8px] font-black uppercase tracking-widest">⭐ ELT</span>
-                          </div>
-                        )}
+                        <div className="absolute top-3 right-3 flex gap-1.5">
+                          {m.type === 'hot' && (
+                            <div className="bg-orange-500 px-2.5 py-1 rounded-xl">
+                              <span className="text-white text-[8px] font-black uppercase tracking-widest">🔥 HOT</span>
+                            </div>
+                          )}
+                          {m.premium && (
+                            <div className="bg-secondary px-2.5 py-1 rounded-xl">
+                              <span className="text-white text-[8px] font-black uppercase tracking-widest">⭐ ELT</span>
+                            </div>
+                          )}
+                        </div>
 
                         <div className="absolute bottom-3 left-4 right-4">
                           <h3 className="text-base font-black text-white leading-tight uppercase truncate">{m.name}</h3>

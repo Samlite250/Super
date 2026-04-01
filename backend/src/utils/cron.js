@@ -22,12 +22,48 @@ async function calculateDailyReturns(targetUserId = null) {
 
       const machine = inv.Machine;
       const user = inv.User;
+      const payoutType = machine.payoutType || 'daily';
       
       let referenceDate = inv.lastReturnAt || inv.startDate;
       let lastReturnTime = new Date(referenceDate).getTime();
       let currentTime = now.getTime();
       let hoursPassed = (currentTime - lastReturnTime) / (1000 * 60 * 60);
 
+      // --- HANDLE TOTAL PAYOUT (e.g., Short-term "Hot Plans") ---
+      if (payoutType === 'total') {
+        const start = new Date(inv.startDate);
+        const durationDays = parseInt(machine.durationDays);
+        const expiry = new Date(start.getTime() + (durationDays * 24 * 60 * 60 * 1000));
+
+        // Only pay out if we've reached or passed the expiry date AND haven't paid yet
+        if (now >= expiry && !inv.lastReturnAt) {
+          const totalIncome = (parseFloat(inv.amount) * parseFloat(machine.dailyPercent) * durationDays) / 100;
+          
+          const t = await sequelize.transaction();
+          try {
+            await User.increment({ balance: totalIncome }, { where: { id: user.id }, transaction: t });
+            inv.status = 'completed';
+            inv.lastReturnAt = now;
+            await inv.save({ transaction: t });
+            
+            await Transaction.create({ 
+              userId: user.id, 
+              type: 'earning', 
+              amount: totalIncome, 
+              description: `Matured ROI: ${machine.name} (${durationDays} days)` 
+            }, { transaction: t });
+
+            await t.commit();
+            console.log(`[ROI-TOTAL] Dispatched ${totalIncome} to ${user.email} for matured plan ${inv.id}`);
+          } catch (err) {
+            await t.rollback();
+            console.error(`[ROI-TOTAL] Failed for investment ${inv.id}:`, err);
+          }
+        }
+        continue; // Skip the daily loop for total payout plans
+      }
+
+      // --- HANDLE DAILY PAYOUT (Standard Plans) ---
       while (hoursPassed >= 24) {
         // Calculate income (use stored dailyIncome if available, otherwise fallback to percentage)
         let dailyIncome = 0;

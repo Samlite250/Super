@@ -156,6 +156,8 @@ exports.create = async (req, res) => {
       dailyPercent: parseFloat(dailyPercent), 
       premium: premium === 'true' || premium === true,
       country: country || 'Global',
+      type: req.body.type || 'normal',
+      payoutType: req.body.payoutType || 'daily',
       imageUrl 
     });
     res.json(machine);
@@ -199,6 +201,8 @@ exports.update = async (req, res) => {
     
     machine.premium = (premium === 'true' || premium === true);
     if (country) machine.country = country;
+    if (req.body.type) machine.type = req.body.type;
+    if (req.body.payoutType) machine.payoutType = req.body.payoutType;
 
     // Try to save; auto-alter imageUrl column if too short, then retry
     try {

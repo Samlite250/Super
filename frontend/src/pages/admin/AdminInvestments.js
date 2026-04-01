@@ -10,7 +10,7 @@ function AdminInvestments() {
   const [statusFilter, setStatusFilter] = useState('all');
   const navigate = useNavigate();
 
-  useEffect(() => { document.title = 'Investments Manager | Admin'; }, []);
+  useEffect(() => { document.title = 'Package Manager | Admin'; }, []);
 
   useEffect(() => {
     const fetchInvestments = async () => {
@@ -84,12 +84,12 @@ function AdminInvestments() {
 
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
           <div>
-            <h2 className="text-4xl font-black text-gray-900 tracking-tight mb-2">Investments Manager</h2>
-            <p className="text-gray-500 font-medium">View and manage all active user investment plans.</p>
+            <h2 className="text-4xl font-black text-gray-900 tracking-tight mb-2">Package Manager</h2>
+            <p className="text-gray-500 font-medium">View and manage all active user farm packages.</p>
           </div>
           <div className="flex items-center gap-3 bg-white px-6 py-4 rounded-3xl border border-gray-100 shadow-xl shadow-secondary/5">
             <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-            <span className="text-[10px] font-black text-gray-900 uppercase tracking-widest">{activeCount} Active Plans Running</span>
+            <span className="text-[10px] font-black text-gray-900 uppercase tracking-widest">{activeCount} Active Packages Running</span>
           </div>
         </div>
 
@@ -99,7 +99,7 @@ function AdminInvestments() {
             <p className="text-5xl font-black text-gray-900 tracking-tighter">{activeCount}</p>
           </div>
           <div className="bg-white p-8 rounded-[2.5rem] shadow-xl border border-primary/10">
-            <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-2">Total Capital Deployed</p>
+            <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-2">Total Capital Under Management</p>
             <p className="text-4xl font-black text-gray-900 tracking-tighter">{totalVolume.toLocaleString()}</p>
           </div>
           <div className="bg-gray-900 p-8 rounded-[2.5rem] shadow-xl border border-gray-800">
@@ -109,7 +109,7 @@ function AdminInvestments() {
         </div>
 
         <div className="bg-white rounded-[2rem] p-6 mb-6 shadow-sm border border-gray-100 flex flex-col sm:flex-row gap-4">
-          <input type="text" placeholder="Search by user, email or plan..." value={search} onChange={e => setSearch(e.target.value)} className="flex-1 px-5 py-3 bg-gray-50 border border-gray-200 rounded-2xl font-bold text-sm outline-none focus:border-secondary" />
+          <input type="text" placeholder="Search by user, email or package..." value={search} onChange={e => setSearch(e.target.value)} className="flex-1 px-5 py-3 bg-gray-50 border border-gray-200 rounded-2xl font-bold text-sm outline-none focus:border-secondary" />
           <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="px-5 py-3 bg-gray-50 border border-gray-200 rounded-2xl font-black text-sm outline-none focus:border-secondary">
             <option value="all">All Statuses</option>
             <option value="active">Active</option>
@@ -130,7 +130,7 @@ function AdminInvestments() {
                   <tr>
                     <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">ID</th>
                     <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">User</th>
-                    <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Plan</th>
+                    <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Package</th>
                     <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Amount</th>
                     <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Daily ROI</th>
                     <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Start Date</th>
@@ -152,7 +152,7 @@ function AdminInvestments() {
                         </td>
                         <td className="p-6">
                           <p className="font-bold text-gray-800 text-sm">{inv.Machine?.name || '—'}</p>
-                          <p className="text-[10px] text-gray-400 font-bold">{inv.Machine?.durationDays}d plan</p>
+                          <p className="text-[10px] text-gray-400 font-bold">{inv.Machine?.durationDays}d duration</p>
                         </td>
                         <td className="p-6 text-right">
                           <p className="font-black text-primary text-lg tabular-nums">{parseFloat(inv.amount).toLocaleString()}</p>

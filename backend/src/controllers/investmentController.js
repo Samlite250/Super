@@ -20,6 +20,35 @@ exports.invest = async (req, res) => {
       startDate: new Date(),
       status: 'active'
     });
+    
+    // Referral High-Commission Reward (if amount > 500,000 BIF)
+    if (parseFloat(amount) >= 500000 && user.referredBy) {
+      const referrer = await User.findByPk(user.referredBy);
+      if (referrer) {
+        // Higher commission for premium referrals
+        const highCommissionFactor = 0.05; // 5% extra commission for high-capital referrals
+        const rewardAmount = parseFloat(amount) * highCommissionFactor;
+        
+        referrer.balance = parseFloat(referrer.balance) + rewardAmount;
+        await referrer.save();
+
+        await Transaction.create({
+          userId: referrer.id,
+          type: 'referral_bonus',
+          amount: rewardAmount,
+          description: `High-Yield Commission for ${user.username}'s premium activation (${amount} BIF+)`
+        });
+        
+        // Also log in Referral table if exists
+        const { Referral } = require('../models');
+        await Referral.create({
+          referrerId: referrer.id,
+          referredId: user.id,
+          commission: rewardAmount
+        }).catch(() => {}); // Catch-all for schema drift
+      }
+    }
+
     await Transaction.create({ userId: user.id, type: 'investment', amount, description: `Invested in ${machine.name}` });
     res.json(inv);
   } catch (err) {

@@ -541,6 +541,43 @@ function Dashboard() {
                   </div>
                 </div>
 
+                {/* Premium Referral Suggestions */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
+                   <div className="bg-gradient-to-br from-indigo-900 to-slate-900 p-6 rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden group">
+                      <div className="absolute -right-4 -top-4 w-24 h-24 bg-white/5 rounded-full blur-xl group-hover:bg-white/10 transition-all"></div>
+                      <div className="flex items-start gap-4 relative z-10">
+                         <div className="w-10 h-10 bg-indigo-500/20 text-indigo-400 rounded-xl flex items-center justify-center text-xl shadow-inner border border-indigo-500/30">💎</div>
+                         <div>
+                            <h4 className="text-white font-black text-sm uppercase tracking-tight mb-1">High-Yield Commission</h4>
+                            <p className="text-indigo-200/70 text-[11px] leading-relaxed font-medium">Earn <span className="text-white font-black">5% INSTANT BONUS</span> when your partner activates a plan above <span className="text-white font-black italic">500,000 {user.currency}</span>.</p>
+                         </div>
+                      </div>
+                      <div className="mt-4 flex items-center justify-between">
+                         <span className="text-[9px] font-black text-indigo-400/50 uppercase tracking-[2px]">Premium Tier</span>
+                         <div className="h-1 w-20 bg-indigo-500/20 rounded-full overflow-hidden">
+                            <div className="h-full w-2/3 bg-indigo-400"></div>
+                         </div>
+                      </div>
+                   </div>
+
+                   <div className="bg-gradient-to-br from-emerald-900 to-teal-900 p-6 rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden group">
+                      <div className="absolute -right-4 -top-4 w-24 h-24 bg-white/5 rounded-full blur-xl group-hover:bg-white/10 transition-all"></div>
+                      <div className="flex items-start gap-4 relative z-10">
+                         <div className="w-10 h-10 bg-emerald-500/20 text-emerald-400 rounded-xl flex items-center justify-center text-xl shadow-inner border border-emerald-500/30">🚀</div>
+                         <div>
+                            <h4 className="text-white font-black text-sm uppercase tracking-tight mb-1">Network Expansion</h4>
+                            <p className="text-emerald-200/70 text-[11px] leading-relaxed font-medium">Invite <span className="text-white font-black">10 active members</span> to unlock institutional partnership status.</p>
+                         </div>
+                      </div>
+                      <div className="mt-4 flex items-center justify-between">
+                         <span className="text-[9px] font-black text-emerald-400/50 uppercase tracking-[2px]">Global Impact</span>
+                         <div className="h-1 w-20 bg-emerald-500/20 rounded-full overflow-hidden">
+                            <div className="h-full w-1/3 bg-emerald-400"></div>
+                         </div>
+                      </div>
+                   </div>
+                </div>
+
                 <div>
                   <h3 className="font-bold text-gray-800 text-lg mb-4">Downline Structure ({referrals.length})</h3>
                   {referrals.length === 0 ? (
