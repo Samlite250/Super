@@ -22,7 +22,11 @@ export const translations = {
     commission: "Commission Earned",
     payout: "Payout",
     totalProfit: "Total Profit",
-    waitTime: "Wait Time"
+    waitTime: "Wait Time",
+    motiveTitle: "Financial Freedom",
+    motiveText: "Your journey to wealth starts here. Invest in Tracova and grow your future through agriculture!",
+    motiveAction: "Invest in Your Future",
+    motiveBanner: "Your future is being planted today. Start growing with Tracova!"
   },
   sw: {
     welcome: "Karibu",
@@ -47,7 +51,11 @@ export const translations = {
     commission: "Tume Iliyopatikana",
     payout: "Malipo",
     totalProfit: "Faida Jumla",
-    waitTime: "Muda wa Kusubiri"
+    waitTime: "Muda wa Kusubiri",
+    motiveTitle: "Uhuru wa Kifedha",
+    motiveText: "Safari yako ya utajiri inaanza hapa. Wekeza katika Tracova na tukuze maisha yako ya baadaye kupitia kilimo!",
+    motiveAction: "Wekeza kwa Baadaye Yako",
+    motiveBanner: "Maisha yako ya baadaye yanapandwa leo. Anza kukua na Tracova!"
   },
   rw: {
     welcome: "Murakaza neza",
@@ -72,7 +80,11 @@ export const translations = {
     commission: "Inyungu wabonye",
     payout: "Kwishyuza",
     totalProfit: "Inyungu Yose",
-    waitTime: "Igihe cyo gutegereza"
+    waitTime: "Igihe cyo gutegereza",
+    motiveTitle: "Ubwisanzure mu bukungu",
+    motiveText: "Urugendo rwawe rw'ubutunzi rutangirira hano. Shora muri Tracova maze wubake ejo hazaza hawe binyuze mu buhinzi!",
+    motiveAction: "Shora mu ejo hazaza hawe",
+    motiveBanner: "Ejo hawe hazaza harimo kubakwa uyu munsi. Tangira gukurana na Tracova!"
   },
   rn: {
     welcome: "Kaze",
@@ -97,7 +109,12 @@ export const translations = {
     commission: "Inyungu wabonye",
     payout: "Kwishyuza",
     totalProfit: "Inyungu Yose",
-    waitTime: "Igihe co gutegereza"
+    waitTime: "Igihe co gutegereza",
+    motiveTitle: "Ubwisanzure mu bukungu",
+    motiveText: "Urugendo rwawe rw'ubutunzi rutangirira hano. Shira amafaranga yawe muri Tracova maze wubake ejo hazaza hawe biciye mu burimyi!",
+    motiveAction: "Shira amafaranga yawe mu ejo hazaza",
+    motiveBanner: "Ejo hawe hazaza hariko harategurwa uyu musi. Tangira gutera imbere na Tracova!"
+
 
   }
 };

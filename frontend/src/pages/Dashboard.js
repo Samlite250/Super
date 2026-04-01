@@ -145,50 +145,49 @@ function Dashboard() {
   return (
     <div className="min-h-screen bg-gray-50 font-sans pb-16">
       
-      {/* Hot Flash Sale Banner */}
+      {/* Motivational Banner */}
       {hotPlansCount > 0 && (
-        <div className="bg-gradient-to-r from-amber-500 to-orange-600 text-white py-2 px-4 shadow-sm relative z-[60] overflow-hidden">
-          <div className="absolute inset-0 bg-white/10 animate-pulse pointer-events-none"></div>
+        <div className="bg-gradient-to-r from-primary to-green-800 text-white py-2.5 px-4 shadow-sm relative z-[60] overflow-hidden">
+          <div className="absolute inset-0 bg-white/5 animate-pulse pointer-events-none"></div>
           <div className="max-w-6xl mx-auto flex items-center justify-center gap-4 text-[10px] font-black uppercase tracking-[3px]">
-             <Zap size={14} className="fill-white animate-bounce" />
-             <span>Limited Time: Hot Flash Sales Available Now!</span>
-             <button onClick={() => navigate('/machines')} className="bg-white text-orange-600 px-3 py-1 rounded-full hover:bg-orange-50 transition-colors tracking-widest flex items-center gap-2">
-               View Now <ExternalLink size={10} />
+             <Award size={14} className="text-yellow-400 animate-bounce" />
+             <span>{t('motiveBanner')}</span>
+             <button onClick={() => navigate('/machines')} className="bg-white text-primary px-4 py-1 rounded-full hover:bg-green-50 transition-all font-black tracking-widest flex items-center gap-2 shadow-sm">
+               {t('motiveAction')} <ExternalLink size={10} />
              </button>
-             <Zap size={14} className="fill-white animate-bounce" />
           </div>
         </div>
       )}
 
-      {/* Hot Offer Popup Modal */}
+      {/* Motivational Popup Modal */}
       <AnimatePresence>
         {showHotPopup && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-md">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/90 backdrop-blur-sm">
             <motion.div 
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.8, opacity: 0 }}
-              className="bg-white rounded-[2.5rem] w-full max-w-[280px] sx:max-w-[90vw] overflow-hidden shadow-2xl relative border-4 border-amber-400"
+              className="bg-white rounded-[2.5rem] w-full max-w-[320px] overflow-hidden shadow-2xl relative border-4 border-primary"
             >
-              <div className="p-6 sm:p-8 text-center">
-                 <div className="text-4xl sm:text-5xl mb-4">🔥</div>
-                 <h2 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight mb-2 uppercase">HOT OFFER!</h2>
-                 <p className="text-slate-500 font-bold text-[10px] uppercase tracking-widest leading-relaxed mb-6">
-                    {hotPlansCount} Limited flash sales are now active.
+              <div className="p-8 sm:p-10 text-center">
+                 <div className="text-5xl sm:text-6xl mb-6 scale-110 drop-shadow-lg">🌱</div>
+                 <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tighter mb-3 uppercase leading-none">{t('motiveTitle')}</h2>
+                 <p className="text-slate-500 font-bold text-[11px] uppercase tracking-widest leading-relaxed mb-8 px-2">
+                    {t('motiveText')}
                  </p>
 
                  
                  <button 
                   onClick={() => { setShowHotPopup(false); navigate('/machines'); }}
-                  className="w-full py-4 bg-orange-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl active:scale-95 transition-all"
+                  className="w-full py-4.5 bg-primary text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-[0_10px_20px_-5px_rgba(31,139,76,0.5)] active:scale-95 transition-all"
                  >
-                    Check Now
+                    {t('motiveAction')}
                  </button>
                  <button 
                   onClick={() => setShowHotPopup(false)}
-                  className="mt-4 text-[9px] font-black text-slate-300 hover:text-slate-500 uppercase tracking-widest transition-colors"
+                  className="mt-6 text-[10px] font-black text-slate-300 hover:text-slate-500 uppercase tracking-widest transition-colors"
                  >
-                    Dismiss
+                    NOT NOW
                  </button>
               </div>
             </motion.div>
