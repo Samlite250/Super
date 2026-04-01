@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, Link, useLocation } from 'react-router-dom';
-import { toast } from 'react-hot-toast';
 import api from '../services/api';
+import { useLanguage } from '../context/LanguageContext';
 
 function RegisterPage() {
+  const { t } = useLanguage();
   const [form, setForm] = useState({
     fullName: '', username: '', phone: '', email: '', password: '', country: '', referralCode: ''
   });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
   const location = useLocation();
 
   useEffect(() => { document.title = "Register | Tracova"; }, []);
@@ -51,8 +51,8 @@ function RegisterPage() {
             <img src="/logo.png" className="h-[70px] w-auto object-contain mx-auto drop-shadow-lg" alt="Tracova Logo" />
             <span className="text-xl font-black text-primary tracking-[0.2em] uppercase mt-1 group-hover:text-green-700 transition-colors">Tracova</span>
           </Link>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2 tracking-tight">Create your account</h2>
-          <p className="text-sm font-medium text-gray-500">Join others making money from farming.</p>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2 tracking-tight">{t('register')}</h2>
+          <p className="text-sm font-medium text-gray-500">Join the professional platform.</p>
         </div>
 
 
@@ -130,7 +130,7 @@ function RegisterPage() {
             <div>
               <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Set Password</label>
 
-              <input 
+               <input 
                 name="password" 
                 onChange={handleChange} 
                 value={form.password} 
@@ -142,33 +142,13 @@ function RegisterPage() {
             </div>
           </div>
 
-          {/* Referral Field */}
-          <div className="pt-2 border-t border-gray-100 relative">
-             <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5 flex justify-between items-center">
-               <span>Referred By</span>
-               {form.referralCode && (
-                 <span className="text-[10px] bg-green-100 text-primary px-2 py-0.5 rounded-full animate-pulse flex items-center gap-1">
-                   <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>
-                   Inviter Detected
-                 </span>
-               )}
-             </label>
-             <input 
-               name="referralCode" 
-               readOnly
-               value={form.referralCode} 
-               placeholder="No inviter detected" 
-               className="w-full px-4 py-2.5 bg-gray-50 border border-dashed border-gray-200 rounded-xl transition-all font-bold text-gray-500 text-sm cursor-default" 
-             />
-          </div>
-
           <button 
             disabled={loading}
             className="w-full py-4 mt-6 bg-primary hover:bg-green-700 active:scale-[0.98] text-white rounded-xl font-bold text-lg shadow-[0_4px_14px_0_rgba(31,139,76,0.39)] transition-all flex justify-center items-center gap-2 disabled:opacity-70 disabled:scale-100"
           >
             {loading ? (
                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-            ) : "Join Now"}
+            ) : t('register')}
           </button>
 
         </form>
@@ -179,9 +159,9 @@ function RegisterPage() {
           </p>
           <div className="mt-8 text-center border-t border-gray-100 pt-6">
             <p className="font-medium text-gray-600">
-              Already have an account?{' '}
+              {t('hasAccount')}{' '}
               <Link to="/login" className="font-bold text-primary hover:text-green-700 hover:underline transition">
-                Log in instantly
+                {t('login')}
               </Link>
             </p>
           </div>
