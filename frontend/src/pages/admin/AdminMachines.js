@@ -44,6 +44,8 @@ function AdminMachines() {
     setTimeout(() => setToast(null), 3500);
   };
 
+  const [typeFilter, setTypeFilter] = useState('all'); // 'all', 'normal', 'hot'
+
   const fetchMachines = useCallback(async () => {
     try {
       const res = await api.get('/machines');
@@ -60,7 +62,12 @@ function AdminMachines() {
 
   useEffect(() => { fetchMachines(); }, [fetchMachines]);
 
-  const tabMachines = machines.filter(m => (m.country || 'Global') === activeTab);
+  const filteredMachines = machines.filter(m => {
+    const countryMatch = (m.country || 'Global') === activeTab;
+    const typeMatch = typeFilter === 'all' || m.type === typeFilter;
+    return countryMatch && typeMatch;
+  });
+
   const activeCountry = COUNTRIES.find(c => c.key === activeTab) || COUNTRIES[0];
 
   const openAdd = () => {
@@ -238,6 +245,36 @@ function AdminMachines() {
           })}
         </div>
 
+        {/* Tier Filter Section */}
+        <div className="flex items-center gap-4 mb-8 pb-4 border-b border-gray-100">
+           <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Plan Tier:</p>
+           <div className="flex gap-2">
+              {[
+                { key: 'all', label: 'All Packages', icon: '📋' },
+                { key: 'normal', label: 'Standard Plans', icon: '🌱' },
+                { key: 'hot', label: 'Hot Portfolios', icon: '🔥' },
+              ].map(t => {
+                const count = machines.filter(m => (m.country || 'Global') === activeTab && (t.key === 'all' || m.type === t.key)).length;
+                const isActive = typeFilter === t.key;
+                return (
+                  <button
+                    key={t.key}
+                    onClick={() => setTypeFilter(t.key)}
+                    className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 border ${
+                      isActive ? 'bg-gray-900 text-white border-transparent shadow-md' : 'bg-white text-gray-500 border-gray-100 hover:border-gray-300'
+                    }`}
+                  >
+                    <span>{t.icon}</span>
+                    {t.label}
+                    <span className={`px-2 py-0.5 rounded-full text-[8px] ${isActive ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-400'}`}>
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
+           </div>
+        </div>
+
         {/* Country Info Banner */}
         {activeTab !== 'Global' && (
           <div className={`${activeCountry.color} rounded-2xl p-4 mb-6 flex items-center gap-4 shadow-md`}>
@@ -382,9 +419,9 @@ function AdminMachines() {
         {!showForm && (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
             {[
-              { label: 'Total Packages', value: tabMachines.length, icon: '📋' },
-              { label: 'Standard', value: tabMachines.filter(m => !m.premium).length, icon: '🔵' },
-              { label: 'Elite', value: tabMachines.filter(m => m.premium).length, icon: '⭐' },
+              { label: 'Total Packages', value: filteredMachines.length, icon: '📋' },
+              { label: 'Standard', value: filteredMachines.filter(m => !m.premium).length, icon: '🔵' },
+              { label: 'Elite', value: filteredMachines.filter(m => m.premium).length, icon: '⭐' },
               { label: 'Currency', value: activeCountry.currency, icon: '💱' },
             ].map((s, i) => (
               <div key={i} className="bg-white border border-gray-100 rounded-2xl p-5 flex items-center justify-between shadow-sm">
@@ -401,11 +438,11 @@ function AdminMachines() {
         {/* Plans Grid */}
         {!showForm && (
           <div>
-            {tabMachines.length === 0 ? (
+            {filteredMachines.length === 0 ? (
               <div className="bg-white rounded-[3rem] border-2 border-dashed border-gray-100 p-20 text-center">
                 <p className="text-4xl mb-4">{activeCountry.flag}</p>
                 <p className="text-gray-300 font-black uppercase tracking-[6px] text-xs mb-4">No Packages Yet</p>
-                <p className="text-gray-400 text-sm font-medium mb-6">No investment packages configured for {activeCountry.label} users.</p>
+                <p className="text-gray-400 text-sm font-medium mb-6">No {typeFilter !== 'all' ? typeFilter : ''} investment packages configured for {activeCountry.label} users.</p>
                 <button
                   onClick={openAdd}
                   className="px-8 py-3 bg-gray-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-black transition-all"
@@ -415,7 +452,7 @@ function AdminMachines() {
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
-                {tabMachines.map((m, idx) => {
+                {filteredMachines.map((m, idx) => {
                   const fallbackImages = ['/tractor_agro.png','/drone_agro.png','/harvester_agro.png','/heavy_tractor_agro.png'];
                   const imgSrc = m.imageUrl ? getMachineImage(m.imageUrl) : fallbackImages[idx % fallbackImages.length];
                   const countryInfo = COUNTRIES.find(c => c.key === (m.country || 'Global')) || COUNTRIES[0];
