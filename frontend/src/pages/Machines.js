@@ -11,6 +11,8 @@ function Machines() {
   const [investingId, setInvestingId] = useState(null);
   const navigate = useNavigate();
 
+  const [viewType, setViewType] = useState('normal'); // 'normal' or 'hot'
+
   useEffect(() => { document.title = "Farm Packages | Tracova"; }, []);
 
   useEffect(() => {
@@ -44,9 +46,6 @@ function Machines() {
       return;
     }
     
-    // Check if user has enough balance roughly (if we had user state here), 
-    // but the backend will validate it anyway.
-    
     if (!window.confirm(`Are you sure you want to invest in ${machine.name} for ${parseFloat(machine.price || machine.priceFBu).toLocaleString()} ${user?.currency || machine.currency || 'FBu'}?`)) {
         return;
     }
@@ -76,6 +75,9 @@ function Machines() {
       </div>
     );
   }
+
+  const hotPlans = machines.filter(m => m.type === 'hot');
+  const normalPlans = machines.filter(m => m.type !== 'hot');
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans pb-16">
@@ -112,6 +114,27 @@ function Machines() {
           </div>
         )}
 
+        {/* Tab Switcher */}
+        <div className="flex justify-center mb-10">
+           <div className="bg-white p-1.5 rounded-2xl shadow-sm border border-gray-100 flex gap-1">
+              <button
+                onClick={() => setViewType('normal')}
+                className={`px-8 py-3 rounded-xl font-bold text-sm transition-all duration-300 ${viewType === 'normal' ? 'bg-primary text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'}`}
+              >
+                Standard Equipment
+              </button>
+              <button
+                onClick={() => setViewType('hot')}
+                className={`px-8 py-3 rounded-xl font-bold text-sm transition-all duration-300 relative ${viewType === 'hot' ? 'bg-orange-500 text-white shadow-md shadow-orange-100' : 'text-gray-500 hover:bg-orange-50'}`}
+              >
+                Hot Short-Time Plans
+                {hotPlans.length > 0 && viewType !== 'hot' && (
+                  <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white animate-pulse"></span>
+                )}
+              </button>
+           </div>
+        </div>
+
         {machines.length === 0 && !error ? (
           <div className="bg-white p-10 rounded-2xl shadow-sm border border-gray-100 text-center">
             <span className="text-6xl mb-4 block">🚜</span>
@@ -120,33 +143,38 @@ function Machines() {
           </div>
         ) : (
           <>
-            {/* Hot Plans Section */}
-            {machines.filter(m => m.type === 'hot').length > 0 && (
-              <div className="mb-14">
+            {viewType === 'hot' ? (
+              <div className="animate-fadeIn">
                 <div className="flex items-center gap-3 mb-6">
                    <div className="w-1.5 h-8 bg-orange-500 rounded-full"></div>
-                   <h2 className="text-2xl font-black text-gray-900 tracking-tight">Short-Time <span className="text-orange-600 uppercase">Hot Plans</span> ⚡</h2>
+                   <h2 className="text-2xl font-black text-gray-900 tracking-tight">Active <span className="text-orange-600 uppercase">Flash Sales</span> 🔥</h2>
+                </div>
+                {hotPlans.length === 0 ? (
+                  <div className="bg-white p-16 rounded-3xl border border-dashed border-gray-200 text-center">
+                    <p className="text-4xl mb-4">⏳</p>
+                    <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">No active flash plans at the moment</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {hotPlans.map((m, idx) => (
+                      <MachineCard key={m.id} m={m} idx={idx} user={user} investingId={investingId} handleInvest={handleInvest} isHot={true} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="animate-fadeIn">
+                <div className="flex items-center gap-3 mb-6">
+                   <div className="w-1.5 h-8 bg-primary rounded-full"></div>
+                   <h2 className="text-2xl font-black text-gray-900 tracking-tight">Standard <span className="text-primary uppercase">Portfolio</span></h2>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {machines.filter(m => m.type === 'hot').map((m, idx) => (
-                    <MachineCard key={m.id} m={m} idx={idx} user={user} investingId={investingId} handleInvest={handleInvest} isHot={true} />
+                  {normalPlans.map((m, idx) => (
+                    <MachineCard key={m.id} m={m} idx={idx} user={user} investingId={investingId} handleInvest={handleInvest} />
                   ))}
                 </div>
               </div>
             )}
-
-            {/* Normal Plans Section */}
-            <div>
-              <div className="flex items-center gap-3 mb-6">
-                 <div className="w-1.5 h-8 bg-primary rounded-full"></div>
-                 <h2 className="text-2xl font-black text-gray-900 tracking-tight">Main Equipment <span className="text-primary uppercase">Catalog</span></h2>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {machines.filter(m => m.type !== 'hot').map((m, idx) => (
-                  <MachineCard key={m.id} m={m} idx={idx} user={user} investingId={investingId} handleInvest={handleInvest} />
-                ))}
-              </div>
-            </div>
           </>
         )}
       </div>
