@@ -687,21 +687,21 @@ function Dashboard() {
                 {/* Downline Structure */}
                 <div className="mb-20">
                   <div className="flex items-center justify-between mb-6 px-4">
-                    <h3 className="font-black text-gray-900 text-lg uppercase tracking-tight">Active Team Nodes ({referrals.length})</h3>
-                    <span className="text-[10px] font-black text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full border border-indigo-100">Live Status</span>
+                    <h3 className="font-black text-gray-900 text-lg uppercase tracking-tight">Your Team Members ({referrals.length})</h3>
+                    <span className="text-[10px] font-black text-primary bg-green-50 px-3 py-1 rounded-full border border-green-100 uppercase tracking-widest">Live</span>
                   </div>
                   {referrals.length === 0 ? (
                     <div className="bg-white border-2 border-dashed border-gray-100 rounded-[2.5rem] p-16 text-center text-gray-300 font-black uppercase text-xs tracking-widest">
-                      Zero active nodes detected. Invite whales to start yielding.
+                      No team members found. Share your link to start building your network.
                     </div>
                   ) : (
                     <div className="overflow-x-auto rounded-[2rem] border border-gray-100 shadow-md">
                       <table className="w-full text-left border-collapse">
                         <thead className="bg-gray-50/80 border-b border-gray-100">
                           <tr>
-                            <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Node User</th>
-                            <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Activation Date</th>
-                            <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Yield Generated</th>
+                            <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Member Name</th>
+                            <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Join Date</th>
+                            <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Commission Earned</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-50">
@@ -720,8 +720,8 @@ function Dashboard() {
                               </td>
                               <td className="p-6 text-xs text-gray-500 font-bold">{new Date(ref.createdAt).toLocaleDateString()}</td>
                               <td className="p-6 text-right">
-                                <span className="font-black text-primary bg-green-50 px-3 py-2 rounded-xl border border-green-100 inline-block">
-                                  + {parseFloat(ref.commission || 0).toLocaleString()} <span className="text-[10px] opacity-50">{user.currency}</span>
+                                <span className="font-black text-primary bg-green-50 px-4 py-2 rounded-xl border border-green-100 inline-block font-sans">
+                                  + {parseFloat(ref.commission || 0).toLocaleString()} <span className="text-[10px] opacity-60 ml-0.5">{user.currency}</span>
                                 </span>
 
                               </td>
