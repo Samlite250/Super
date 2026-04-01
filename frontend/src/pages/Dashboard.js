@@ -424,34 +424,83 @@ function Dashboard() {
                     </div>
                  </div>
 
-                 {/* Balance Cards */}
-                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
-                    <div className="bg-gray-950 p-10 rounded-[3rem] shadow-3xl text-white relative overflow-hidden group border border-white/5">
-                        <div className="absolute top-0 right-0 w-40 h-40 bg-primary/20 rounded-full blur-[80px]"></div>
-                        <div className="flex justify-between items-start mb-12 relative z-10">
-                            <div>
-                               <p className="text-[10px] font-black text-gray-500 uppercase tracking-[4px] mb-4">{t('totalBalance')}</p>
-                               <h2 className="text-6xl font-black tracking-tight">{parseFloat(user.balance || 0).toLocaleString()} <span className="text-xl font-bold opacity-30">{user.currency || 'FBu'}</span></h2>
-                            </div>
-                            <div className="w-14 h-14 bg-white/10 rounded-[1.5rem] flex items-center justify-center text-3xl shadow-inner border border-white/10 backdrop-blur-sm">💰</div>
-                        </div>
-
-                        <div className="flex gap-4 relative z-10">
-                            <button 
-                              onClick={() => navigate('/deposit')}
-                              className="flex-1 bg-white text-gray-950 py-5 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl"
-                            >
-                               {t('deposit')}
-                            </button>
-                            <button 
-                              onClick={() => navigate('/withdraw')}
-                              className="flex-1 bg-white/10 border border-white/20 text-white py-5 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-white/20 active:scale-95 transition-all backdrop-blur-sm"
-                            >
-                               {t('withdraw')}
-                            </button>
-                        </div>
+                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  {/* Action Card */}
+                  <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-6 md:p-8 rounded-2xl border border-green-100 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 -mr-4 -mt-4 w-32 h-32 bg-green-200 rounded-full opacity-20 blur-xl"></div>
+                    <h3 className="font-extrabold text-xl text-green-900 mb-2 relative z-10">Quick Actions</h3>
+                    <p className="text-sm text-green-700 font-medium mb-6 relative z-10">Manage your money and expand your portfolio.</p>
+                    
+                    <div className="space-y-3 relative z-10">
+                      <button
+                        onClick={() => navigate('/deposit')}
+                        className="w-full bg-white hover:bg-blue-50 text-secondary border-2 border-secondary/20 py-3 rounded-xl font-bold shadow-sm transition-all flex items-center justify-center gap-2"
+                      >
+                        💵 {t('deposit')}
+                      </button>
+                      <button
+                        onClick={() => navigate('/withdraw')}
+                        className="w-full bg-primary hover:bg-green-700 text-white py-3 rounded-xl font-bold shadow-[0_4px_14px_0_rgba(31,139,76,0.39)] transition-all flex items-center justify-center gap-2"
+                      >
+                        📱 {t('withdraw')}
+                      </button>
+                      <button
+                        onClick={() => navigate('/machines')}
+                        className="w-full bg-gray-900 hover:bg-black text-white py-3 rounded-xl font-bold shadow-md transition-all flex items-center justify-center gap-2"
+                      >
+                        🚜 Explore Plans
+                      </button>
                     </div>
-                 </div>
+                  </div>
+
+                  {/* Profile Card */}
+                  <div className="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 flex flex-col relative overflow-hidden">
+                    <div className="absolute top-0 right-0 -mr-4 -mt-4 w-32 h-32 bg-blue-100 rounded-full opacity-50 blur-xl"></div>
+                    <h3 className="font-extrabold text-xl text-gray-900 mb-2 relative z-10">Account Settings</h3>
+                    <p className="text-sm text-gray-500 font-medium mb-6 relative z-10">Your verified identity and status.</p>
+                    
+                    <div className="space-y-4 text-sm flex-1 relative z-10">
+                      <div className="flex justify-between items-center py-2 border-b border-gray-50">
+                        <span className="text-gray-500 font-medium">Email Address</span>
+                        <span className="font-bold text-gray-900">{user.email}</span>
+                      </div>
+                      <div className="flex justify-between items-center py-2 border-b border-gray-50">
+                        <span className="text-gray-500 font-medium">Account Total</span>
+                        <span className="font-bold text-gray-900">{parseFloat(user.balance || 0).toLocaleString()} {user.currency}</span>
+                      </div>
+                      <div className="flex justify-between items-center py-2 border-b border-gray-50">
+                        <span className="text-gray-500 font-medium">Status</span>
+                        <span className="bg-green-100 text-green-800 text-[10px] uppercase tracking-wider px-2 py-1 rounded font-bold">Verified</span>
+                      </div>
+                      <div className="flex justify-between items-center py-2">
+                        <span className="text-gray-500 font-medium">Member Since</span>
+                        <span className="font-bold text-gray-900">{new Date(user.createdAt).toLocaleDateString()}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Join Us Section */}
+                {(socialLinks.whatsapp || socialLinks.telegram) && (
+                  <div className="mt-8 bg-white p-6 md:p-8 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6 transition-all hover:shadow-md">
+                     <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-xl shadow-inner italic font-serif text-gray-400">@</div>
+                        <div>
+                          <h3 className="text-lg font-black text-gray-900 tracking-tight">Community Hub</h3>
+                          <p className="text-[11px] text-gray-400 font-bold uppercase tracking-widest">Connect with official registry streams</p>
+                        </div>
+                     </div>
+                     
+                     <div className="flex items-center gap-3">
+                        {socialLinks.whatsapp && (
+                          <a href={socialLinks.whatsapp} target="_blank" rel="noopener noreferrer" className="bg-green-50 hover:bg-green-500 text-green-600 hover:text-white px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">WhatsApp</a>
+                        )}
+                        {socialLinks.telegram && (
+                          <a href={socialLinks.telegram} target="_blank" rel="noopener noreferrer" className="bg-blue-50 hover:bg-blue-500 text-blue-600 hover:text-white px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Telegram</a>
+                        )}
+                     </div>
+                  </div>
+                )}
               </div>
             )}
 
