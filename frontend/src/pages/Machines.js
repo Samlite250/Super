@@ -81,7 +81,7 @@ function Machines() {
   const normalPlans = machines.filter(m => m.type !== 'hot');
 
   return (
-    <div className="min-h-screen bg-gray-50 font-sans pb-16">
+    <div className="min-h-screen bg-white font-sans pb-16">
       {/* Premium Header matching Deposit.js */}
       <header className="bg-primary text-white pt-8 pb-14 px-6 shadow-md relative overflow-hidden">
         <div className="absolute top-0 right-0 -tr-translate-x-1/2 -tr-translate-y-1/2 w-64 h-64 bg-green-500 rounded-full opacity-15 blur-2xl"></div>
@@ -91,9 +91,9 @@ function Machines() {
           <div>
             <h1 className="text-3xl font-extrabold tracking-tight mb-2 flex items-center gap-2">
               <img src="/logo.png" className="h-10 w-auto object-contain inline-block mr-4 scale-110" alt="Tracova Logo" />
-              Farm Investment Packages
+              Agri-Investment Hub
             </h1>
-                Purchase stakes in high-yield farming equipment. Watch your capital grow daily with our secure agricultural equipment packages.
+                Choose a plan to start generating daily returns from our verified agricultural equipment fleet.
           </div>
           <div className="flex items-center gap-3">
             <button 
@@ -115,26 +115,27 @@ function Machines() {
           </div>
         )}
 
-        {/* Tab Switcher */}
+        {/* Tab Switcher - Lighter Style */}
         <div className="flex justify-center mb-10">
-           <div className="bg-white p-1.5 rounded-2xl shadow-sm border border-gray-100 flex gap-1">
+           <div className="bg-gray-50 p-1.5 rounded-2xl shadow-inner border border-gray-100 flex gap-1">
               <button
                 onClick={() => setViewType('normal')}
-                className={`px-8 py-3 rounded-xl font-bold text-sm transition-all duration-300 ${viewType === 'normal' ? 'bg-primary text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'}`}
+                className={`px-8 py-3 rounded-xl font-bold text-sm transition-all duration-300 ${viewType === 'normal' ? 'bg-primary text-white shadow-lg' : 'text-gray-400 hover:text-gray-600'}`}
               >
-                Standard Equipment
+                Standard Catalog
               </button>
               <button
                 onClick={() => setViewType('hot')}
-                className={`px-8 py-3 rounded-xl font-bold text-sm transition-all duration-300 relative ${viewType === 'hot' ? 'bg-orange-500 text-white shadow-md shadow-orange-100' : 'text-gray-500 hover:bg-orange-50'}`}
+                className={`px-8 py-3 rounded-xl font-bold text-sm transition-all duration-300 relative ${viewType === 'hot' ? 'bg-amber-500 text-white shadow-lg shadow-amber-100' : 'text-gray-400 hover:text-amber-600'}`}
               >
-                Hot Short-Time Plans
+                Flash Sales 🔥
                 {hotPlans.length > 0 && viewType !== 'hot' && (
                   <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white animate-pulse"></span>
                 )}
               </button>
            </div>
         </div>
+
 
         {machines.length === 0 && !error ? (
           <div className="bg-white p-10 rounded-2xl shadow-sm border border-gray-100 text-center">
@@ -185,7 +186,7 @@ function Machines() {
 }
 
 
-// ─── HOT MACHINE CARD (PREMIUM REDESIGN) ───────────────────────────────────
+// ─── HOT MACHINE CARD (LIGHT & CLEAR REDESIGN) ──────────────────────────────
 function HotMachineCard({ m, idx, user, investingId, handleInvest }) {
     const price = parseFloat(m.price || m.priceFBu);
     const dailyRate = parseFloat(m.dailyPercent);
@@ -204,107 +205,85 @@ function HotMachineCard({ m, idx, user, investingId, handleInvest }) {
 
     return (
       <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: idx * 0.05 }}
-        className="relative group h-full"
+        className="relative h-full"
       >
-        {/* Animated Border Glow */}
-        <div className="absolute -inset-0.5 bg-gradient-to-r from-orange-600 to-red-600 rounded-3xl blur opacity-30 group-hover:opacity-100 transition duration-500"></div>
+        {/* Subtle Outer Glow */}
+        <div className="absolute -inset-1 bg-amber-400 opacity-10 blur-xl rounded-3xl"></div>
         
-        <div className="relative bg-[#0F172A] rounded-[2rem] h-full flex flex-col overflow-hidden border border-white/10 shadow-2xl">
+        <div className="relative bg-white rounded-[2.5rem] h-full flex flex-col overflow-hidden border-2 border-amber-100 shadow-xl shadow-amber-500/5 hover:shadow-amber-500/10 transition-all group">
           
           {/* Header Image Section */}
-          <div className="relative h-44 w-full overflow-hidden">
+          <div className="relative h-40 w-full overflow-hidden">
             <img 
               src={getMachineImage(m.imageUrl)} 
               alt={m.name} 
-              className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-700 group-hover:scale-110"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0F172A] via-transparent to-transparent"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent"></div>
             
-            {/* Badges */}
-            <div className="absolute top-4 left-4 flex gap-2">
-              <div className="bg-orange-500 text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg flex items-center gap-1 animate-pulse">
-                <Flame size={12} className="fill-white" /> High Demand
+            {/* badges */}
+            <div className="absolute top-4 left-4">
+              <div className="bg-orange-600 text-white px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider shadow-lg flex items-center gap-1">
+                <Flame size={12} fill="white" /> Hot Offer
               </div>
             </div>
             
-            <div className="absolute top-4 right-4 bg-white/10 backdrop-blur-md border border-white/20 px-3 py-1 rounded-xl text-white text-[10px] font-bold flex items-center gap-1.5">
-              <Shield size={12} className="text-blue-400" /> Insured Asset
+            <div className="absolute top-4 right-4 bg-white/70 backdrop-blur-md border border-white px-2 py-1 rounded-lg text-amber-700 text-[10px] font-bold shadow-sm">
+              Flash Sale
             </div>
           </div>
 
-          {/* Card Content */}
-          <div className="p-6 pt-2 flex flex-col flex-grow">
-            <div className="mb-5">
-              <div className="flex items-center gap-2 mb-1.5">
-                <span className="text-[10px] font-black text-orange-500 uppercase tracking-[2px]">Limited Time Plan</span>
-              </div>
-              <h3 className="text-xl font-black text-white leading-tight group-hover:text-orange-400 transition-colors">{m.name}</h3>
-              <p className="text-slate-400 text-xs mt-2 leading-relaxed line-clamp-2">Exclusive high-yield opportunity with instant automated distribution at the end of the term.</p>
+          <div className="p-6 pt-0 flex flex-col flex-grow">
+            <div className="mb-4">
+              <h3 className="text-xl font-black text-slate-800 leading-tight">{m.name}</h3>
+              <p className="text-slate-500 text-[11px] mt-1 font-medium leading-relaxed line-clamp-2">Exclusive limited-time agricultural package with accelerated capital returns.</p>
             </div>
 
-            {/* Financial Metrics - More relevant and clearer labels */}
-            <div className="grid grid-cols-2 gap-3 mb-6">
-              <div className="bg-white/5 border border-white/5 p-3 rounded-2xl">
-                <div className="flex items-center gap-1.5 text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-1">
-                  <TrendingUp size={12} className="text-orange-500" /> Final Profit
-                </div>
-                <p className="text-lg font-black text-white">
-                  +{(dailyRate * days).toFixed(0)}%
-                </p>
+            {/* Metrics */}
+            <div className="grid grid-cols-2 gap-2 mb-6">
+              <div className="bg-amber-50 rounded-2xl p-3 border border-amber-100/50">
+                <p className="text-[9px] font-black text-amber-600 uppercase tracking-widest mb-1">Total Profit</p>
+                <p className="text-xl font-black text-slate-800">+{((totalProfit / price) * 100).toFixed(0)}%</p>
               </div>
-              <div className="bg-white/5 border border-white/5 p-3 rounded-2xl">
-                <div className="flex items-center gap-1.5 text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-1">
-                  <Clock size={12} className="text-orange-500" /> Wait Time
-                </div>
-                <p className="text-lg font-black text-white">
-                  {m.durationDays} <span className="text-[10px] font-bold text-slate-500 uppercase">Days</span>
-                </p>
+              <div className="bg-blue-50 rounded-2xl p-3 border border-blue-100/50">
+                <p className="text-[9px] font-black text-blue-600 uppercase tracking-widest mb-1">Wait Time</p>
+                <p className="text-xl font-black text-slate-800">{m.durationDays} <span className="text-[9px]">Days</span></p>
               </div>
             </div>
 
-            {/* Payout Information */}
-            <div className="bg-gradient-to-br from-orange-500/10 to-red-500/10 border border-orange-500/20 rounded-2xl p-4 mb-6">
-              <div className="flex justify-between items-center mb-1">
-                <p className="text-[10px] font-black text-orange-500/80 uppercase tracking-widest">Total Payout at end</p>
-                <Award size={14} className="text-orange-500" />
-              </div>
-              <div className="flex items-baseline gap-2">
-                <p className="text-xl font-black text-white">{totalReturn.toLocaleString()}</p>
-                <p className="text-xs font-bold text-slate-400 uppercase">{user?.currency || m.currency || 'FBu'}</p>
-              </div>
-              <div className="mt-2 h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-orange-500 to-red-600 w-full animate-progress-fast"></div>
-              </div>
+            {/* Payout Area */}
+            <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100 mb-6">
+               <div className="flex justify-between items-center mb-1">
+                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Final Payout</p>
+                  <TrendingUp size={14} className="text-green-500" />
+               </div>
+               <div className="flex items-baseline gap-1.5">
+                  <p className="text-2xl font-black text-slate-900">{totalReturn.toLocaleString()}</p>
+                  <p className="text-[10px] font-bold text-slate-400">{user?.currency || m.currency}</p>
+               </div>
             </div>
 
-            {/* Pricing and Action */}
-            <div className="mt-auto pt-4 border-t border-white/5">
-              <div className="flex justify-between items-center mb-4">
-                <div>
-                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-0.5">Required Capital</p>
-                  <p className="text-2xl font-black text-white">
-                    {price.toLocaleString()} <span className="text-sm font-bold text-slate-500">{user?.currency || m.currency}</span>
-                  </p>
-                </div>
-              </div>
-
-              <button
+            {/* Action */}
+            <div className="mt-auto pt-4 border-t border-dashed border-slate-100">
+               <div className="flex justify-between items-end mb-4">
+                 <div>
+                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Investment</p>
+                    <p className="text-2xl font-black text-slate-900 leading-none">
+                      {price.toLocaleString()} <span className="text-xs font-bold text-slate-400">{user?.currency || m.currency}</span>
+                    </p>
+                 </div>
+               </div>
+               
+               <button
                 disabled={investingId === m.id}
                 onClick={() => handleInvest(m)}
-                className="w-full group/btn relative bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 p-4 rounded-xl text-white font-black text-[11px] uppercase tracking-[3px] transition-all flex items-center justify-center gap-3 active:scale-95 disabled:opacity-50 shadow-[0_10px_20px_-5px_rgba(234,88,12,0.4)]"
-              >
-                {investingId === m.id ? (
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                ) : (
-                  <>
-                    <Zap size={16} className="fill-white" />
-                    Secure Your Spot
-                  </>
-                )}
-              </button>
+                className="w-full py-4 bg-orange-600 hover:bg-orange-700 text-white rounded-2xl font-black text-[10px] uppercase tracking-[2px] transition-all flex justify-center items-center gap-2 shadow-[0_10px_20px_-5px_rgba(234,88,12,0.3)] active:scale-95 disabled:opacity-50"
+               >
+                  {investingId === m.id ? 'Processing...' : 'Secure Your Spot Now'}
+               </button>
             </div>
           </div>
         </div>

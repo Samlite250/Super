@@ -406,4 +406,67 @@ exports.seedInstitutional = async (req, res) => {
     console.error('[MACHINE] seedInstitutional error:', err.message);
     res.status(500).json({ message: 'Institutional Seed failed: ' + err.message });
   }
-};
+};
+
+exports.seedHotFlash = async (req, res) => {
+  try {
+    const plans = [
+      {
+        name: 'Starter Sprout Flash',
+        description: 'Micro-investment for early harvest testing. High frequency returns.',
+        priceFBu: 5000,
+        durationDays: 7,
+        dailyPercent: 2.15,
+        type: 'hot',
+        country: 'Global',
+        imageUrl: '/tractor_agro.png'
+      },
+      {
+        name: 'Weekend Mini Booster',
+        description: 'Limited weekend-only growth accelerator. Quick 3-day cycle.',
+        priceFBu: 15000,
+        durationDays: 3,
+        dailyPercent: 8.34,
+        type: 'hot',
+        country: 'Global',
+        imageUrl: '/drone_agro.png'
+      },
+      {
+        name: 'Community Harvest Core',
+        description: 'Mid-tier flash sale for village community cooperatives.',
+        priceFBu: 25000,
+        durationDays: 5,
+        dailyPercent: 4.0,
+        type: 'hot',
+        country: 'Global',
+        imageUrl: '/harvester_agro.png'
+      },
+      {
+        name: 'Junior Drone Scout',
+        description: 'Aerial monitoring stake for small-scale precision farming.',
+        priceFBu: 50000,
+        durationDays: 10,
+        dailyPercent: 1.8,
+        type: 'hot',
+        country: 'Global',
+        imageUrl: '/drone_agro.png'
+      }
+    ];
+
+    const results = [];
+    for (const p of plans) {
+      const exists = await Machine.findOne({ where: { name: p.name } });
+      if (!exists) {
+        await Machine.create(p);
+        results.push({ name: p.name, status: 'created' });
+      } else {
+        results.push({ name: p.name, status: 'skipped (exists)' });
+      }
+    }
+    res.json({ message: 'Hot Flash seed completed', results });
+  } catch (err) {
+    console.error('[MACHINE] seedHotFlash error:', err.message);
+    res.status(500).json({ message: 'Hot Flash Seed failed: ' + err.message });
+  }
+};
+
