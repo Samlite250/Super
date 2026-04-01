@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import api from '../services/api';
+import { useLanguage } from '../context/LanguageContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Tractor, X, ExternalLink, Zap } from 'lucide-react';
 
 function Dashboard() {
+  const { language, setLanguage, t } = useLanguage();
   const [user, setUser] = useState(null);
+
   const [showAd, setShowAd] = useState(true);
   const [investments, setInvestments] = useState([]);
   const [referrals, setReferrals] = useState([]);
@@ -202,12 +205,25 @@ function Dashboard() {
         
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row md:justify-between md:items-center relative z-10 gap-4">
           <div>
-            <img src="/logo.png" className="h-12 w-auto object-contain" alt="Tracova Logo" />
+            <div className="flex items-center gap-4 mb-2">
+              <img src="/logo.png" className="h-10 w-auto object-contain" alt="Tracova Logo" />
+              <div className="h-6 w-[1px] bg-white/20"></div>
+              <select 
+                value={language} 
+                onChange={(e) => setLanguage(e.target.value)}
+                className="bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg px-3 py-1.5 text-[11px] font-black text-white outline-none cursor-pointer backdrop-blur-md transition-all uppercase tracking-widest"
+              >
+                <option value="en" className="text-gray-900">EN - English</option>
+                <option value="sw" className="text-gray-900">SW - Swahili</option>
+                <option value="rw" className="text-gray-900">RW - Kinyarwanda</option>
+                <option value="rn" className="text-gray-900">RN - Kirundi</option>
+              </select>
+            </div>
             <h1 className="text-3xl font-extrabold tracking-tight">
-               Welcome, {user.username || user.email.split('@')[0]}
+               {t('welcome')}, {user.username || user.email.split('@')[0]}
             </h1>
             <p className="text-green-50 font-medium opacity-90 max-w-xl">
-              Manage your agricultural assets, track your daily yields, and withdraw your earnings directly to your mobile money account.
+              Track your daily yields, manage agricultural assets and withdraw your earnings directly to mobile money.
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -371,17 +387,17 @@ function Dashboard() {
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
           <div className="flex overflow-x-auto border-b border-gray-100 hide-scrollbar">
             {[
-              { id: 'overview', label: '📊 Overview' },
-              { id: 'investments', label: '🚜 My Assets' },
-              { id: 'wallet', label: '💳 Wallet & Cashier' },
-              { id: 'referrals', label: '👥 My Team' },
-              { id: 'history', label: '📜 Activity Log' },
-              { id: 'settings', label: '⚙️ Settings' }
+              { id: 'overview', label: `📊 ${t('dashboard')}`, key: 'dashboard' },
+              { id: 'investments', label: `🚜 ${t('myAssets')}`, key: 'myAssets' },
+              { id: 'wallet', label: `💳 ${t('wallet')}`, key: 'wallet' },
+              { id: 'referrals', label: `👥 ${t('myTeam')}`, key: 'myTeam' },
+              { id: 'history', label: `📜 ${t('history')}`, key: 'history' },
+              { id: 'settings', label: `⚙️ ${t('settings')}`, key: 'settings' }
             ].map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex-1 min-w-[140px] px-6 py-4 font-bold text-sm transition-colors whitespace-nowrap ${
+                className={`flex-1 min-w-[140px] px-6 py-4 font-bold text-[10px] uppercase tracking-widest transition-colors whitespace-nowrap ${
                   activeTab === tab.id 
                     ? 'border-b-2 border-primary text-primary bg-green-50/30' 
                     : 'text-gray-500 hover:text-gray-800 hover:bg-gray-50'
@@ -392,130 +408,59 @@ function Dashboard() {
             ))}
           </div>
 
+
           {/* Tab Content */}
           <div className="p-6 md:p-8 min-h-[400px]">
             
             {/* Overview Tab */}
             {activeTab === 'overview' && (
+
               <div className="animate-fadeIn">
-                <br />
-                <br />
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Action Card */}
-                  <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-6 md:p-8 rounded-2xl border border-green-100 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 -mr-4 -mt-4 w-32 h-32 bg-green-200 rounded-full opacity-20 blur-xl"></div>
-                    <h3 className="font-extrabold text-xl text-green-900 mb-2 relative z-10">Quick Actions</h3>
-                    <p className="text-sm text-green-700 font-medium mb-6 relative z-10">Manage your money and expand your portfolio.</p>
-                    
-                    <div className="space-y-3 relative z-10">
-                      <button
-                        onClick={() => navigate('/deposit')}
-                        className="w-full bg-white hover:bg-blue-50 text-secondary border-2 border-secondary/20 py-3 rounded-xl font-bold shadow-sm transition-all flex items-center justify-center gap-2"
-                      >
-                        💵 Deposit Funds
-                      </button>
-                      <button
-                        onClick={() => navigate('/withdraw')}
-                        className="w-full bg-primary hover:bg-green-700 text-white py-3 rounded-xl font-bold shadow-[0_4px_14px_0_rgba(31,139,76,0.39)] transition-all flex items-center justify-center gap-2"
-                      >
-                        📱 Withdraw Earnings
-                      </button>
-                      <button
-                        onClick={() => navigate('/machines')}
-                        className="w-full bg-gray-900 hover:bg-black text-white py-3 rounded-xl font-bold shadow-md transition-all flex items-center justify-center gap-2"
-                      >
-                        🚜 Explore New Plans
-                      </button>
+                 <div className="flex items-center justify-between mb-8">
+                    <h2 className="text-2xl font-black text-gray-900 tracking-tight uppercase">{t('dashboard')}</h2>
+                    <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-full border border-gray-100">
+                       <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                       <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{t('welcome')}</span>
                     </div>
-                  </div>
+                 </div>
 
-                  {/* Profile Card */}
-                  <div className="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 flex flex-col relative overflow-hidden">
-                    <div className="absolute top-0 right-0 -mr-4 -mt-4 w-32 h-32 bg-blue-100 rounded-full opacity-50 blur-xl"></div>
-                    <h3 className="font-extrabold text-xl text-gray-900 mb-2 relative z-10">Account Settings</h3>
-                    <p className="text-sm text-gray-500 font-medium mb-6 relative z-10">Your verified identity and status.</p>
-                    
-                    <div className="space-y-4 text-sm flex-1 relative z-10">
-                      <div className="flex justify-between items-center py-2 border-b border-gray-50">
-                        <span className="text-gray-500 font-medium">Email Address</span>
-                        <span className="font-bold text-gray-900">{user.email}</span>
-                      </div>
-                      <div className="flex justify-between items-center py-2 border-b border-gray-50">
-                        <span className="text-gray-500 font-medium">Phone Number</span>
-                        <span className="font-bold text-gray-900">{user.phone || '—'}</span>
-                      </div>
-                      <div className="flex justify-between items-center py-2 border-b border-gray-50">
-                        <span className="text-gray-500 font-medium">Registered Country</span>
-                        <span className="font-bold text-gray-900">{user.country}</span>
-                      </div>
-                      <div className="flex justify-between items-center py-2 border-b border-gray-50">
-                        <span className="text-gray-500 font-medium">Account Status</span>
-                        <span className="bg-green-100 text-green-800 text-[10px] uppercase tracking-wider px-2 py-1 rounded font-bold">Verified</span>
-                      </div>
-                      <div className="flex justify-between items-center py-2 border-b border-gray-50">
-                        <span className="text-gray-500 font-medium">Invited By</span>
-                        <span className="font-bold text-gray-900">{user.upline?.fullName || 'Community'}</span>
-                      </div>
-                      <div className="flex justify-between items-center py-2">
-                        <span className="text-gray-500 font-medium">Member Since</span>
-                        <span className="font-bold text-gray-900">{new Date(user.createdAt).toLocaleDateString()}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Join Us Section - Refined & Compact */}
-                {(socialLinks.whatsapp || socialLinks.telegram) && (
-                  <div className="mt-8 bg-white p-6 md:p-8 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6 transition-all hover:shadow-md">
-                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-xl shadow-inner italic font-serif text-gray-400">@</div>
-                        <div>
-                          <h3 className="text-lg font-black text-gray-900 tracking-tight">Community Hub</h3>
-                          <p className="text-[11px] text-gray-400 font-bold uppercase tracking-widest">Connect with official registry streams</p>
+                 {/* Balance Cards */}
+                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
+                    <div className="bg-gray-950 p-10 rounded-[3rem] shadow-3xl text-white relative overflow-hidden group border border-white/5">
+                        <div className="absolute top-0 right-0 w-40 h-40 bg-primary/20 rounded-full blur-[80px]"></div>
+                        <div className="flex justify-between items-start mb-12 relative z-10">
+                            <div>
+                               <p className="text-[10px] font-black text-gray-500 uppercase tracking-[4px] mb-4">{t('totalBalance')}</p>
+                               <h2 className="text-6xl font-black tracking-tight">{parseFloat(user.balance || 0).toLocaleString()} <span className="text-xl font-bold opacity-30">{user.currency || 'FBu'}</span></h2>
+                            </div>
+                            <div className="w-14 h-14 bg-white/10 rounded-[1.5rem] flex items-center justify-center text-3xl shadow-inner border border-white/10 backdrop-blur-sm">💰</div>
                         </div>
-                     </div>
-                     
-                     <div className="flex items-center gap-3">
-                        {socialLinks.whatsapp && (
-                          <a 
-                            href={socialLinks.whatsapp} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="group flex items-center gap-2.5 bg-green-50 hover:bg-green-500 text-green-600 hover:text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm border border-green-100"
-                          >
-                            <svg className="w-4 h-4 transition-transform group-hover:scale-110" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.72.94 3.659 1.437 5.634 1.437h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-                            WhatsApp
-                          </a>
-                        )}
-                        {socialLinks.telegram && (
-                          <a 
-                            href={socialLinks.telegram} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="group flex items-center gap-2.5 bg-blue-50 hover:bg-blue-500 text-blue-600 hover:text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm border border-blue-100"
-                          >
-                            <svg className="w-4 h-4 transition-transform group-hover:scale-110" fill="currentColor" viewBox="0 0 24 24">
-                              <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.131.583-2.483 10.581-2.483 10.581-.131.583-.583.743-1.066.425l-3.812-2.825-1.841 1.774c-.159.159-.265.265-.477.265l.265-3.864 7.025-6.345c.318-.265-.053-.425-.477-.159l-8.683 5.464-3.759-1.166c-.848-.265-.848-.848.159-1.219l14.654-5.669c.689-.265 1.272.159.159.743z"/>
-                            </svg>
-                            Telegram
-                          </a>
-                        )}
 
-                     </div>
-                  </div>
-                )}
+                        <div className="flex gap-4 relative z-10">
+                            <button 
+                              onClick={() => navigate('/deposit')}
+                              className="flex-1 bg-white text-gray-950 py-5 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl"
+                            >
+                               {t('deposit')}
+                            </button>
+                            <button 
+                              onClick={() => navigate('/withdraw')}
+                              className="flex-1 bg-white/10 border border-white/20 text-white py-5 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-white/20 active:scale-95 transition-all backdrop-blur-sm"
+                            >
+                               {t('withdraw')}
+                            </button>
+                        </div>
+                    </div>
+                 </div>
               </div>
             )}
-
-
 
             {/* Investments Tab */}
             {activeTab === 'investments' && (
               <div className="animate-fadeIn">
                 <div className="flex justify-between items-end mb-6">
                   <div>
-                    <h2 className="text-2xl font-black text-gray-900 mb-1">Your Portfolio</h2>
-                    <p className="text-sm text-gray-500 font-medium">Track the performance of your fractional agricultural assets.</p>
+                    <h2 className="text-2xl font-black text-gray-900 mb-1 leading-none">{t('myAssets')}</h2>
                   </div>
                 </div>
 
@@ -523,42 +468,27 @@ function Dashboard() {
                   <div className="bg-gray-50 border border-gray-200 border-dashed rounded-2xl p-10 text-center">
                     <div className="text-5xl mb-4">🌱</div>
                     <h3 className="text-lg font-bold text-gray-800 mb-2">No active assets</h3>
-                    <p className="text-gray-500 text-sm mb-6 max-w-sm mx-auto">You haven't purchased any investment plans yet. Start earning daily returns today.</p>
-                    <button
-                      onClick={() => navigate('/machines')}
-                      className="bg-secondary hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-bold shadow-md transition-all inline-flex items-center gap-2"
-                    >
-                      Browse Plans <svg className="w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
-                    </button>
+                    <p className="text-gray-500 text-sm mb-6 max-w-sm mx-auto">You haven't purchased any investment plans yet.</p>
                   </div>
                 ) : (
                   <div className="overflow-x-auto rounded-xl border border-gray-100">
                     <table className="w-full text-left border-collapse">
                       <thead className="bg-gray-50/80 border-b border-gray-100">
                         <tr>
-                          <th className="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Asset Plan</th>
-                          <th className="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Invested Amount</th>
-                          <th className="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Daily ROI</th>
-                          <th className="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Status</th>
-                          <th className="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider text-right">Start Date</th>
+                          <th className="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider">{t('myAssets')}</th>
+                          <th className="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider">{t('totalInvested')}</th>
+                          <th className="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider">ROI %</th>
+                          <th className="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider text-right">Date</th>
                         </tr>
                       </thead>
                       <tbody>
                         {investments.map((i, idx) => (
                           <tr key={i.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
                             <td className="p-4">
-                              <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs">{idx + 1}</div>
-                                <span className="font-extrabold text-gray-800">{i.Machine?.name || 'Unknown Asset'}</span>
-                              </div>
+                              <span className="font-extrabold text-gray-800">{i.Machine?.name || 'Asset'}</span>
                             </td>
                             <td className="p-4 font-black text-gray-900">{parseFloat(i.amount).toLocaleString()} <span className="text-xs text-gray-500">{user.currency}</span></td>
-                            <td className="p-4"><span className="text-green-600 font-bold bg-green-50 px-2 py-1 rounded">{i.Machine?.dailyReturn || '0'}%</span></td>
-                            <td className="p-4">
-                              <span className="flex items-center gap-1.5 text-xs font-bold text-green-700 bg-green-100 px-2.5 py-1 rounded-full w-max">
-                                <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> Active
-                              </span>
-                            </td>
+                            <td className="p-4 text-green-600 font-bold">{i.Machine?.dailyPercent || '0'}%</td>
                             <td className="p-4 text-right text-gray-500 font-medium text-sm">{new Date(i.createdAt).toLocaleDateString()}</td>
                           </tr>
                         ))}
@@ -573,38 +503,21 @@ function Dashboard() {
             {activeTab === 'wallet' && (
               <div className="animate-fadeIn">
                 <div className="mb-8">
-                  <h2 className="text-2xl font-black text-gray-900 mb-1">Cashier</h2>
-                  <p className="text-sm text-gray-500 font-medium">Manage your funds securely and withdraw instantly.</p>
+                  <h2 className="text-2xl font-black text-gray-900 mb-1 leading-none">{t('wallet')}</h2>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                  {/* Balance Hero Card */}
-                  <div className="md:col-span-2 bg-gradient-to-br from-gray-900 to-black rounded-2xl p-8 relative overflow-hidden flex flex-col shadow-xl">
-                    <div className="absolute top-0 right-0 -mr-10 -mt-10 w-48 h-48 bg-green-500 rounded-full opacity-20 blur-2xl"></div>
-                    <p className="text-gray-400 font-medium text-sm mb-1 relative z-10">Total Withdrawable Balance</p>
-                    <h3 className="text-4xl md:text-5xl font-black text-white mb-6 relative z-10">
-                      {Math.max(0, parseFloat(user.balance)).toLocaleString()} <span className="text-xl md:text-2xl text-gray-500">{user.currency}</span>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                  <div className="bg-gray-950 rounded-2xl p-8 relative overflow-hidden flex flex-col shadow-xl">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 rounded-full blur-2xl"></div>
+                    <p className="text-gray-400 font-medium text-sm mb-1 relative z-10">{t('totalBalance')}</p>
+                    <h3 className="text-4xl font-black text-white mb-6 relative z-10">
+                      {Math.max(0, parseFloat(user.balance)).toLocaleString()} <span className="text-xl text-gray-500">{user.currency}</span>
                     </h3>
-                    <div className="flex gap-3 mt-auto relative z-10">
-                      <button onClick={() => navigate('/deposit')} className="px-6 py-2.5 bg-blue-500 hover:bg-blue-400 text-white font-bold rounded-xl transition-colors">
-                        Deposit +
-                      </button>
-                      <button onClick={() => navigate('/withdraw')} className="px-6 py-2.5 bg-white/10 hover:bg-white/20 border border-white/10 text-white font-bold rounded-xl transition-colors">
-                        Withdraw
-                      </button>
-                    </div>
                   </div>
 
-                  {/* Earnings Breakdown */}
-                  <div className="flex flex-col gap-4">
-                    <div className="bg-white border border-gray-100 p-5 rounded-2xl shadow-sm flex-1 flex flex-col justify-center">
-                      <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Asset Value</p>
-                      <p className="text-xl font-black text-gray-800">{investments.reduce((a, b) => a + parseFloat(b.amount), 0).toLocaleString()} <span className="text-sm font-bold text-gray-500">{user.currency}</span></p>
-                    </div>
-                    <div className="bg-white border border-gray-100 p-5 rounded-2xl shadow-sm flex-1 flex flex-col justify-center border-l-4 border-l-purple-500">
-                      <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Referral Rewards</p>
-                      <p className="text-xl font-black text-purple-700">{parseFloat(user.referralEarnings || 0).toLocaleString()} <span className="text-sm font-bold text-purple-400">{user.currency}</span></p>
-                    </div>
+                  <div className="bg-white border border-gray-100 p-8 rounded-2xl shadow-sm border-l-4 border-l-green-500">
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">{t('dailyEarnings')}</p>
+                    <p className="text-3xl font-black text-green-700">{investments.reduce((sum, inv) => sum + (parseFloat(inv.amount) * (parseFloat(inv.Machine?.dailyPercent) || 0) / 100), 0).toLocaleString()} <span className="text-sm font-bold text-gray-400">{user.currency}</span></p>
                   </div>
                 </div>
               </div>

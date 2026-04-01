@@ -27,9 +27,13 @@ import AdminInvestments from './pages/admin/AdminInvestments';
 import AdminLedger from './pages/admin/AdminLedger';
 
 
+import { LanguageProvider } from './context/LanguageContext';
+
 function App() {
   return (
-    <Router>
+    <LanguageProvider>
+      <Router>
+
       <Toaster position="top-right" reverseOrder={false} />
       <Routes>
         <Route path="/" element={<Landing />} />
@@ -61,7 +65,9 @@ function App() {
         {/* additional static pages could be added here */}
       </Routes>
     </Router>
+    </LanguageProvider>
   );
 }
+
 
 export default App;
