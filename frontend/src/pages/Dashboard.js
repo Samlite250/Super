@@ -602,42 +602,42 @@ function Dashboard() {
             {activeTab === 'referrals' && (
               <div className="animate-fadeIn">
                 <div className="mb-8 text-center md:text-left px-2">
-                  <h2 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight mb-2">Passive Income Strategy</h2>
-                  <p className="text-primary font-bold text-[9px] sm:text-xs uppercase tracking-[2px] sm:tracking-[3px]">Target High-Capital Investors for Maximum Passive Yields</p>
+                  <h2 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight mb-2">Invite Partners & Earn</h2>
+                  <p className="text-primary font-bold text-[10px] sm:text-xs uppercase tracking-[2px] sm:tracking-[3px]">Invite users with high capital to earn more commission</p>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-10">
-                   {/* Whale Catcher Card - System Green */}
-                   <div className="bg-gradient-to-br from-primary via-green-800 to-green-950 p-6 sm:p-10 rounded-[2.5rem] sm:rounded-[3rem] border border-white/10 shadow-3xl group relative overflow-hidden flex flex-col justify-center">
+                   {/* Top Investor Guide Card */}
+                   <div className="bg-gradient-to-br from-primary via-green-800 to-green-950 p-6 sm:p-10 rounded-[2.5rem] border border-white/10 shadow-3xl group relative overflow-hidden flex flex-col justify-center">
                       <div className="absolute right-0 top-0 w-32 h-32 bg-white/10 rounded-full blur-3xl"></div>
-                      <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-5 relative z-10 text-center sm:text-left">
-                         <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white/10 text-white rounded-2xl flex items-center justify-center text-2xl sm:text-3xl shadow-inner border border-white/20">💎</div>
+                      <div className="flex items-start gap-4 sm:gap-5 relative z-10">
+                         <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white/10 text-white rounded-2xl flex items-center justify-center text-xl sm:text-3xl shadow-inner border border-white/20">💎</div>
                          <div>
-                            <h4 className="text-white font-black text-lg uppercase tracking-tight mb-1 sm:mb-2">Whale Catcher Guide</h4>
+                            <h4 className="text-white font-black text-lg uppercase tracking-tight mb-1 sm:mb-2">Top Investor Rewards</h4>
                             <p className="text-green-100/70 text-xs leading-relaxed font-bold">
-                               Target investors with <span className="text-white underline underline-offset-4 font-black">1,000,000 {user.currency}+</span> capital. 
-                               You earn an <span className="text-yellow-400 font-black">INSTANT 10% BONUS</span> per activation.
+                               Target users with <span className="text-white underline underline-offset-4 font-black">1,000,000 {user.currency}+</span>. 
+                               Earn an <span className="text-yellow-400 font-black text-sm">INSTANT 10% BONUS</span> on every activation.
                             </p>
                          </div>
                       </div>
                    </div>
                    
-                   {/* Clean Referral Link Section - Multi-Device Optimized */}
-                   <div className="bg-white p-6 sm:p-10 rounded-[2.5rem] sm:rounded-[3rem] border border-gray-100 shadow-xl flex flex-col justify-center relative overflow-hidden">
+                   {/* Clean Referral Link Section - Same Line Focus */}
+                   <div className="bg-white p-6 sm:p-10 rounded-[2.5rem] border border-gray-100 shadow-xl flex flex-col justify-center relative overflow-hidden">
                      <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full blur-xl"></div>
-                     <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest sm:tracking-[4px] mb-4 sm:mb-6">Your Invitation Node Link</p>
-                     <div className="flex flex-col sm:flex-row bg-gray-50 p-2 rounded-2xl border border-gray-100 items-center gap-2 sm:gap-0 shadow-inner">
-                        <span className="text-[10px] sm:text-[11px] font-mono text-gray-500 truncate px-4 sm:px-6 w-full text-center sm:text-left">.../register?ref={user.referralCode}</span>
+                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest sm:tracking-[4px] mb-4 sm:mb-6">Your Invitation Link</p>
+                     <div className="flex bg-gray-50 p-2 rounded-2xl border border-gray-100 items-center gap-2 shadow-inner overflow-hidden">
+                        <span className="text-[10px] sm:text-[11px] font-mono text-gray-500 truncate px-4 sm:px-6 flex-1">.../reg?ref={user.referralCode}</span>
                         <button 
                           onClick={copyReferralLink}
-                          className="w-full sm:w-auto bg-gray-950 text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-black text-[10px] sm:text-[11px] uppercase tracking-widest active:scale-95 transition-all shadow-xl hover:bg-black"
+                          className="bg-gray-950 text-white px-5 sm:px-8 py-3.5 sm:py-4 rounded-xl font-black text-[9px] sm:text-[11px] uppercase tracking-widest active:scale-95 transition-all shadow-xl hover:bg-black whitespace-nowrap"
                         >
                           {copySuccess ? '✓ COPIED' : 'COPY LINK'}
                         </button>
                      </div>
-                     <p className="mt-4 text-[9px] font-bold text-gray-400 text-center tracking-widest uppercase opacity-70">Share & expand your decentralized node network</p>
                    </div>
                 </div>
+
 
                 {/* Simplified Referral Earnings Table */}
                 <div className="bg-white rounded-[2rem] sm:rounded-[2.5rem] border border-gray-100 shadow-xl overflow-hidden mb-12">
