@@ -58,7 +58,7 @@ function LoginPage() {
             <span className="text-xl font-black text-primary tracking-[0.2em] uppercase mt-1 group-hover:text-green-700 transition-colors">Tracova</span>
           </Link>
           <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-2 tracking-tight">Welcome back</h2>
-          <p className="text-sm font-medium text-gray-500">Log in to view your agricultural yields.</p>
+          <p className="text-sm font-medium text-gray-500">Login to see your farm profits.</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -95,9 +95,10 @@ function LoginPage() {
           >
             {loading ? (
                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-            ) : "Secure Login"}
+            ) : "Login Now"}
           </button>
         </form>
+
 
         <div className="mt-8 text-center border-t border-gray-100 pt-6">
           <p className="text-sm font-medium text-gray-600">

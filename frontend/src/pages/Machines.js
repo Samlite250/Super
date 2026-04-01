@@ -239,13 +239,14 @@ function HotMachineCard({ m, idx, user, investingId, handleInvest }) {
           <div className="p-6 pt-0 flex flex-col flex-grow">
             <div className="mb-4">
               <h3 className="text-xl font-black text-slate-800 leading-tight">{m.name}</h3>
-              <p className="text-slate-500 text-[11px] mt-1 font-medium leading-relaxed line-clamp-2">Exclusive limited-time agricultural package with accelerated capital returns.</p>
+              <p className="text-slate-500 text-[11px] mt-1 font-medium leading-relaxed line-clamp-2">Best opportunity to grow your money in a short time.</p>
             </div>
+
 
             {/* Metrics */}
             <div className="grid grid-cols-2 gap-2 mb-6">
               <div className="bg-amber-50 rounded-2xl p-3 border border-amber-100/50">
-                <p className="text-[9px] font-black text-amber-600 uppercase tracking-widest mb-1">Total Profit</p>
+                <p className="text-[9px] font-black text-amber-600 uppercase tracking-widest mb-1">Total Earnings</p>
                 <p className="text-xl font-black text-slate-800">+{((totalProfit / price) * 100).toFixed(0)}%</p>
               </div>
               <div className="bg-blue-50 rounded-2xl p-3 border border-blue-100/50">
@@ -253,6 +254,7 @@ function HotMachineCard({ m, idx, user, investingId, handleInvest }) {
                 <p className="text-xl font-black text-slate-800">{m.durationDays} <span className="text-[9px]">Days</span></p>
               </div>
             </div>
+
 
             {/* Payout Area */}
             <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100 mb-6">

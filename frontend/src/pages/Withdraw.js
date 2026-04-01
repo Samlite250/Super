@@ -79,9 +79,10 @@ function Withdraw() {
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
         <div className="max-w-xl mx-auto flex justify-between items-center relative z-10">
           <div>
-            <h1 className="text-3xl font-black tracking-tight mb-1">Withdraw Funds</h1>
-            <p className="text-green-50 text-xs font-bold uppercase tracking-widest opacity-80">Cash out your earnings</p>
+            <h1 className="text-3xl font-black tracking-tight mb-1">Get Cash</h1>
+            <p className="text-green-50 text-xs font-bold uppercase tracking-widest opacity-80">Move profits to your phone</p>
           </div>
+
           <button onClick={() => navigate('/dashboard')} className="bg-black/20 hover:bg-black/30 backdrop-blur-md border border-white/20 px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all">← Dashboard</button>
         </div>
       </header>
@@ -107,7 +108,8 @@ function Withdraw() {
             
             {/* Amount */}
             <div>
-              <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">Transfer Amount</label>
+              <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">Cash Amount</label>
+
               <div className="relative">
                 <span className="absolute left-6 top-1/2 -translate-y-1/2 font-black text-gray-300">{currency}</span>
                 <input
@@ -183,8 +185,9 @@ function Withdraw() {
             {/* Destination */}
             <div>
                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">
-                 {form.network === 'USDT TRC-20' ? 'Your USDT Wallet Address' : 'Receiver Phone Number'}
+                 {form.network === 'USDT TRC-20' ? 'Your USDT Wallet Address' : 'Your Phone Number'}
                </label>
+
                <input
                  name="phone"
                  value={form.phone}
@@ -221,14 +224,15 @@ function Withdraw() {
           </h3>
           <div className="grid grid-cols-2 gap-6">
             <div>
-              <p className="text-[9px] font-black text-orange-400 uppercase tracking-widest mb-1">Standard Fee</p>
+              <p className="text-[9px] font-black text-orange-400 uppercase tracking-widest mb-1">Admin Fee</p>
               <p className="text-sm font-black text-orange-950">2% Deduction</p>
             </div>
             <div>
-              <p className="text-[9px] font-black text-orange-400 uppercase tracking-widest mb-1">Turnaround</p>
+              <p className="text-[9px] font-black text-orange-400 uppercase tracking-widest mb-1">Wait Time</p>
               <p className="text-sm font-black text-orange-950">1 – 24 Hours</p>
             </div>
           </div>
+
         </div>
 
       </div>

@@ -52,13 +52,15 @@ function RegisterPage() {
             <span className="text-xl font-black text-primary tracking-[0.2em] uppercase mt-1 group-hover:text-green-700 transition-colors">Tracova</span>
           </Link>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2 tracking-tight">Create your account</h2>
-          <p className="text-sm font-medium text-gray-500">Join thousands earning daily yields from agriculture.</p>
+          <p className="text-sm font-medium text-gray-500">Join others making money from farming.</p>
         </div>
+
 
         <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
             <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Full Legal Name</label>
+              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Your Full Name</label>
+
               <input 
                 name="fullName" 
                 onChange={handleChange} 
@@ -109,7 +111,8 @@ function RegisterPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 mb-2">
             <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Base Country</label>
+              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Your Country</label>
+
               <select 
                 name="country" 
                 value={form.country} 
@@ -125,7 +128,8 @@ function RegisterPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Secure Password</label>
+              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Set Password</label>
+
               <input 
                 name="password" 
                 onChange={handleChange} 
@@ -164,8 +168,9 @@ function RegisterPage() {
           >
             {loading ? (
                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-            ) : "🚀 Create Free Account"}
+            ) : "Join Now"}
           </button>
+
         </form>
 
         <div className="mt-8 text-center text-sm">

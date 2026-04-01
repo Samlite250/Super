@@ -628,8 +628,8 @@ function Dashboard() {
             {activeTab === 'history' && (
               <div className="animate-fadeIn">
                 <div className="mb-6">
-                  <h2 className="text-2xl font-black text-gray-900 mb-1">Financial Ledger</h2>
-                  <p className="text-sm text-gray-500 font-medium">Clear record of all your incoming and outgoing protocol movements.</p>
+                  <h2 className="text-2xl font-black text-gray-900 mb-1">Money History</h2>
+                  <p className="text-sm text-gray-500 font-medium">Detailed and clear record of all your incoming and outgoing transactions.</p>
                 </div>
 
                 <div className="space-y-8">
@@ -638,8 +638,8 @@ function Dashboard() {
                     {/* Deposits Section */}
                     <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
                       <div className="bg-gray-50 px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-                        <h4 className="font-bold text-gray-800 text-sm uppercase tracking-wider">💰 Deposit Requests</h4>
-                        <span className="text-[10px] font-black text-secondary bg-secondary/10 px-2 py-1 rounded">Real-time</span>
+                        <h4 className="font-bold text-gray-800 text-sm uppercase tracking-wider">💰 Your Deposits</h4>
+                        <span className="text-[10px] font-black text-secondary bg-secondary/10 px-2 py-1 rounded">Live</span>
                       </div>
                       <div className="max-h-80 overflow-y-auto custom-scrollbar">
                         {history.deposits.length > 0 ? (
@@ -661,7 +661,7 @@ function Dashboard() {
                             ))}
                           </div>
                         ) : (
-                          <div className="p-10 text-center text-gray-300 font-bold text-xs">No deposit data available.</div>
+                          <div className="p-10 text-center text-gray-300 font-bold text-xs">No deposits yet.</div>
                         )}
                       </div>
                     </div>
@@ -670,7 +670,7 @@ function Dashboard() {
                     <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
                       <div className="bg-gray-50 px-6 py-4 border-b border-gray-100 flex justify-between items-center">
                         <h4 className="font-bold text-gray-800 text-sm uppercase tracking-wider">🏦 Payout Requests</h4>
-                        <span className="text-[10px] font-black text-primary bg-primary/10 px-2 py-1 rounded">Real-time</span>
+                        <span className="text-[10px] font-black text-primary bg-primary/10 px-2 py-1 rounded">Live</span>
                       </div>
                       <div className="max-h-80 overflow-y-auto custom-scrollbar">
                         {history.withdrawals.length > 0 ? (
@@ -692,7 +692,7 @@ function Dashboard() {
                             ))}
                           </div>
                         ) : (
-                          <div className="p-10 text-center text-gray-300 font-bold text-xs">No withdrawal data available.</div>
+                          <div className="p-10 text-center text-gray-300 font-bold text-xs">No payouts yet.</div>
                         )}
                       </div>
                     </div>
@@ -701,8 +701,8 @@ function Dashboard() {
                   {/* Unified Transaction Ledger */}
                   <div className="bg-white rounded-[2rem] border border-gray-100 overflow-hidden shadow-xl">
                     <div className="bg-gray-900 text-white px-8 py-6">
-                       <h3 className="font-black text-xl tracking-tight">System Ledger Entries</h3>
-                       <p className="text-gray-400 text-[10px] uppercase font-bold tracking-[3px] mt-1">Immutable Verification Stream</p>
+                       <h3 className="font-black text-xl tracking-tight">ALL TRANSACTIONS</h3>
+                       <p className="text-gray-400 text-[10px] uppercase font-bold tracking-[3px] mt-1">Full statement of your activity</p>
                     </div>
                     <div>
                       {history.transactions.length > 0 ? (
@@ -710,9 +710,9 @@ function Dashboard() {
                           <table className="w-full text-left">
                             <thead className="bg-gray-50 border-b border-gray-100">
                               <tr>
-                                <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Protocol Type</th>
-                                <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Entry Logic</th>
-                                <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Magnitude</th>
+                                <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Type</th>
+                                <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Details</th>
+                                <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Amount</th>
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-50">
@@ -750,7 +750,7 @@ function Dashboard() {
                            <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
                               <span className="text-2xl opacity-20">📑</span>
                            </div>
-                           <p className="text-gray-400 font-black uppercase text-[10px] tracking-widest">No verified ledger entries found.</p>
+                           <p className="text-gray-400 font-black uppercase text-[10px] tracking-widest">No transactions found.</p>
                         </div>
                       )}
                   </div>
@@ -758,6 +758,7 @@ function Dashboard() {
               </div>
             </div>
           )}
+
 
             {/* Settings Tab */}
             {activeTab === 'settings' && (

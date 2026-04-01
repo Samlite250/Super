@@ -97,11 +97,12 @@ function Deposit() {
       fd.append('payerNumber', payerNumber);
       fd.append('payerNames', payerNames);
       await api.post(`/deposits/${newDepositId}/proof`, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
-      setSuccess(`Deposit request #${newDepositId} submitted. Awaiting admin verification.`);
+      setSuccess(`Deposit request #${newDepositId} submitted. Waiting for approval.`);
       setProofFile(null); setPayerNumber(''); setPayerNames('');
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to submit deposit.');
+      setError(err.response?.data?.message || 'Failed to add money.');
     } finally { setLoading(false); setUploading(false); }
+
   };
 
   const handleAutomaticPayment = async () => {
@@ -146,10 +147,11 @@ function Deposit() {
           <div className="flex items-center gap-4">
             <span className="text-3xl">💵</span>
             <div>
-               <h1 className="text-2xl font-black text-white tracking-tight">Fund Your Account</h1>
-               <p className="text-white/80 text-[11px] font-bold uppercase tracking-wider">Add balance securely to your wallet.</p>
+               <h1 className="text-2xl font-black text-white tracking-tight">Add Money</h1>
+               <p className="text-white/80 text-[11px] font-bold uppercase tracking-wider">Add money to your account safely.</p>
             </div>
           </div>
+
           <Link to="/dashboard" className="bg-[#00000030] hover:bg-black/30 text-white px-5 py-2 rounded-lg font-bold transition-all text-[12px] border border-white/5 flex items-center gap-2">← Back</Link>
         </div>
       </header>
@@ -389,9 +391,10 @@ function Deposit() {
                 </div>
                 <div className="pt-2 space-y-3">
                    <button onClick={handleManualSubmit} disabled={loading || uploading} className="w-full py-3.5 bg-white border-2 border-[#1F8B4C] text-[#1F8B4C] hover:bg-green-50 rounded-xl font-black text-xs uppercase tracking-[2px] transition-all flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50">
-                     {uploading ? 'UPLOADING PROOF...' : '🏦 SUBMIT MANUAL TRANSFER'}
+                     {uploading ? 'UPLOADING PROOF...' : '🏦 SUBMIT STANDARD PAY'}
                    </button>
                 </div>
+
               </div>
             </div>
             <div className="space-y-6">
