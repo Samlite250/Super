@@ -89,6 +89,17 @@ function Withdraw() {
 
       <div className="max-w-xl mx-auto px-6 mt-10">
         
+        {/* Processing Time Notice */}
+        <div className="bg-amber-50 border border-amber-200 p-5 rounded-2xl mb-8 flex items-center gap-5 text-amber-900 shadow-sm relative overflow-hidden -mt-16 z-20">
+           <div className="absolute top-0 right-0 w-24 h-24 bg-amber-200/20 rounded-full blur-2xl"></div>
+           <div className="w-12 h-12 bg-amber-100 rounded-2xl flex items-center justify-center text-xl shadow-inner border border-amber-200">⏳</div>
+           <div>
+              <p className="text-[10px] font-black uppercase tracking-[3px] mb-1 text-amber-600 font-sans">Processing Time</p>
+              <p className="text-[13px] font-bold leading-tight">Your payout will be processed within <span className="text-amber-700">5 minutes to 24 hours</span>. If it exceeds this time, please contact Customer Support.</p>
+           </div>
+        </div>
+
+        
         {/* Status Alerts */}
         {success && <div className="bg-green-50 border border-green-200 text-green-800 p-5 rounded-2xl mb-6 shadow-sm flex items-center gap-4 animate-fadeIn"><div className="w-8 h-8 rounded-full bg-green-200 text-green-700 flex items-center justify-center font-black">✓</div><p className="font-bold text-sm">{success}</p></div>}
         {error && <div className="bg-red-50 border border-red-200 text-red-800 p-5 rounded-2xl mb-6 shadow-sm flex items-center gap-4 animate-fadeIn"><div className="w-8 h-8 rounded-full bg-red-200 text-red-700 flex items-center justify-center font-black">!</div><p className="font-bold text-sm">{error}</p></div>}

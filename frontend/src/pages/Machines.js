@@ -149,12 +149,12 @@ function Machines() {
               <div className="animate-fadeIn">
                 <div className="flex items-center gap-3 mb-6">
                    <div className="w-1.5 h-8 bg-orange-500 rounded-full"></div>
-                   <h2 className="text-2xl font-black text-gray-900 tracking-tight">Active <span className="text-orange-600 uppercase">Flash Sales</span> 🔥</h2>
+                   <h2 className="text-2xl font-black text-gray-900 tracking-tight">Active <span className="text-orange-600 uppercase">Hot Sales</span> 🔥</h2>
                 </div>
                 {hotPlans.length === 0 ? (
                   <div className="bg-white p-16 rounded-3xl border border-dashed border-gray-200 text-center">
                     <p className="text-4xl mb-4">⏳</p>
-                    <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">No active flash plans at the moment</p>
+                    <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">No active hot plans at the moment</p>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
@@ -257,16 +257,18 @@ function HotMachineCard({ m, idx, user, investingId, handleInvest }) {
             {/* badges */}
             <div className="absolute top-4 left-4 flex flex-col gap-2">
               <div className="bg-orange-600 text-white px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider shadow-lg flex items-center gap-1">
-                <Flame size={12} fill="white" /> Hot Offer
+                <Flame size={12} fill="white" /> Hot Plan
               </div>
+
               <div className="bg-slate-900 text-amber-400 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider shadow-lg flex items-center gap-1.5 border border-amber-400/20">
                 <Clock size={10} className="animate-spin-slow" /> Ends In: <HotCountdown targetDate={m.endsAt} />
               </div>
             </div>
             
             <div className="absolute top-4 right-4 bg-white/70 backdrop-blur-md border border-white px-2 py-1 rounded-lg text-amber-700 text-[10px] font-bold shadow-sm">
-              Flash Sale
+              Limited Sale
             </div>
+
           </div>
 
 
@@ -318,7 +320,7 @@ function HotMachineCard({ m, idx, user, investingId, handleInvest }) {
                 onClick={() => handleInvest(m)}
                 className="w-full py-4 bg-orange-600 hover:bg-orange-700 text-white rounded-2xl font-black text-[10px] uppercase tracking-[2px] transition-all flex justify-center items-center gap-2 shadow-[0_10px_20px_-5px_rgba(234,88,12,0.3)] active:scale-95 disabled:opacity-50"
                >
-                  {investingId === m.id ? 'Processing...' : 'Secure Your Spot Now'}
+                  {investingId === m.id ? 'Processing...' : 'Invest Now'}
                </button>
             </div>
           </div>

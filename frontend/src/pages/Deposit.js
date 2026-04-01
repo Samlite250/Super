@@ -159,6 +159,17 @@ function Deposit() {
       <br /><br />
 
       <div className="max-w-5xl mx-auto px-6">
+        
+        {/* Processing Time Notice */}
+        <div className="bg-amber-50 border border-amber-200 p-5 rounded-2xl mb-8 flex items-center gap-5 text-amber-900 shadow-sm relative overflow-hidden -mt-10 z-20">
+           <div className="absolute top-0 right-0 w-24 h-24 bg-amber-200/20 rounded-full blur-2xl"></div>
+           <div className="w-12 h-12 bg-amber-100 rounded-2xl flex items-center justify-center text-2xl shadow-inner border border-amber-200">⏳</div>
+           <div>
+              <p className="text-[10px] font-black uppercase tracking-[3px] mb-1 text-amber-600">Processing Time</p>
+              <p className="text-[13px] font-bold leading-tight">Your request will be processed within <span className="text-amber-700">5 minutes to 24 hours</span>. If it exceeds this time, please contact Customer Support.</p>
+           </div>
+        </div>
+
 
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-xl mb-8 flex items-center gap-4 shadow-sm animate-pulse">
