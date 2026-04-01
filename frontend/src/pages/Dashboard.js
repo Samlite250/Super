@@ -80,7 +80,19 @@ function Dashboard() {
 
 
 
+  useEffect(() => {
+    let timer;
+    if (showHotPopup) {
+      timer = setTimeout(() => {
+        setShowHotPopup(false);
+      }, 30000); // 30 seconds
+    }
+    return () => clearTimeout(timer);
+  }, [showHotPopup]);
+
+
   const copyReferralLink = () => {
+
     const link = `${window.location.origin}/register?ref=${user.referralCode}`;
     navigator.clipboard.writeText(link);
     setCopySuccess(true);

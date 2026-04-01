@@ -199,11 +199,13 @@ const calculateTimeLeft = (targetDate, fakeOffsetHours = 24) => {
     const diff = target - now;
     if (diff <= 0) return '00:00:00';
     
+    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
     const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
     const m = Math.floor((diff / (1000 * 60)) % 60);
     const s = Math.floor((diff / 1000) % 60);
-    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    return `${d}d ${String(h).padStart(2, '0')}h ${String(m).padStart(2, '0')}m ${String(s).padStart(2, '0')}s`;
 };
+
 
 function HotCountdown({ targetDate }) {
     const [timeLeft, setTimeLeft] = useState(calculateTimeLeft(targetDate));
