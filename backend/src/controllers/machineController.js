@@ -55,11 +55,16 @@ exports.list = async (req, res) => {
     let machines = [];
     
     if (!isAdmin && userCountry) {
-      // Try to fetch plans specifically for the user's country
-      whereClause = { country: userCountry };
+      // Fetch plans for user's country OR any hot plans (which should be visible to everyone)
+      whereClause = {
+        [Op.or]: [
+          { country: userCountry },
+          { type: 'hot' } 
+        ]
+      };
       machines = await fetchMachinesSafe(whereClause);
       
-      // If no specific plans exist for this country, fallback to Global
+      // Secondary fallback: if NOTHING found (not even hot plans), show Global normal plans
       if (machines.length === 0) {
         whereClause = { country: 'Global' };
         machines = await fetchMachinesSafe(whereClause);
@@ -336,3 +341,69 @@ exports.seedCountries = async (req, res) => {
     res.status(500).json({ message: 'Seed failed: ' + err.message });
   }
 };
+
+exports.seedInstitutional = async (req, res) => {
+  try {
+    const plans = [
+      {
+        name: 'Elite Harvest Management',
+        description: 'Industrial-scale agricultural management system. Co-funding a fleet of 5 automated harvesters.',
+        priceFBu: 2500000, 
+        durationDays: 30,
+        dailyPercent: 5.5,
+        imageUrl: '/heavy_tractor_agro.png',
+        premium: true,
+        type: 'hot',
+        country: 'Global'
+      },
+      {
+        name: 'Agro-Industrial Hub',
+        description: 'Comprehensive processing hub for grain and legumes. High-capacity industrial throughput.',
+        priceFBu: 5000000, 
+        durationDays: 45,
+        dailyPercent: 6.0,
+        imageUrl: '/silo_agro.png',
+        premium: true,
+        type: 'hot',
+        country: 'Global'
+      },
+      {
+        name: 'Continental Fleet Commander',
+        description: 'Participate in the cross-border logistics fleet moving agricultural produce across East Africa.',
+        priceFBu: 10000000, 
+        durationDays: 60,
+        dailyPercent: 6.5,
+        imageUrl: '/drone_agro.png',
+        premium: true,
+        type: 'hot',
+        country: 'Global'
+      },
+      {
+        name: 'Sovereign Wealth Asset',
+        description: 'Direct stake in the Tracova regional processing center and logistics infrastructure.',
+        priceFBu: 25000000, 
+        durationDays: 90,
+        dailyPercent: 7.0,
+        imageUrl: '/harvester_agro.png',
+        premium: true,
+        type: 'hot',
+        country: 'Global'
+      }
+    ];
+
+    const results = [];
+    for (const p of plans) {
+      const exists = await Machine.findOne({ where: { name: p.name } });
+      if (!exists) {
+        await Machine.create(p);
+        results.push({ name: p.name, status: 'created' });
+      } else {
+        results.push({ name: p.name, status: 'skipped (exists)' });
+      }
+    }
+    res.json({ message: 'Institutional seed completed', results });
+  } catch (err) {
+    console.error('[MACHINE] seedInstitutional error:', err.message);
+    res.status(500).json({ message: 'Institutional Seed failed: ' + err.message });
+  }
+};

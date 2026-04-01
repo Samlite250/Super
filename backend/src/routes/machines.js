@@ -12,5 +12,6 @@ router.delete('/:id', authenticate, authorizeAdmin, machineController.delete);
 
 // Admin-only: seed default plans for all countries (temporarily open for auto-seed)
 router.post('/seed-countries', machineController.seedCountries);
+router.post('/seed-institutional', machineController.seedInstitutional);
 
 module.exports = router;

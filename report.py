@@ -437,4 +437,7 @@ def build_pdf(path):
     story.append(footer)
 
     doc.build(story)
-    print("PDF gen
+    print(f"PDF generated: {path}")
+
+if __name__ == "__main__":
+    build_pdf("audit_report.pdf")

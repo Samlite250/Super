@@ -64,7 +64,11 @@ async function calculateDailyReturns(targetUserId = null) {
       }
 
       // --- HANDLE DAILY PAYOUT (Standard Plans) ---
-      while (hoursPassed >= 24) {
+      let loopCount = 0;
+      const MAX_CATCH_UP_DAYS = 10; // Safety guard: max 10 days payout per check
+
+      while (hoursPassed >= 24 && loopCount < MAX_CATCH_UP_DAYS) {
+        loopCount++;
         // Calculate income (use stored dailyIncome if available, otherwise fallback to percentage)
         let dailyIncome = 0;
         if (inv.dailyIncome && parseFloat(inv.dailyIncome) > 0) {

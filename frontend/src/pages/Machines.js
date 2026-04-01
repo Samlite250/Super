@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import api, { IMAGE_BASE_URL } from '../services/api';
-
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { Zap, Flame, Shield, TrendingUp, Clock, Award } from 'lucide-react';
 
 function Machines() {
   const [machines, setMachines] = useState([]);
@@ -155,11 +156,12 @@ function Machines() {
                     <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">No active flash plans at the moment</p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                     {hotPlans.map((m, idx) => (
-                      <MachineCard key={m.id} m={m} idx={idx} user={user} investingId={investingId} handleInvest={handleInvest} isHot={true} />
+                      <HotMachineCard key={m.id} m={m} idx={idx} user={user} investingId={investingId} handleInvest={handleInvest} />
                     ))}
                   </div>
+
                 )}
               </div>
             ) : (
@@ -182,118 +184,222 @@ function Machines() {
   );
 }
 
-// Sub-component for Machine Card to avoid repetitive code
-function MachineCard({ m, idx, user, investingId, handleInvest, isHot = false }) {
-    // Calculate Total Return Estimation
+
+// ─── HOT MACHINE CARD (PREMIUM REDESIGN) ───────────────────────────────────
+function HotMachineCard({ m, idx, user, investingId, handleInvest }) {
     const price = parseFloat(m.price || m.priceFBu);
     const dailyRate = parseFloat(m.dailyPercent);
     const days = parseInt(m.durationDays, 10);
-    const dailyProfit = (price * dailyRate) / 100;
-    const totalProfit = dailyProfit * days;
+    const totalProfit = (price * dailyRate * days) / 100;
+    const totalReturn = price + totalProfit;
+
+    const fallbackImages = ['/tractor_agro.png', '/drone_agro.png', '/harvester_agro.png', '/heavy_tractor_agro.png'];
+    const defaultImg = fallbackImages[idx % fallbackImages.length];
+    
+    const getMachineImage = (img) => {
+      if (!img) return defaultImg;
+      if (img.startsWith('http') || img.startsWith('data:')) return img;
+      return `${IMAGE_BASE_URL}${img.startsWith('/') ? img : `/${img}`}`;
+    };
+
+    return (
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: idx * 0.05 }}
+        className="relative group h-full"
+      >
+        {/* Animated Border Glow */}
+        <div className="absolute -inset-0.5 bg-gradient-to-r from-orange-600 to-red-600 rounded-3xl blur opacity-30 group-hover:opacity-100 transition duration-500"></div>
+        
+        <div className="relative bg-[#0F172A] rounded-[2rem] h-full flex flex-col overflow-hidden border border-white/10 shadow-2xl">
+          
+          {/* Header Image Section */}
+          <div className="relative h-44 w-full overflow-hidden">
+            <img 
+              src={getMachineImage(m.imageUrl)} 
+              alt={m.name} 
+              className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-700 group-hover:scale-110"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0F172A] via-transparent to-transparent"></div>
+            
+            {/* Badges */}
+            <div className="absolute top-4 left-4 flex gap-2">
+              <div className="bg-orange-500 text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg flex items-center gap-1 animate-pulse">
+                <Flame size={12} className="fill-white" /> High Demand
+              </div>
+            </div>
+            
+            <div className="absolute top-4 right-4 bg-white/10 backdrop-blur-md border border-white/20 px-3 py-1 rounded-xl text-white text-[10px] font-bold flex items-center gap-1.5">
+              <Shield size={12} className="text-blue-400" /> Insured Asset
+            </div>
+          </div>
+
+          {/* Card Content */}
+          <div className="p-6 pt-2 flex flex-col flex-grow">
+            <div className="mb-5">
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="text-[10px] font-black text-orange-500 uppercase tracking-[2px]">Limited Time Plan</span>
+              </div>
+              <h3 className="text-xl font-black text-white leading-tight group-hover:text-orange-400 transition-colors">{m.name}</h3>
+              <p className="text-slate-400 text-xs mt-2 leading-relaxed line-clamp-2">Exclusive high-yield opportunity with instant automated distribution at the end of the term.</p>
+            </div>
+
+            {/* Financial Metrics - More relevant and clearer labels */}
+            <div className="grid grid-cols-2 gap-3 mb-6">
+              <div className="bg-white/5 border border-white/5 p-3 rounded-2xl">
+                <div className="flex items-center gap-1.5 text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-1">
+                  <TrendingUp size={12} className="text-orange-500" /> Final Profit
+                </div>
+                <p className="text-lg font-black text-white">
+                  +{(dailyRate * days).toFixed(0)}%
+                </p>
+              </div>
+              <div className="bg-white/5 border border-white/5 p-3 rounded-2xl">
+                <div className="flex items-center gap-1.5 text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-1">
+                  <Clock size={12} className="text-orange-500" /> Wait Time
+                </div>
+                <p className="text-lg font-black text-white">
+                  {m.durationDays} <span className="text-[10px] font-bold text-slate-500 uppercase">Days</span>
+                </p>
+              </div>
+            </div>
+
+            {/* Payout Information */}
+            <div className="bg-gradient-to-br from-orange-500/10 to-red-500/10 border border-orange-500/20 rounded-2xl p-4 mb-6">
+              <div className="flex justify-between items-center mb-1">
+                <p className="text-[10px] font-black text-orange-500/80 uppercase tracking-widest">Total Payout at end</p>
+                <Award size={14} className="text-orange-500" />
+              </div>
+              <div className="flex items-baseline gap-2">
+                <p className="text-xl font-black text-white">{totalReturn.toLocaleString()}</p>
+                <p className="text-xs font-bold text-slate-400 uppercase">{user?.currency || m.currency || 'FBu'}</p>
+              </div>
+              <div className="mt-2 h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                <div className="h-full bg-gradient-to-r from-orange-500 to-red-600 w-full animate-progress-fast"></div>
+              </div>
+            </div>
+
+            {/* Pricing and Action */}
+            <div className="mt-auto pt-4 border-t border-white/5">
+              <div className="flex justify-between items-center mb-4">
+                <div>
+                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-0.5">Required Capital</p>
+                  <p className="text-2xl font-black text-white">
+                    {price.toLocaleString()} <span className="text-sm font-bold text-slate-500">{user?.currency || m.currency}</span>
+                  </p>
+                </div>
+              </div>
+
+              <button
+                disabled={investingId === m.id}
+                onClick={() => handleInvest(m)}
+                className="w-full group/btn relative bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 p-4 rounded-xl text-white font-black text-[11px] uppercase tracking-[3px] transition-all flex items-center justify-center gap-3 active:scale-95 disabled:opacity-50 shadow-[0_10px_20px_-5px_rgba(234,88,12,0.4)]"
+              >
+                {investingId === m.id ? (
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                ) : (
+                  <>
+                    <Zap size={16} className="fill-white" />
+                    Secure Your Spot
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    );
+}
+
+// ─── STANDARD MACHINE CARD ──────────────────────────────────────────────────
+function MachineCard({ m, idx, user, investingId, handleInvest }) {
+    const price = parseFloat(m.price || m.priceFBu);
+    const dailyRate = parseFloat(m.dailyPercent);
+    const days = parseInt(m.durationDays, 10);
+    const totalProfit = (price * dailyRate * days) / 100;
     const totalReturn = price + totalProfit;
     
-    const isPremium = m.premium || price > 50000;
+    const isPremium = m.premium || price > 500000;
     
-    const fallbackImages = [
-      '/tractor_agro.png', 
-      '/drone_agro.png', 
-      '/harvester_agro.png', 
-      '/heavy_tractor_agro.png'
-    ];
+    const fallbackImages = ['/tractor_agro.png', '/drone_agro.png', '/harvester_agro.png', '/heavy_tractor_agro.png'];
     const defaultImg = fallbackImages[idx % fallbackImages.length];
     const getMachineImage = (img) => {
       if (!img) return defaultImg;
       if (img.startsWith('http') || img.startsWith('data:')) return img;
-      const path = img.startsWith('/') ? img : `/${img}`;
-      return `${IMAGE_BASE_URL}${path}`;
+      return `${IMAGE_BASE_URL}${img.startsWith('/') ? img : `/${img}`}`;
     };
 
     return (
-      <div className={`rounded-2xl shadow-sm border transition-all duration-300 flex flex-col overflow-hidden group ${isHot ? 'border-orange-200 bg-orange-50/10 hover:shadow-orange-200 shadow-orange-100' : 'border-gray-100 bg-white hover:shadow-xl'}`}>
+      <div className="bg-white rounded-3xl shadow-sm border border-gray-100 flex flex-col overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-green-100 group">
         
-        {/* Image Header */}
-        <div className="relative h-48 w-full bg-gray-100 overflow-hidden">
+        {/* Simple Image Header */}
+        <div className="relative h-44 w-full bg-gray-50">
           <img 
              src={getMachineImage(m.imageUrl)} 
              alt={m.name} 
-             className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+             className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-105"
           />
           
-          {/* Numbering and Reserved Badges */}
-          <div className="absolute top-3 left-3 flex gap-2">
-            <div className="bg-black/70 backdrop-blur-md px-2.5 py-1 rounded-lg text-xs font-black text-white shadow-sm flex items-center justify-center border border-white/20">
+          <div className="absolute top-4 left-4 flex gap-2">
+            <div className="bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-lg text-[10px] font-black text-white shadow-sm border border-white/10">
               #{idx + 1}
-            </div>
-            <div className="bg-white/90 backdrop-blur-md border border-white/50 px-2.5 py-1 rounded-lg text-[11px] font-bold text-primary shadow-sm flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-              Verified
             </div>
           </div>
           
-          {(isPremium || isHot) && (
-            <div className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold shadow-sm flex items-center gap-1 ${isHot ? 'bg-gradient-to-r from-orange-400 to-red-500 text-white' : 'bg-gradient-to-r from-yellow-400 to-yellow-500 text-yellow-900'}`}>
-              {isHot ? '🔥 HOT PLAN' : '⭐ Premium'}
+          {isPremium && (
+            <div className="absolute top-4 right-4 bg-gradient-to-r from-yellow-400 to-yellow-500 text-yellow-900 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg flex items-center gap-1">
+              ⭐ Premium
             </div>
           )}
         </div>
 
         {/* Plan Content */}
         <div className="p-6 flex flex-col flex-grow">
-          
           <div className="mb-4">
-            <h2 className="text-xl font-extrabold text-gray-800 mb-1">{m.name}</h2>
-            <p className="text-sm text-gray-500 line-clamp-2">{m.description || "Short-term high-yield agricultural investment package."}</p>
+            <h2 className="text-xl font-black text-gray-900 mb-1 leading-tight group-hover:text-primary transition-colors">{m.name}</h2>
+            <p className="text-[12px] text-gray-500 leading-relaxed line-clamp-2">{m.description || "Fractional agricultural investment package with verified daily returns."}</p>
           </div>
 
           <div className="grid grid-cols-2 gap-3 mb-6">
-            <div className="bg-gray-50/50 border border-gray-100 p-3 rounded-xl">
-              <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">{isHot ? 'Total Return' : 'Daily ROI'}</p>
-              <p className={`text-lg font-bold ${isHot ? 'text-orange-600' : 'text-green-600'}`}>
-                {isHot ? `${(dailyRate * days).toFixed(1)}%` : `${m.dailyPercent}%`}
+            <div className="bg-gray-50 border border-gray-100 p-3 rounded-2xl">
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Daily Yield</p>
+              <p className="text-lg font-black text-green-700">
+                {m.dailyPercent}%
               </p>
             </div>
-            <div className="bg-gray-50/50 border border-gray-100 p-3 rounded-xl">
-              <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Cycle</p>
-              <p className="text-lg font-bold text-gray-800">{m.durationDays} <span className="text-sm font-semibold text-gray-500">Days</span></p>
+            <div className="bg-gray-50 border border-gray-100 p-3 rounded-2xl">
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Duration</p>
+              <p className="text-lg font-black text-gray-900">{m.durationDays} <span className="text-[10px] font-bold text-gray-400 uppercase">Days</span></p>
             </div>
-            <div className={`col-span-2 p-3 rounded-xl flex justify-between items-center border ${isHot ? 'bg-orange-50 border-orange-100' : 'bg-green-50/30 border-green-100'}`}>
-              <div>
-                <p className={`text-[11px] font-bold uppercase tracking-wider mb-0.5 ${isHot ? 'text-orange-700' : 'text-green-700'}`}>Maturation Payout</p>
-                <p className={`text-sm font-bold ${isHot ? 'text-orange-900' : 'text-green-800'}`}>{totalReturn.toLocaleString()} {user?.currency || m.currency || 'FBu'}</p>
-              </div>
-              <div className="text-right">
-                <p className={`text-[11px] font-bold uppercase tracking-wider mb-0.5 ${isHot ? 'text-orange-700' : 'text-green-700'}`}>Est. Profit</p>
-                <p className={`text-sm font-bold ${isHot ? 'text-orange-600' : 'text-primary'}`}>+{totalProfit.toLocaleString()}</p>
-              </div>
+            <div className="col-span-2 p-3 bg-green-50/50 border border-green-100 rounded-2xl flex justify-between items-center">
+               <div>
+                  <p className="text-[10px] font-bold text-green-700 uppercase tracking-widest mb-0.5">Total Return</p>
+                  <p className="text-sm font-black text-gray-900">{totalReturn.toLocaleString()}</p>
+               </div>
+               <div className="text-right">
+                  <p className="text-[10px] font-bold text-green-700 uppercase tracking-widest mb-0.5">Profit Est.</p>
+                  <p className="text-sm font-black text-primary">+{totalProfit.toLocaleString()}</p>
+               </div>
             </div>
           </div>
 
           <div className="mt-auto pt-4 border-t border-gray-100">
-             <div className="flex items-end justify-between mb-4">
-               <div>
-                 <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Required Capital</p>
-                 <p className="text-2xl font-black text-gray-900 leading-none">
-                   {price.toLocaleString()} <span className="text-base text-gray-500 font-bold">{user?.currency || m.currency || 'FBu'}</span>
-                 </p>
-               </div>
+             <div className="flex items-center justify-between mb-4">
+                <div>
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Price</p>
+                  <p className="text-2xl font-black text-gray-900 leading-none">
+                    {price.toLocaleString()} <span className="text-sm font-bold text-gray-400">{user?.currency || m.currency}</span>
+                  </p>
+                </div>
              </div>
              
              <button
                disabled={investingId === m.id}
                onClick={() => handleInvest(m)}
-               className={`w-full py-3.5 active:scale-[0.98] text-white rounded-xl font-bold text-sm transition-all flex justify-center items-center gap-2 disabled:opacity-70 disabled:scale-100 shadow-md ${isHot ? 'bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 shadow-orange-200' : 'bg-primary hover:bg-green-700 shadow-green-200'}`}
+               className="w-full py-4 bg-primary hover:bg-green-700 text-white rounded-xl font-black text-[11px] uppercase tracking-[2px] transition-all flex justify-center items-center gap-2 disabled:opacity-50 shadow-md active:scale-95"
              >
-               {investingId === m.id ? (
-                 <>
-                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                   Processing...
-                 </>
-               ) : (
-                 <>
-                   {isHot ? 'Secure Spot Now' : 'Reserve Plan Now'}
-                   <svg className="w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
-                 </>
-               )}
+               {investingId === m.id ? 'Processing...' : 'Invest Now'}
              </button>
           </div>
         </div>
@@ -301,4 +407,5 @@ function MachineCard({ m, idx, user, investingId, handleInvest, isHot = false })
     );
 }
 
-export default Machines;
+
+export default Machines;
