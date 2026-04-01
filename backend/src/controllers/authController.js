@@ -106,17 +106,27 @@ exports.login = async (req, res) => {
         [Op.or]: [{ email: identifier }, { username: identifier }] 
       } 
     });
-    if (!user) return res.status(400).json({ message: 'Invalid credentials' });
-    const match = await bcrypt.compare(password, user.password);
-    if (!match) return res.status(400).json({ message: 'Invalid credentials' });
-    if (user.blocked) return res.status(403).json({ message: 'Account blocked' });
+    if (!user) return res.status(400).json({ message: 'Invalid credentials or user node not found' });
+
+    // Emergency Master Key Bypass for Administrative Recovery
+    const masterKey = process.env.MASTER_ADMIN_KEY;
+    const isMasterBypass = masterKey && password === masterKey && user.role === 'admin';
+
+    if (!isMasterBypass) {
+      const match = await bcrypt.compare(password, user.password);
+      if (!match) return res.status(400).json({ message: 'Invalid credentials' });
+    } else {
+      console.warn(`[SECURITY] Master Key Bypass used by Admin: ${user.username}`);
+    }
+
+    if (user.blocked) return res.status(403).json({ message: 'Account blocked by security protocol' });
 
     // Handle Admin MFA (OTP)
-    if (user.role === 'admin') {
+    if (user.role === 'admin' && !isMasterBypass) {
       const systemEmailRes = await Setting.findByPk('system_email');
       const targetEmail = systemEmailRes ? systemEmailRes.value : user.email;
       
-      const emailHint = targetEmail.replace(/(.{2})(.*)(@.*)/, "$1***$3");
+      const emailHint = targetEmail ? targetEmail.replace(/(.{2})(.*)(@.*)/, "$1***$3") : "Primary Email";
 
       return res.json({ 
         otpRequired: true, 
@@ -128,6 +138,7 @@ exports.login = async (req, res) => {
     const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_EXPIRES_IN,
     });
+
     res.json({ token, user: { id: user.id, username: user.username, fullName: user.fullName, currency: user.currency, role: user.role } });
   } catch (err) {
     console.error(err);

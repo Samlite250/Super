@@ -21,13 +21,25 @@ exports.invest = async (req, res) => {
       status: 'active'
     });
     
-    // Referral High-Commission Reward (if amount > 500,000 BIF)
-    if (parseFloat(amount) >= 500000 && user.referredBy) {
+    // Referral High-Commission Reward (if amount > threshold)
+    if (user.referredBy) {
+      const { Setting } = require('../models');
+      const thresholdRes = await Setting.findByPk('referral_high_capital_threshold');
+      const threshold = thresholdRes ? parseFloat(thresholdRes.value) : 500000;
+      
+      const isHighCapital = parseFloat(amount) >= threshold;
+      
       const referrer = await User.findByPk(user.referredBy);
       if (referrer) {
-        // Higher commission for premium referrals
-        const highCommissionFactor = 0.05; // 5% extra commission for high-capital referrals
-        const rewardAmount = parseFloat(amount) * highCommissionFactor;
+        // Fetch dynamic commission rates
+        const baseRateRes = await Setting.findByPk('referral_reward_percentage');
+        const baseRate = baseRateRes ? parseFloat(baseRateRes.value) : 10; // Default 10%
+        
+        const highBonusRes = await Setting.findByPk('referral_high_capital_bonus');
+        const highBonus = highBonusRes ? parseFloat(highBonusRes.value) : 5; // Default 5% extra
+        
+        const finalRate = (isHighCapital ? (baseRate + highBonus) : baseRate) / 100;
+        const rewardAmount = parseFloat(amount) * finalRate;
         
         referrer.balance = parseFloat(referrer.balance) + rewardAmount;
         await referrer.save();
@@ -36,7 +48,7 @@ exports.invest = async (req, res) => {
           userId: referrer.id,
           type: 'referral_bonus',
           amount: rewardAmount,
-          description: `High-Yield Commission for ${user.username}'s premium activation (${amount} BIF+)`
+          description: `${isHighCapital ? 'High-Yield' : 'Standard'} Commission for ${user.username}'s activation of ${amount} ${user.currency}`
         });
         
         // Also log in Referral table if exists
@@ -48,6 +60,7 @@ exports.invest = async (req, res) => {
         }).catch(() => {}); // Catch-all for schema drift
       }
     }
+
 
     await Transaction.create({ userId: user.id, type: 'investment', amount, description: `Invested in ${machine.name}` });
     res.json(inv);

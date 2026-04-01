@@ -10,6 +10,11 @@ function AdminSettings() {
     Burundi: '0', Rwanda: '0', Uganda: '0', Kenya: '0', referral: '2500'
   });
   const [supportEmail, setSupportEmail] = useState('support@tracova.com');
+  const [referralSettings, setReferralSettings] = useState({
+    reward_percentage: '10',
+    high_threshold: '500000',
+    high_bonus: '5'
+  });
   const [autoDepositEnabled, setAutoDepositEnabled] = useState(true);
   const [cryptoWallets, setCryptoWallets] = useState({ trc20: '', enabled: false });
   const [loading, setLoading] = useState(true);
@@ -38,6 +43,11 @@ function AdminSettings() {
           if (s.auto_deposit_enabled !== undefined) {
              setAutoDepositEnabled(s.auto_deposit_enabled === 'true' || s.auto_deposit_enabled === true);
           }
+          setReferralSettings({
+            reward_percentage: s.referral_reward_percentage || '10',
+            high_threshold: s.referral_high_capital_threshold || '500000',
+            high_bonus: s.referral_high_capital_bonus || '5'
+          });
           setRewards({
             Burundi: s.signup_bonus_Burundi || '0',
             Rwanda: s.signup_bonus_Rwanda || '0',
@@ -57,6 +67,22 @@ function AdminSettings() {
   }, [navigate]);
 
 
+  const saveReferralSettings = async () => {
+    try {
+      setSavingSocial(true);
+      await Promise.all([
+        api.post('/settings', { key: 'referral_reward_percentage', value: referralSettings.reward_percentage }),
+        api.post('/settings', { key: 'referral_high_capital_threshold', value: referralSettings.high_threshold }),
+        api.post('/settings', { key: 'referral_high_capital_bonus', value: referralSettings.high_bonus })
+      ]);
+      alert('Referral reward configuration success!');
+    } catch (err) {
+      alert('Referral update failed');
+    } finally {
+      setSavingSocial(false);
+    }
+  };
+
   const saveCryptoWallets = async () => {
     try {
       setSavingSocial(true);
@@ -70,6 +96,7 @@ function AdminSettings() {
   };
 
   const saveRewards = async () => {
+
     try {
       setSavingSocial(true);
       await Promise.all([
@@ -277,7 +304,45 @@ function AdminSettings() {
                     <button onClick={saveCryptoWallets} disabled={savingSocial} className="w-full py-4 bg-secondary text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-blue-400 transition-all">Save Crypto Settings</button>
                   </div>
               </div>
+              {/* Referral Dynamics */}
+              <div className="bg-[#1e293b] p-10 rounded-[4rem] shadow-2xl border border-white/10 text-white">
+                  <h3 className="text-xl font-black mb-8 flex items-center gap-4 text-secondary">
+                     <span className="text-2xl">👥</span> Referral Rewards
+                  </h3>
+                  <div className="space-y-4">
+                     <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest opacity-60 ml-1">Base Reward (%)</label>
+                        <input 
+                           type="number" 
+                           value={referralSettings.reward_percentage} 
+                           onChange={e => setReferralSettings({ ...referralSettings, reward_percentage: e.target.value })} 
+                           className="w-full px-5 py-3.5 bg-white/5 border border-white/10 rounded-2xl text-white text-xs outline-none focus:border-secondary/50 font-mono" 
+                        />
+                     </div>
+                     <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest opacity-60 ml-1">High Capital Threshold</label>
+                        <input 
+                           type="number" 
+                           value={referralSettings.high_threshold} 
+                           onChange={e => setReferralSettings({ ...referralSettings, high_threshold: e.target.value })} 
+                           className="w-full px-5 py-3.5 bg-white/5 border border-white/10 rounded-2xl text-white text-xs outline-none focus:border-secondary/50 font-mono" 
+                        />
+                     </div>
+                     <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest opacity-60 ml-1">High Capital Bonus (+%)</label>
+                        <input 
+                           type="number" 
+                           value={referralSettings.high_bonus} 
+                           onChange={e => setReferralSettings({ ...referralSettings, high_bonus: e.target.value })} 
+                           className="w-full px-5 py-3.5 bg-white/5 border border-white/10 rounded-2xl text-white text-xs outline-none focus:border-secondary/50 font-mono" 
+                        />
+                     </div>
+                     <button onClick={saveReferralSettings} disabled={savingSocial} className="w-full py-5 bg-secondary text-white rounded-[2rem] font-black text-[11px] uppercase tracking-[4px] shadow-3xl hover:bg-blue-400 transition-all mt-4">Update Referral Dynamics</button>
+                  </div>
+              </div>
+
               <div className="bg-[#0f172a] p-10 rounded-[4rem] shadow-2xl border border-white/10 text-white">
+
                   <h3 className="text-xl font-black mb-8 flex items-center gap-4">
                      <span className="text-2xl text-yellow-400">🎁</span> Signup Bonuses
                   </h3>
