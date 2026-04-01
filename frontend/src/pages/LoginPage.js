@@ -2,12 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import api from '../services/api';
+import { useLanguage } from '../context/LanguageContext';
 
 function LoginPage() {
+  const { t } = useLanguage();
   const [loginIdentifier, setLoginIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
 
   useEffect(() => { document.title = "Login | Tracova"; }, []);
 
@@ -57,13 +60,13 @@ function LoginPage() {
             <img src="/logo.png" className="h-[70px] w-auto object-contain mx-auto drop-shadow-lg" alt="Tracova Logo" />
             <span className="text-xl font-black text-primary tracking-[0.2em] uppercase mt-1 group-hover:text-green-700 transition-colors">Tracova</span>
           </Link>
-          <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-2 tracking-tight">Welcome back</h2>
-          <p className="text-sm font-medium text-gray-500">Login to see your farm profits.</p>
+          <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-2 tracking-tight">{t('login')}</h2>
+          <p className="text-sm font-medium text-gray-500">Access your professional workspace.</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-1.5">Username or Email</label>
+            <label className="block text-sm font-bold text-gray-700 mb-1.5">{t('email')} / Username</label>
             <input
               type="text"
               value={loginIdentifier}
@@ -76,8 +79,8 @@ function LoginPage() {
 
           <div>
             <div className="flex justify-between items-center mb-1.5">
-              <label className="block text-sm font-bold text-gray-700">Password</label>
-              <Link to="/forgot-password" size="sm" className="text-xs font-bold text-primary hover:text-green-700 transition">Forgot password?</Link>
+              <label className="block text-sm font-bold text-gray-700">{t('password')}</label>
+              <Link to="/forgot-password" size="sm" className="text-xs font-bold text-primary hover:text-green-700 transition">{t('forgotPassword')}</Link>
             </div>
             <input
               type="password"
@@ -95,19 +98,19 @@ function LoginPage() {
           >
             {loading ? (
                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-            ) : "Login Now"}
+            ) : t('login')}
           </button>
         </form>
 
-
         <div className="mt-8 text-center border-t border-gray-100 pt-6">
           <p className="text-sm font-medium text-gray-600">
-            Don't have an account?{' '}
+            {t('noAccount')}{' '}
             <Link to="/register" className="font-bold text-primary hover:text-green-700 hover:underline transition">
-              Create one now
+              {t('register')}
             </Link>
           </p>
         </div>
+
       </div>
 
     </div>

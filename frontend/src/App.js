@@ -28,11 +28,14 @@ import AdminLedger from './pages/admin/AdminLedger';
 
 
 import { LanguageProvider } from './context/LanguageContext';
+import LanguageSwitcher from './components/LanguageSwitcher';
 
 function App() {
   return (
     <LanguageProvider>
+      <LanguageSwitcher />
       <Router>
+
 
       <Toaster position="top-right" reverseOrder={false} />
       <Routes>

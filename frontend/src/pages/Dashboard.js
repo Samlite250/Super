@@ -207,16 +207,6 @@ function Dashboard() {
             <div className="flex items-center gap-4 mb-2">
               <img src="/logo.png" className="h-10 w-auto object-contain" alt="Tracova Logo" />
               <div className="h-6 w-[1px] bg-white/20"></div>
-              <select 
-                value={language} 
-                onChange={(e) => setLanguage(e.target.value)}
-                className="bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg px-3 py-1.5 text-[11px] font-black text-white outline-none cursor-pointer backdrop-blur-md transition-all uppercase tracking-widest"
-              >
-                <option value="en" className="text-gray-900">EN - English</option>
-                <option value="sw" className="text-gray-900">SW - Swahili</option>
-                <option value="rw" className="text-gray-900">RW - Kinyarwanda</option>
-                <option value="rn" className="text-gray-900">RN - Kirundi</option>
-              </select>
             </div>
             <h1 className="text-3xl font-extrabold tracking-tight">
                {t('welcome')}, {user.username || user.email.split('@')[0]}
