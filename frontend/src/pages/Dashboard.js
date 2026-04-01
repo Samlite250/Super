@@ -148,19 +148,20 @@ function Dashboard() {
       {/* Hot Offer Popup Modal */}
       <AnimatePresence>
         {showHotPopup && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/70 backdrop-blur-md">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-md">
             <motion.div 
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.8, opacity: 0 }}
-              className="bg-white rounded-[3rem] w-full max-w-[280px] overflow-hidden shadow-2xl relative border-4 border-amber-400"
+              className="bg-white rounded-[2.5rem] w-full max-w-[280px] sx:max-w-[90vw] overflow-hidden shadow-2xl relative border-4 border-amber-400"
             >
-              <div className="p-8 text-center">
-                 <div className="text-5xl mb-4">🔥</div>
-                 <h2 className="text-xl font-black text-slate-900 tracking-tight mb-2 uppercase">HOT OFFER!</h2>
+              <div className="p-6 sm:p-8 text-center">
+                 <div className="text-4xl sm:text-5xl mb-4">🔥</div>
+                 <h2 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight mb-2 uppercase">HOT OFFER!</h2>
                  <p className="text-slate-500 font-bold text-[10px] uppercase tracking-widest leading-relaxed mb-6">
                     {hotPlansCount} Limited flash sales are now active.
                  </p>
+
                  
                  <button 
                   onClick={() => { setShowHotPopup(false); navigate('/machines'); }}
@@ -600,50 +601,51 @@ function Dashboard() {
             {/* Referrals Tab */}
             {activeTab === 'referrals' && (
               <div className="animate-fadeIn">
-                <div className="mb-10 text-center md:text-left">
-                  <h2 className="text-3xl font-black text-gray-900 tracking-tight mb-2">Passive Income Strategy</h2>
-                  <p className="text-indigo-600 font-bold text-xs uppercase tracking-[3px]">Target High-Capital Investors for Maximum Passive Yields</p>
+                <div className="mb-8 text-center md:text-left px-2">
+                  <h2 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight mb-2">Passive Income Strategy</h2>
+                  <p className="text-primary font-bold text-[9px] sm:text-xs uppercase tracking-[2px] sm:tracking-[3px]">Target High-Capital Investors for Maximum Passive Yields</p>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
-                   {/* Whale Catcher Card */}
-                   <div className="bg-gradient-to-br from-indigo-900 via-indigo-950 to-black p-10 rounded-[3rem] border border-white/10 shadow-3xl group relative overflow-hidden flex flex-col justify-center">
-                      <div className="absolute right-0 top-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl"></div>
-                      <div className="flex items-start gap-5 relative z-10">
-                         <div className="w-14 h-14 bg-white/10 text-white rounded-2xl flex items-center justify-center text-3xl shadow-inner border border-white/20">💎</div>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-10">
+                   {/* Whale Catcher Card - System Green */}
+                   <div className="bg-gradient-to-br from-primary via-green-800 to-green-950 p-6 sm:p-10 rounded-[2.5rem] sm:rounded-[3rem] border border-white/10 shadow-3xl group relative overflow-hidden flex flex-col justify-center">
+                      <div className="absolute right-0 top-0 w-32 h-32 bg-white/10 rounded-full blur-3xl"></div>
+                      <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-5 relative z-10 text-center sm:text-left">
+                         <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white/10 text-white rounded-2xl flex items-center justify-center text-2xl sm:text-3xl shadow-inner border border-white/20">💎</div>
                          <div>
-                            <h4 className="text-white font-black text-xl uppercase tracking-tight mb-2">Whale Catcher Guide</h4>
-                            <p className="text-indigo-200/70 text-sm leading-relaxed font-bold">
+                            <h4 className="text-white font-black text-lg uppercase tracking-tight mb-1 sm:mb-2">Whale Catcher Guide</h4>
+                            <p className="text-green-100/70 text-xs leading-relaxed font-bold">
                                Target investors with <span className="text-white underline underline-offset-4 font-black">1,000,000 {user.currency}+</span> capital. 
-                               You earn an <span className="text-secondary font-black">INSTANT 10% BONUS</span> per activation.
+                               You earn an <span className="text-yellow-400 font-black">INSTANT 10% BONUS</span> per activation.
                             </p>
                          </div>
                       </div>
                    </div>
                    
-                   {/* Clean Referral Link Section */}
-                   <div className="bg-white p-10 rounded-[3rem] border border-gray-100 shadow-xl flex flex-col justify-center relative overflow-hidden">
-                     <div className="absolute top-0 right-0 w-24 h-24 bg-green-500/5 rounded-full blur-xl"></div>
-                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-[4px] mb-6">Your Invitation Node Link</p>
-                     <div className="flex bg-gray-50 p-2 rounded-2xl border border-gray-100 items-center justify-between shadow-inner">
-                        <span className="text-[11px] font-mono text-gray-500 truncate px-6">.../register?ref={user.referralCode}</span>
+                   {/* Clean Referral Link Section - Multi-Device Optimized */}
+                   <div className="bg-white p-6 sm:p-10 rounded-[2.5rem] sm:rounded-[3rem] border border-gray-100 shadow-xl flex flex-col justify-center relative overflow-hidden">
+                     <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full blur-xl"></div>
+                     <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest sm:tracking-[4px] mb-4 sm:mb-6">Your Invitation Node Link</p>
+                     <div className="flex flex-col sm:flex-row bg-gray-50 p-2 rounded-2xl border border-gray-100 items-center gap-2 sm:gap-0 shadow-inner">
+                        <span className="text-[10px] sm:text-[11px] font-mono text-gray-500 truncate px-4 sm:px-6 w-full text-center sm:text-left">.../register?ref={user.referralCode}</span>
                         <button 
                           onClick={copyReferralLink}
-                          className="bg-gray-950 text-white px-8 py-4 rounded-xl font-black text-[11px] uppercase tracking-widest active:scale-95 transition-all shadow-xl hover:bg-black"
+                          className="w-full sm:w-auto bg-gray-950 text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-black text-[10px] sm:text-[11px] uppercase tracking-widest active:scale-95 transition-all shadow-xl hover:bg-black"
                         >
-                          {copySuccess ? '✓ COPIED' : 'COPY'}
+                          {copySuccess ? '✓ COPIED' : 'COPY LINK'}
                         </button>
                      </div>
-                     <p className="mt-4 text-[10px] font-bold text-gray-400 text-center tracking-widest uppercase">Every active direct partner boosts your passive wallet</p>
+                     <p className="mt-4 text-[9px] font-bold text-gray-400 text-center tracking-widest uppercase opacity-70">Share & expand your decentralized node network</p>
                    </div>
                 </div>
 
                 {/* Simplified Referral Earnings Table */}
-                <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-xl overflow-hidden mb-12">
-                   <div className="bg-gray-950 text-white p-8">
-                      <h3 className="text-lg font-black tracking-tight mb-1 uppercase">Commission Scale</h3>
-                      <p className="text-gray-500 text-[10px] uppercase font-bold tracking-[3px]">Earn 10% instant bonus on every capital deployment</p>
+                <div className="bg-white rounded-[2rem] sm:rounded-[2.5rem] border border-gray-100 shadow-xl overflow-hidden mb-12">
+                   <div className="bg-primary text-white p-6 sm:p-8">
+                      <h3 className="text-base sm:text-lg font-black tracking-tight mb-1 uppercase">Commission Scale</h3>
+                      <p className="text-white/60 text-[10px] uppercase font-bold tracking-[3px]">Earn 10% instant bonus on every capital deployment</p>
                    </div>
+
                    <div className="overflow-x-auto">
                       <table className="w-full text-left border-collapse">
                          <thead className="bg-gray-50/50 border-b border-gray-100">
@@ -658,9 +660,10 @@ function Dashboard() {
                                   <td className="p-6 font-bold text-gray-700">
                                      {amt.toLocaleString()} <span className="text-[10px] text-gray-400 font-bold ml-1">{user.currency}</span>
                                   </td>
-                                  <td className="p-6 text-right font-black text-indigo-600 group-hover:scale-105 transition-transform origin-right">
-                                     + {(amt * 0.1).toLocaleString()} <span className="text-[10px] text-indigo-800/40 font-bold ml-1">{user.currency}</span>
+                                  <td className="p-6 text-right font-black text-primary group-hover:scale-105 transition-transform origin-right">
+                                     + {(amt * 0.1).toLocaleString()} <span className="text-[10px] text-green-800/40 font-bold ml-1">{user.currency}</span>
                                   </td>
+
                                </tr>
                             ))}
                          </tbody>
@@ -705,9 +708,10 @@ function Dashboard() {
                               </td>
                               <td className="p-6 text-xs text-gray-500 font-bold">{new Date(ref.createdAt).toLocaleDateString()}</td>
                               <td className="p-6 text-right">
-                                <span className="font-black text-indigo-600 bg-indigo-50 px-3 py-2 rounded-xl border border-indigo-100 inline-block">
+                                <span className="font-black text-primary bg-green-50 px-3 py-2 rounded-xl border border-green-100 inline-block">
                                   + {parseFloat(ref.commission || 0).toLocaleString()} <span className="text-[10px] opacity-50">{user.currency}</span>
                                 </span>
+
                               </td>
                             </tr>
                           ))}
