@@ -28,35 +28,56 @@ function Dashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [meRes, machinesRes, statsRes, histRes, invRes, refRes, socResFinal] = await Promise.all([
-          api.get('/user/me'),
-          api.get('/machines'),
-          api.get('/user/stats'),
-          api.get('/user/history'),
-          api.get('/investments/me'),
-          api.get('/referrals/me'),
-          api.get('/settings/social-links')
-        ]);
+        // Critical: User Identity
+        const meRes = await api.get('/user/me').catch(err => {
+           console.error('Critical Auth Failure:', err);
+           navigate('/login');
+           return null;
+        });
+        if (!meRes) return;
         setUser(meRes.data);
-        const hot = (machinesRes.data || []).filter(m => m.type === 'hot');
-        setHotPlansCount(hot.length);
-        if (hot.length > 0 && !sessionStorage.getItem('hotOfferSeen')) {
-          setShowHotPopup(true);
+
+        // Non-Critical: All other data should not break the dashboard
+        const fetchSilently = async (url, setter) => {
+          try {
+            const res = await api.get(url);
+            setter(res.data);
+          } catch (e) {
+            console.warn(`Soft error fetching ${url}:`, e.message);
+          }
+        };
+
+        fetchSilently('/user/stats', setStats);
+        fetchSilently('/user/history', setHistory);
+        fetchSilently('/investments/me', setInvestments);
+        fetchSilently('/referrals/me', setReferrals);
+        fetchSilently('/settings/social-links', (data) => setSocialLinks(data || { whatsapp: '', telegram: '' }));
+
+        // Machines (for hot popup check)
+        try {
+          const machinesRes = await api.get('/machines');
+          const hot = (machinesRes.data || []).filter(m => m.type === 'hot');
+          setHotPlansCount(hot.length);
+          if (hot.length > 0 && !sessionStorage.getItem('hotOfferSeen')) {
+            setShowHotPopup(true);
+          }
+        } catch (e) {
+          console.warn('Machine fetch soft-fail:', e.message);
         }
-        setStats(statsRes.data);
-        setHistory(histRes.data);
-        setInvestments(invRes.data);
-        setReferrals(refRes.data);
-        setSocialLinks(socResFinal.data || { whatsapp: '', telegram: '' });
 
       } catch (err) {
-        navigate('/login');
+        console.error('Dashboard logic error:', err);
+        // Only redirect on actual auth error or logic crash
+        if (err.response?.status === 401) {
+           navigate('/login');
+        }
       } finally {
         setLoading(false);
       }
     };
     fetchData();
   }, [navigate]);
+
 
 
   const copyReferralLink = () => {
