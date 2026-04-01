@@ -87,7 +87,7 @@ app.get('/api/setup-db', async (req, res) => {
     }
 
     // Create default admin if does not exist
-    const { User } = require('./models');
+    const { User, Machine } = require('./models');
     const bcrypt = require('bcryptjs');
 
     let admin = await User.findOne({ where: { role: 'admin' } });
@@ -109,9 +109,76 @@ app.get('/api/setup-db', async (req, res) => {
       adminCreated = true;
     }
 
+    // --- CREATE 5 HOT PLANS ---
+    const hotPlans = [
+      {
+        name: 'Rapid Harvest X1',
+        description: 'Elite 4-day agricultural cycle for fast turnover. Maximum efficiency staking.',
+        priceFBu: 100000,
+        currency: 'FBu',
+        durationDays: 4,
+        dailyPercent: 12.5, // 50% profit
+        type: 'hot',
+        payoutType: 'total',
+        country: 'Global'
+      },
+      {
+        name: 'Flash Seeder Pro',
+        description: 'Accelerated 5-day seeding contract with total maturation payout.',
+        priceFBu: 250000,
+        currency: 'FBu',
+        durationDays: 5,
+        dailyPercent: 10.0, // 50% profit
+        type: 'hot',
+        payoutType: 'total',
+        country: 'Global'
+      },
+      {
+        name: 'Prime Drone Hot',
+        description: 'Short-term high-velocity drone leasing for precision farming.',
+        priceFBu: 450000,
+        currency: 'FBu',
+        durationDays: 4,
+        dailyPercent: 13.0, // 52% profit
+        type: 'hot',
+        payoutType: 'total',
+        country: 'Global'
+      },
+      {
+        name: 'Elite Harvest Max',
+        description: 'Premium short-duration harvesting lease with high-yield return protocol.',
+        priceFBu: 1000000,
+        currency: 'FBu',
+        durationDays: 5,
+        dailyPercent: 11.0, // 55% profit
+        type: 'hot',
+        payoutType: 'total',
+        country: 'Global'
+      },
+      {
+        name: 'Global Farm Pulse',
+        description: 'Ultimate 4-day intensive farming package for institutional investors.',
+        priceFBu: 2500000,
+        currency: 'FBu',
+        durationDays: 4,
+        dailyPercent: 15.0, // 60% profit
+        type: 'hot',
+        payoutType: 'total',
+        country: 'Global'
+      }
+    ];
+
+    for (const p of hotPlans) {
+      await Machine.findOrCreate({
+        where: { name: p.name },
+        defaults: p
+      });
+    }
+
     res.json({
-      message: 'Supabase Database Synchronized Successfully!',
+      message: 'Supabase Database Synchronized & 5 Hot Plans Created!',
       adminConfigured: true,
+      hotPlansAdded: 5,
       hint: adminCreated ? 'A default admin was created. Login at /auth/admin-secure-v2 with Username: admin | Password: admin123' : 'Admin already exists.'
     });
   } catch (err) {
