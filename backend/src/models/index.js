@@ -68,10 +68,10 @@ Withdrawal.belongsTo(User, { foreignKey: 'userId' });
 User.hasMany(Transaction, { foreignKey: 'userId', onDelete: 'CASCADE' });
 Transaction.belongsTo(User, { foreignKey: 'userId' });
 
-User.hasMany(Referral, { foreignKey: 'referrerId', onDelete: 'CASCADE' });
-Referral.belongsTo(User, { foreignKey: 'referrerId' });
-Referral.belongsTo(User, { foreignKey: 'referredId', as: 'referredUser' });
-User.hasMany(Referral, { foreignKey: 'referredId', onDelete: 'CASCADE' });
+User.hasMany(Referral, { as: 'ReferralsAsReferrer', foreignKey: 'referrerId', onDelete: 'CASCADE' });
+Referral.belongsTo(User, { as: 'Referrer', foreignKey: 'referrerId' });
+Referral.belongsTo(User, { as: 'referredUser', foreignKey: 'referredId' });
+User.hasMany(Referral, { as: 'ReferralsAsReferred', foreignKey: 'referredId', onDelete: 'CASCADE' });
 
 User.belongsTo(User, { as: 'upline', foreignKey: 'referredBy' });
 User.hasMany(User, { as: 'downline', foreignKey: 'referredBy', onDelete: 'SET NULL' });

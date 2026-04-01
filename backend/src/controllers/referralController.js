@@ -16,6 +16,7 @@ exports.getMyReferrals = async (req, res) => {
       include: [
         { 
           model: Referral, 
+          as: 'ReferralsAsReferrer',
           attributes: ['commission'],
           where: { referrerId: req.user.id },
           required: false // Left join to show users even if they haven't generated commission yet
@@ -28,7 +29,7 @@ exports.getMyReferrals = async (req, res) => {
     const results = downline.map(u => ({
       id: u.id,
       createdAt: u.createdAt,
-      commission: u.Referrals && u.Referrals.length > 0 ? u.Referrals[0].commission : 0,
+      commission: u.ReferralsAsReferrer && u.ReferralsAsReferrer.length > 0 ? u.ReferralsAsReferrer[0].commission : 0,
       referredUser: {
         id: u.id,
         username: u.username,
