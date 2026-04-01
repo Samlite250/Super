@@ -17,33 +17,47 @@ function Dashboard() {
   const [passLoading, setPassLoading] = useState(false);
   const [passMessage, setPassMessage] = useState({ text: '', type: '' });
   const [socialLinks, setSocialLinks] = useState({ whatsapp: '', telegram: '' });
+  const [showHotPopup, setShowHotPopup] = useState(false);
+  const [hotPlansCount, setHotPlansCount] = useState(0);
+  const [stats, setStats] = useState({ totalInvested: 0, totalEarned: 0 });
   const navigate = useNavigate();
 
 
   useEffect(() => { document.title = "Dashboard | Tracova"; }, []);
 
   useEffect(() => {
-    async function load() {
+    const fetchData = async () => {
       try {
-        const res = await api.get('/user/me');
-        setUser(res.data);
-        const invRes = await api.get('/investments/me');
-        setInvestments(invRes.data);
-        const refRes = await api.get('/referrals/me');
-        setReferrals(refRes.data);
-        const histRes = await api.get('/user/history');
+        const [meRes, machinesRes, statsRes, histRes, invRes, refRes, socResFinal] = await Promise.all([
+          api.get('/user/me'),
+          api.get('/machines'),
+          api.get('/user/stats'),
+          api.get('/user/history'),
+          api.get('/investments/me'),
+          api.get('/referrals/me'),
+          api.get('/settings/social-links')
+        ]);
+        setUser(meRes.data);
+        const hot = (machinesRes.data || []).filter(m => m.type === 'hot');
+        setHotPlansCount(hot.length);
+        if (hot.length > 0 && !sessionStorage.getItem('hotOfferSeen')) {
+          setShowHotPopup(true);
+        }
+        setStats(statsRes.data);
         setHistory(histRes.data);
-        const socRes = await api.get('/settings/social-links');
-        setSocialLinks(socRes.data || { whatsapp: '', telegram: '' });
+        setInvestments(invRes.data);
+        setReferrals(refRes.data);
+        setSocialLinks(socResFinal.data || { whatsapp: '', telegram: '' });
 
       } catch (err) {
         navigate('/login');
       } finally {
         setLoading(false);
       }
-    }
-    load();
+    };
+    fetchData();
   }, [navigate]);
+
 
   const copyReferralLink = () => {
     const link = `${window.location.origin}/register?ref=${user.referralCode}`;
@@ -94,8 +108,75 @@ function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans pb-16">
+      
+      {/* Hot Flash Sale Banner */}
+      {hotPlansCount > 0 && (
+        <div className="bg-gradient-to-r from-amber-500 to-orange-600 text-white py-2 px-4 shadow-sm relative z-[60] overflow-hidden">
+          <div className="absolute inset-0 bg-white/10 animate-pulse pointer-events-none"></div>
+          <div className="max-w-6xl mx-auto flex items-center justify-center gap-4 text-[10px] font-black uppercase tracking-[3px]">
+             <Zap size={14} className="fill-white animate-bounce" />
+             <span>Limited Time: Hot Flash Sales Available Now!</span>
+             <button onClick={() => navigate('/machines')} className="bg-white text-orange-600 px-3 py-1 rounded-full hover:bg-orange-50 transition-colors tracking-widest flex items-center gap-2">
+               View Now <ExternalLink size={10} />
+             </button>
+             <Zap size={14} className="fill-white animate-bounce" />
+          </div>
+        </div>
+      )}
+
+      {/* Hot Offer Popup Modal */}
+      <AnimatePresence>
+        {showHotPopup && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="bg-white rounded-[2.5rem] w-full max-w-sm overflow-hidden shadow-2xl relative"
+            >
+              <div className="bg-amber-400 h-2 w-full"></div>
+              <button onClick={() => setShowHotPopup(false)} className="absolute top-6 right-6 text-gray-400 hover:text-gray-900 transition-colors">
+                <X size={24} />
+              </button>
+              
+              <div className="p-10 text-center">
+                 <div className="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <span className="text-4xl animate-pulse">🔥</span>
+                 </div>
+                 <h2 className="text-2xl font-black text-slate-800 tracking-tight mb-2 uppercase">Hot Offer Alert!</h2>
+                 <p className="text-slate-500 font-bold text-xs uppercase tracking-widest leading-relaxed mb-8">
+                   We have <span className="text-orange-600">{hotPlansCount} new flash sales</span> available with accelerated daily returns.
+                 </p>
+                 
+                 <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100 mb-8">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Status</p>
+                    <p className="text-sm font-black text-green-600 uppercase flex items-center justify-center gap-2">
+                      <span className="w-2 h-2 bg-green-500 rounded-full animate-ping"></span>
+                      Ending Soon
+                    </p>
+                 </div>
+
+                 <button 
+                  onClick={() => { setShowHotPopup(false); navigate('/machines'); }}
+                  className="w-full py-4 bg-orange-600 hover:bg-orange-700 text-white rounded-2xl font-black text-xs uppercase tracking-[2px] shadow-lg transition-all active:scale-95"
+                 >
+                    Check Offers Now
+                 </button>
+                 <button 
+                  onClick={() => setShowHotPopup(false)}
+                  className="mt-4 text-[10px] font-black text-slate-400 hover:text-slate-600 uppercase tracking-widest transition-colors"
+                 >
+                    Dismiss
+                 </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       {/* Premium Header */}
       <header className="bg-primary text-white pt-8 pb-14 px-6 shadow-md relative overflow-hidden">
+
         <div className="absolute top-0 right-0 -tr-translate-x-1/2 -tr-translate-y-1/2 w-64 h-64 bg-green-500 rounded-full opacity-15 blur-2xl"></div>
         <div className="absolute bottom-0 left-10 w-32 h-32 bg-yellow-400 rounded-full opacity-10 blur-xl"></div>
         

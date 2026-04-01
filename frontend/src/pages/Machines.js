@@ -186,6 +186,34 @@ function Machines() {
 }
 
 
+const calculateTimeLeft = (targetDate, fakeOffsetHours = 24) => {
+    // If we have a real date, use it; otherwise, simulate a 24h cycle from the current day
+    const now = new Date();
+    let target = targetDate ? new Date(targetDate) : new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+    
+    // If the simulated target passed (e.g. it's already after 23:59), set it for tomorrow
+    if (target < now) {
+      target.setDate(target.getDate() + 1);
+    }
+    
+    const diff = target - now;
+    if (diff <= 0) return '00:00:00';
+    
+    const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const m = Math.floor((diff / (1000 * 60)) % 60);
+    const s = Math.floor((diff / 1000) % 60);
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+};
+
+function HotCountdown({ targetDate }) {
+    const [timeLeft, setTimeLeft] = useState(calculateTimeLeft(targetDate));
+    useEffect(() => {
+        const timer = setInterval(() => setTimeLeft(calculateTimeLeft(targetDate)), 1000);
+        return () => clearInterval(timer);
+    }, [targetDate]);
+    return <span>{timeLeft}</span>;
+}
+
 // ─── HOT MACHINE CARD (LIGHT & CLEAR REDESIGN) ──────────────────────────────
 function HotMachineCard({ m, idx, user, investingId, handleInvest }) {
     const price = parseFloat(m.price || m.priceFBu);
@@ -225,9 +253,12 @@ function HotMachineCard({ m, idx, user, investingId, handleInvest }) {
             <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent"></div>
             
             {/* badges */}
-            <div className="absolute top-4 left-4">
+            <div className="absolute top-4 left-4 flex flex-col gap-2">
               <div className="bg-orange-600 text-white px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider shadow-lg flex items-center gap-1">
                 <Flame size={12} fill="white" /> Hot Offer
+              </div>
+              <div className="bg-slate-900 text-amber-400 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider shadow-lg flex items-center gap-1.5 border border-amber-400/20">
+                <Clock size={10} className="animate-spin-slow" /> Ends In: <HotCountdown targetDate={m.endsAt} />
               </div>
             </div>
             
@@ -235,6 +266,7 @@ function HotMachineCard({ m, idx, user, investingId, handleInvest }) {
               Flash Sale
             </div>
           </div>
+
 
           <div className="p-6 pt-0 flex flex-col flex-grow">
             <div className="mb-4">
