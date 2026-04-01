@@ -3,7 +3,8 @@ import api from '../services/api';
 import { useLanguage } from '../context/LanguageContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Tractor, X, ExternalLink, Zap } from 'lucide-react';
+import { Tractor, X, ExternalLink, Zap, Award } from 'lucide-react';
+
 
 function Dashboard() {
   const { language, setLanguage, t } = useLanguage();
