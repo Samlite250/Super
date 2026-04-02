@@ -5,19 +5,22 @@ const LanguageSwitcher = () => {
   const { language, setLanguage } = useLanguage();
 
   return (
-    <div className="fixed top-2 right-2 sm:top-3 sm:right-3 z-[9999] flex items-center bg-white/90 backdrop-blur-sm border border-white/40 rounded-lg p-0.5 shadow-lg opacity-80 hover:opacity-100 transition-all origin-top-right transform scale-90 sm:scale-100">
-      <button 
-        onClick={() => setLanguage('en')}
-        className={`px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider transition-all ${language === 'en' ? 'bg-primary text-white shadow-sm' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-200'}`}
-      >
-        EN
-      </button>
-      <button 
-        onClick={() => setLanguage('fr')}
-        className={`ml-0.5 px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider transition-all ${language === 'fr' ? 'bg-primary text-white shadow-sm' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-200'}`}
-      >
-        FR
-      </button>
+    <div className="w-full bg-slate-900 border-b border-slate-800 flex justify-end items-center px-4 py-1 relative z-[9999] text-xs">
+      <span className="text-[9px] text-slate-500 uppercase tracking-widest font-bold mr-3 hidden sm:inline-block">Language</span>
+      <div className="flex items-center gap-1 bg-black/40 p-0.5 rounded-lg border border-white/10">
+        <button 
+          onClick={() => setLanguage('en')}
+          className={`px-3 py-1 rounded-md text-[10px] font-black uppercase tracking-widest transition-all ${language === 'en' ? 'bg-primary text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-white/10'}`}
+        >
+          EN
+        </button>
+        <button 
+          onClick={() => setLanguage('fr')}
+          className={`px-3 py-1 rounded-md text-[10px] font-black uppercase tracking-widest transition-all ${language === 'fr' ? 'bg-primary text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-white/10'}`}
+        >
+          FR
+        </button>
+      </div>
     </div>
   );
 };
