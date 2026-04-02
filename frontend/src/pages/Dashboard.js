@@ -3,7 +3,7 @@ import api from '../services/api';
 import { useLanguage } from '../context/LanguageContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Tractor, X, ExternalLink, Zap, Award } from 'lucide-react';
+import { Tractor, X, ExternalLink, Zap, Award, LayoutDashboard, Wallet, Users, History, Settings, Banknote, Smartphone, Coins, TrendingUp, Globe, Sprout, AtSign, Gem } from 'lucide-react';
 
 
 function Dashboard() {
@@ -30,30 +30,23 @@ function Dashboard() {
   const getReferralLadder = () => {
     const c = user?.currency || 'FBu';
     let rawLadder = '';
-    
     if (c === 'RWF') rawLadder = systemSettings['referral_ladder_Rwanda'];
     else if (c === 'KES') rawLadder = systemSettings['referral_ladder_Kenya'];
     else if (c === 'UGX') rawLadder = systemSettings['referral_ladder_Uganda'];
     else if (c === 'FBu' || c === 'BIF') rawLadder = systemSettings['referral_ladder_Burundi'];
-    
-    if (!rawLadder && c === 'Global') rawLadder = systemSettings['referral_ladder_Global'];
-
+    else rawLadder = systemSettings['referral_ladder_Global'];
     if (rawLadder) {
-      try {
-        return rawLadder.split(',').map(s => parseFloat(s.trim())).filter(n => !isNaN(n));
-      } catch (e) {}
+      try { return rawLadder.split(',').map(s => parseFloat(s.trim())).filter(n => !isNaN(n)); } catch (e) {}
     }
-
-    // Default fallbacks if backend settings are completely missing
-    if (c === 'RWF') return [350000, 700000, 1000000, 1200000, 1500000];
+    if (c === 'RWF') return [350000, 600000, 900000, 1200000, 1500000];
     if (c === 'KES') return [50000, 80000, 110000, 150000, 200000];
     if (c === 'UGX') return [500000, 800000, 1100000, 1500000, 2000000];
     return [500000, 800000, 1100000, 1500000, 2000000];
   };
 
-  const referralCommissionRate = systemSettings['referral_reward_percentage'] ? parseFloat(systemSettings['referral_reward_percentage']) / 100 : 0.1;
-
-
+  const referralCommissionRate = systemSettings['referral_reward_percentage']
+    ? parseFloat(systemSettings['referral_reward_percentage']) / 100
+    : 0.1;
 
 
   useEffect(() => { document.title = "Dashboard | Tracova"; }, []);
@@ -254,7 +247,7 @@ function Dashboard() {
               onClick={() => navigate('/machines')} 
               className="flex items-center gap-2 bg-yellow-400 hover:bg-yellow-500 text-yellow-900 px-5 py-2.5 rounded-xl text-sm font-bold transition-all hover:scale-105 shadow-sm"
             >
-              â­ New Investment
+              ⭐ New Investment
             </button>
             <button 
               onClick={handleLogout} 
@@ -362,7 +355,7 @@ function Dashboard() {
             transition={{ delay: 0.1 }}
             className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4"
           >
-            <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center text-2xl text-primary">ðŸ’°</div>
+            <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center text-primary"><Coins size={24} /></div>
             <div>
               <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Available Balance</p>
               <p className="text-xl font-black text-gray-900">{Math.max(0, parseFloat(user.balance)).toLocaleString()} <span className="text-sm text-gray-500 font-bold">{user.currency}</span></p>
@@ -374,7 +367,7 @@ function Dashboard() {
             transition={{ delay: 0.2 }}
             className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4"
           >
-            <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-2xl text-blue-500">ðŸ“ˆ</div>
+            <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-500"><TrendingUp size={24} /></div>
             <div>
               <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Active Assets</p>
               <p className="text-xl font-black text-gray-900">{investments.length} <span className="text-sm text-gray-500 font-bold">Plans</span></p>
@@ -386,7 +379,7 @@ function Dashboard() {
             transition={{ delay: 0.3 }}
             className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4"
           >
-            <div className="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center text-2xl text-purple-500">ðŸ‘¥</div>
+            <div className="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center text-purple-500"><Users size={24} /></div>
             <div>
               <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Your Network</p>
               <p className="text-xl font-black text-gray-900">{referrals.length} <span className="text-sm text-gray-500 font-bold">Referrals</span></p>
@@ -398,7 +391,7 @@ function Dashboard() {
             transition={{ delay: 0.4 }}
             className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4"
           >
-            <div className="w-12 h-12 rounded-xl bg-yellow-50 flex items-center justify-center text-2xl text-yellow-500">ðŸŒ</div>
+            <div className="w-12 h-12 rounded-xl bg-yellow-50 flex items-center justify-center text-yellow-500"><Globe size={24} /></div>
             <div>
               <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Account Region</p>
               <p className="text-xl font-black text-gray-900">{user.country}</p>
@@ -410,23 +403,23 @@ function Dashboard() {
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
           <div className="flex overflow-x-auto border-b border-gray-100 hide-scrollbar">
             {[
-              { id: 'overview', label: `ðŸ“Š ${t('dashboard')}`, key: 'dashboard' },
-              { id: 'investments', label: `ðŸšœ ${t('myAssets')}`, key: 'myAssets' },
-              { id: 'wallet', label: `ðŸ’³ ${t('wallet')}`, key: 'wallet' },
-              { id: 'referrals', label: `ðŸ‘¥ ${t('myTeam')}`, key: 'myTeam' },
-              { id: 'history', label: `ðŸ“œ ${t('history')}`, key: 'history' },
-              { id: 'settings', label: `âš™ï¸ ${t('settings')}`, key: 'settings' }
+              { id: 'overview', icon: <LayoutDashboard size={14} />, label: t('dashboard'), key: 'dashboard' },
+              { id: 'investments', icon: <Tractor size={14} />, label: t('myAssets'), key: 'myAssets' },
+              { id: 'wallet', icon: <Wallet size={14} />, label: t('wallet'), key: 'wallet' },
+              { id: 'referrals', icon: <Users size={14} />, label: t('myTeam'), key: 'myTeam' },
+              { id: 'history', icon: <History size={14} />, label: t('history'), key: 'history' },
+              { id: 'settings', icon: <Settings size={14} />, label: t('settings'), key: 'settings' }
             ].map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex-1 min-w-[140px] px-6 py-4 font-bold text-[10px] uppercase tracking-widest transition-colors whitespace-nowrap ${
+                className={`flex-1 min-w-[140px] px-6 py-4 font-bold text-[10px] uppercase tracking-widest transition-colors whitespace-nowrap flex items-center justify-center gap-2 ${
                   activeTab === tab.id 
                     ? 'border-b-2 border-primary text-primary bg-green-50/30' 
                     : 'text-gray-500 hover:text-gray-800 hover:bg-gray-50'
                 }`}
               >
-                {tab.label}
+                {tab.icon} {tab.label}
               </button>
             ))}
           </div>
@@ -459,19 +452,19 @@ function Dashboard() {
                         onClick={() => navigate('/deposit')}
                         className="w-full bg-white hover:bg-blue-50 text-secondary border-2 border-secondary/20 py-3 rounded-xl font-bold shadow-sm transition-all flex items-center justify-center gap-2"
                       >
-                        ðŸ’µ {t('deposit')}
+                        <Banknote size={18} /> {t('deposit')}
                       </button>
                       <button
                         onClick={() => navigate('/withdraw')}
                         className="w-full bg-primary hover:bg-green-700 text-white py-3 rounded-xl font-bold shadow-[0_4px_14px_0_rgba(31,139,76,0.39)] transition-all flex items-center justify-center gap-2"
                       >
-                        ðŸ“± {t('withdraw')}
+                        <Smartphone size={18} /> {t('withdraw')}
                       </button>
                       <button
                         onClick={() => navigate('/machines')}
                         className="w-full bg-gray-900 hover:bg-black text-white py-3 rounded-xl font-bold shadow-md transition-all flex items-center justify-center gap-2"
                       >
-                        ðŸšœ Explore Plans
+                        <Tractor size={18} /> Explore Plans
                       </button>
                     </div>
                   </div>
@@ -507,7 +500,9 @@ function Dashboard() {
                 {(socialLinks.whatsapp || socialLinks.telegram) && (
                   <div className="mt-8 bg-white p-6 md:p-8 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6 transition-all hover:shadow-md">
                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-xl shadow-inner italic font-serif text-gray-400">@</div>
+                        <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-400 shadow-inner">
+                           <AtSign size={24} />
+                        </div>
                         <div>
                           <h3 className="text-lg font-black text-gray-900 tracking-tight">Community Hub</h3>
                           <p className="text-[11px] text-gray-400 font-bold uppercase tracking-widest">Connect with official registry streams</p>
@@ -538,7 +533,7 @@ function Dashboard() {
 
                 {investments.length === 0 ? (
                   <div className="bg-gray-50 border border-gray-200 border-dashed rounded-2xl p-10 text-center">
-                    <div className="text-5xl mb-4">ðŸŒ±</div>
+                    <div className="flex justify-center text-green-200 mb-4"><Sprout size={48} /></div>
                     <h3 className="text-lg font-bold text-gray-800 mb-2">No active assets</h3>
                     <p className="text-gray-500 text-sm mb-6 max-w-sm mx-auto">You haven't purchased any investment plans yet.</p>
                   </div>
@@ -608,11 +603,11 @@ function Dashboard() {
                    <div className="bg-gradient-to-br from-primary via-green-800 to-green-950 p-6 sm:p-10 rounded-[2.5rem] border border-white/10 shadow-3xl group relative overflow-hidden flex flex-col justify-center">
                       <div className="absolute right-0 top-0 w-32 h-32 bg-white/10 rounded-full blur-3xl"></div>
                       <div className="flex items-start gap-4 sm:gap-5 relative z-10">
-                         <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white/10 text-white rounded-2xl flex items-center justify-center text-xl sm:text-3xl shadow-inner border border-white/20">ðŸ’Ž</div>
+                         <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white/10 text-white rounded-2xl flex items-center justify-center text-xl sm:text-3xl shadow-inner border border-white/20">💎</div>
                          <div>
                             <h4 className="text-white font-black text-lg uppercase tracking-tight mb-1 sm:mb-2">Top Investor Rewards</h4>
                             <p className="text-green-100/70 text-xs leading-relaxed font-bold">
-                               Target users with <span className="text-white underline underline-offset-4 font-black">{getReferralLadder()[getReferralLadder().length - 1].toLocaleString()} {user.currency}+</span>. 
+                               Target users with <span className="text-white underline underline-offset-4 font-black">{(getReferralLadder()[getReferralLadder().length - 1] || 0).toLocaleString()} {user?.currency}+</span>. 
                                Earn an <span className="text-yellow-400 font-black text-sm">INSTANT {systemSettings['referral_reward_percentage'] || '10'}% BONUS</span> on every activation.
                             </p>
                          </div>
@@ -627,9 +622,9 @@ function Dashboard() {
                         <span className="text-[10px] sm:text-[11px] font-mono text-gray-500 truncate px-4 sm:px-6 flex-1">.../reg?ref={user.referralCode}</span>
                         <button 
                           onClick={copyReferralLink}
-                          className="bg-gray-950 text-white px-5 sm:px-8 py-3.5 sm:py-4 rounded-xl font-black text-[9px] sm:text-[11px] uppercase tracking-widest active:scale-95 transition-all shadow-xl hover:bg-black whitespace-nowrap"
+                          className="bg-gray-950 text-white px-5 sm:px-8 py-3.5 sm:py-4 rounded-xl font-black text-[9px] sm:text-[11px] uppercase tracking-widest active:scale-95 transition-all shadow-xl hover:bg-black whitespace-nowrap flex items-center gap-1"
                         >
-                          {copySuccess ? 'âœ“ COPIED' : 'COPY LINK'}
+                          {copySuccess ? <><X size={12} className="rotate-45" /> COPIED</> : 'COPY LINK'}
                         </button>
                      </div>
                    </div>
@@ -658,7 +653,7 @@ function Dashboard() {
                                      {amt.toLocaleString()} <span className="text-[10px] text-gray-400 font-bold ml-1">{user.currency}</span>
                                   </td>
                                   <td className="p-6 text-right font-black text-primary group-hover:scale-105 transition-transform origin-right">
-                                     + {(amt * referralCommissionRate).toLocaleString()} <span className="text-[10px] text-green-800/40 font-bold ml-1">{user.currency}</span>
+                                     + {(amt * 0.1).toLocaleString()} <span className="text-[10px] text-green-800/40 font-bold ml-1">{user.currency}</span>
                                   </td>
                                </tr>
                             ))}
@@ -734,7 +729,7 @@ function Dashboard() {
                     {/* Deposits Section */}
                     <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
                       <div className="bg-gray-50 px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-                        <h4 className="font-bold text-gray-800 text-sm uppercase tracking-wider">ðŸ’° Your Deposits</h4>
+                        <h4 className="font-bold text-gray-800 text-sm uppercase tracking-wider">💰 Your Deposits</h4>
                         <span className="text-[10px] font-black text-secondary bg-secondary/10 px-2 py-1 rounded">Live</span>
                       </div>
                       <div className="max-h-80 overflow-y-auto custom-scrollbar">
@@ -765,7 +760,7 @@ function Dashboard() {
                     {/* Withdrawals Section */}
                     <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
                       <div className="bg-gray-50 px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-                        <h4 className="font-bold text-gray-800 text-sm uppercase tracking-wider">ðŸ¦ Payout Requests</h4>
+                        <h4 className="font-bold text-gray-800 text-sm uppercase tracking-wider">🏦 Payout Requests</h4>
                         <span className="text-[10px] font-black text-primary bg-primary/10 px-2 py-1 rounded">Live</span>
                       </div>
                       <div className="max-h-80 overflow-y-auto custom-scrollbar">
@@ -844,7 +839,7 @@ function Dashboard() {
                       ) : (
                         <div className="p-20 text-center">
                            <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                              <span className="text-2xl opacity-20">ðŸ“‘</span>
+                              <span className="text-2xl opacity-20">📑</span>
                            </div>
                            <p className="text-gray-400 font-black uppercase text-[10px] tracking-widest">No transactions found.</p>
                         </div>
@@ -866,14 +861,14 @@ function Dashboard() {
 
                 <div className="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm mb-8">
                   <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
-                    <span className="text-secondary">ðŸ”</span> Change Password
+                    <span className="text-secondary">🔐</span> Change Password
                   </h3>
                   
                   {passMessage.text && (
                     <div className={`p-4 rounded-xl mb-6 text-sm font-bold flex items-center gap-3 ${
                       passMessage.type === 'success' ? 'bg-green-50 text-green-700 border border-green-100' : 'bg-red-50 text-red-700 border border-red-100'
                     }`}>
-                      {passMessage.type === 'success' ? 'âœ…' : 'âš ï¸'} {passMessage.text}
+                      {passMessage.type === 'success' ? '✅' : '⚠️'} {passMessage.text}
                     </div>
                   )}
 
@@ -886,7 +881,7 @@ function Dashboard() {
                         value={passForm.currentPassword}
                         onChange={(e) => setPassForm({...passForm, currentPassword: e.target.value})}
                         className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-secondary outline-none transition-all font-medium"
-                        placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                        placeholder="••••••••"
                       />
                     </div>
                     <div>
@@ -898,7 +893,7 @@ function Dashboard() {
                         value={passForm.newPassword}
                         onChange={(e) => setPassForm({...passForm, newPassword: e.target.value})}
                         className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-secondary outline-none transition-all font-medium"
-                        placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                        placeholder="••••••••"
                       />
                     </div>
                     <div>
@@ -909,7 +904,7 @@ function Dashboard() {
                         value={passForm.confirmPassword}
                         onChange={(e) => setPassForm({...passForm, confirmPassword: e.target.value})}
                         className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-secondary outline-none transition-all font-medium"
-                        placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                        placeholder="••••••••"
                       />
                     </div>
                     <button 
@@ -945,7 +940,7 @@ function Dashboard() {
 
             <div className="flex items-center gap-4 mt-2 md:mt-0">
               <p className="text-gray-400 font-medium text-xs">
-                Â© 2024 Tracova Technologies.
+                © 2024 Tracova Technologies.
               </p>
               <div className="flex items-center gap-1.5 text-[10px] font-bold text-gray-400 bg-white shadow-sm px-2.5 py-1 rounded-md border border-gray-200 uppercase tracking-wider">
                 <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import { useNavigate, Link } from 'react-router-dom';
+import { Banknote, Hourglass, AlertTriangle, CheckCircle, Rocket, Landmark, Smartphone, Copy, ClipboardList, Camera, Info, ShieldCheck, Check } from 'lucide-react';
 
 function Deposit() {
   const [amount, setAmount] = useState('50000');
@@ -145,7 +146,7 @@ function Deposit() {
       <header className="bg-[#1F8B4C] pt-8 pb-10 px-8">
         <div className="max-w-5xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-4">
-            <span className="text-3xl">💵</span>
+            <span className="text-3xl text-white"><Banknote size={32} /></span>
             <div>
                <h1 className="text-2xl font-black text-white tracking-tight">Add Money</h1>
                <p className="text-white/80 text-[11px] font-bold uppercase tracking-wider">Add money to your account safely.</p>

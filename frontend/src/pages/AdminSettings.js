@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import AdminLayout from '../components/AdminLayout';
 import api from '../services/api';
 import { toast } from 'react-hot-toast';
+import { Sprout, Zap } from 'lucide-react';
 
 function AdminSettings() {
   const [settings, setSettings] = useState({});
@@ -138,7 +139,7 @@ function AdminSettings() {
 
         <div className="mt-8 p-8 bg-green-50 rounded-[2.5rem] border border-green-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
            <div className="flex gap-4 flex-1">
-             <div className="text-2xl">🌱</div>
+             <div className="text-2xl text-green-600"><Sprout /></div>
              <div>
                <h4 className="font-black text-green-900 mb-1">Seed Default Referral Ladders</h4>
                <p className="text-sm text-green-800 font-medium leading-relaxed">
@@ -149,15 +150,15 @@ function AdminSettings() {
            <button
              onClick={seedDefaults}
              disabled={seeding}
-             className="bg-green-800 hover:bg-green-900 text-white px-8 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all active:scale-95 shadow-lg disabled:opacity-50 whitespace-nowrap shrink-0"
+             className="bg-green-800 hover:bg-green-900 text-white px-8 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all active:scale-95 shadow-lg disabled:opacity-50 whitespace-nowrap shrink-0 flex items-center gap-2"
            >
-             {seeding ? 'Seeding...' : '🌱 Seed Defaults'}
+             {seeding ? 'Seeding...' : <><Sprout size={16} /> Seed Defaults</>}
            </button>
         </div>
 
         <div className="mt-6 p-8 bg-amber-50 rounded-[2.5rem] border border-amber-100">
            <div className="flex gap-4">
-             <div className="text-2xl">⚡</div>
+             <div className="text-2xl text-amber-600"><Zap /></div>
              <div>
                <h4 className="font-black text-amber-900 mb-1">Administrative Note</h4>
                <p className="text-sm text-amber-800 font-medium leading-relaxed">
