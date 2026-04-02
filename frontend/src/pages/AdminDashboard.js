@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../services/api';
 import { useNavigate, Link } from 'react-router-dom';
+import { AlertTriangle, Zap, CheckCircle, Clock } from 'lucide-react';
 import AdminLayout from '../components/AdminLayout';
 
 function AdminDashboard() {
@@ -50,7 +51,7 @@ function AdminDashboard() {
     return (
       <div className="min-h-screen p-6 bg-red-50 flex items-center justify-center">
         <div className="bg-white border border-red-100 p-10 rounded-[2.5rem] shadow-2xl text-center max-w-md">
-          <div className="text-4xl mb-4">⚠️</div>
+          <div className="text-4xl mb-4 text-red-500 flex justify-center"><AlertTriangle size={48} /></div>
           <h2 className="text-2xl font-black text-gray-900 mb-2">Access Restricted</h2>
           <p className="text-gray-500 font-medium mb-8">{error}</p>
           <button onClick={() => navigate('/auth/admin-secure-v2')} className="w-full bg-gray-900 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl">Return to Login</button>
@@ -196,7 +197,7 @@ function AdminDashboard() {
             <div className="bg-gray-950 rounded-[3rem] p-8 shadow-2xl relative overflow-hidden">
               <div className="absolute top-0 right-0 w-48 h-48 bg-secondary rounded-full opacity-[0.04] blur-3xl"></div>
               <h3 className="text-lg font-black text-white mb-6 relative z-10 flex items-center gap-3">
-                <span className="text-secondary">⚡</span>
+                <Zap size={18} className="text-secondary" />
                 Quick Actions
               </h3>
               <div className="space-y-3 relative z-10">
@@ -220,7 +221,7 @@ function AdminDashboard() {
             {/* Pending Alerts */}
             {(pendingDeposits.length > 0 || pendingWithdrawals.length > 0) && (
               <div className="bg-orange-50 border border-orange-100 p-7 rounded-[2.5rem]">
-                <p className="text-[10px] font-black text-orange-500 uppercase tracking-widest mb-4">⚠ Needs Your Attention</p>
+                <p className="text-[10px] font-black text-orange-500 uppercase tracking-widest mb-4 flex items-center gap-2"><AlertTriangle size={12} /> Needs Your Attention</p>
                 <div className="space-y-2">
                   {pendingDeposits.length > 0 && (
                     <Link to="/admin/deposits" className="block p-4 bg-white rounded-2xl border border-orange-100 hover:shadow-md transition-all">

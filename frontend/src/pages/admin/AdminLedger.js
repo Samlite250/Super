@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../../services/api';
 import { useNavigate } from 'react-router-dom';
+import { ArrowUpCircle, ArrowDownCircle, TrendingUp, Users, Tractor, Repeat } from 'lucide-react';
 import AdminLayout from '../../components/AdminLayout';
 
 function AdminLedger() {
@@ -82,8 +83,14 @@ function AdminLedger() {
   };
 
   const typeIcon = (type) => {
-    const icons = { deposit: '⬆️', withdrawal: '⬇️', roi: '📈', referral: '🤝', investment: '🚜' };
-    return icons[type] || '💱';
+    const icons = { 
+      deposit:    <ArrowUpCircle size={12} />, 
+      withdrawal: <ArrowDownCircle size={12} />, 
+      roi:        <TrendingUp size={12} />, 
+      referral:   <Users size={12} />, 
+      investment: <Tractor size={12} /> 
+    };
+    return icons[type] || <Repeat size={12} />;
   };
 
   const totalIn = filtered.filter(t => ['deposit', 'roi', 'referral'].includes(t.type)).reduce((s, t) => s + parseFloat(t.amount || 0), 0);
