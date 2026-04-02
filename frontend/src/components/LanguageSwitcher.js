@@ -5,16 +5,16 @@ const LanguageSwitcher = () => {
   const { language, setLanguage } = useLanguage();
 
   return (
-    <div className="fixed bottom-6 sm:bottom-8 right-4 sm:right-6 z-[9999] flex items-center bg-white/80 backdrop-blur-md border border-white/50 rounded-2xl p-1 shadow-2xl hover:bg-white/95 transition-all border-b-2 border-b-gray-100">
+    <div className="fixed top-2 right-2 sm:top-3 sm:right-3 z-[9999] flex items-center bg-white/90 backdrop-blur-sm border border-white/40 rounded-lg p-0.5 shadow-lg opacity-80 hover:opacity-100 transition-all origin-top-right transform scale-90 sm:scale-100">
       <button 
         onClick={() => setLanguage('en')}
-        className={`px-3 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-black uppercase tracking-wider transition-all ${language === 'en' ? 'bg-primary text-white shadow-[0_5px_15px_-3px_rgba(31,139,76,0.3)]' : 'text-gray-400 hover:text-gray-700 hover:bg-gray-100'}`}
+        className={`px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider transition-all ${language === 'en' ? 'bg-primary text-white shadow-sm' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-200'}`}
       >
         EN
       </button>
       <button 
         onClick={() => setLanguage('fr')}
-        className={`ml-1 px-3 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-black uppercase tracking-wider transition-all ${language === 'fr' ? 'bg-primary text-white shadow-[0_5px_15px_-3px_rgba(31,139,76,0.3)]' : 'text-gray-400 hover:text-gray-700 hover:bg-gray-100'}`}
+        className={`ml-0.5 px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider transition-all ${language === 'fr' ? 'bg-primary text-white shadow-sm' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-200'}`}
       >
         FR
       </button>
