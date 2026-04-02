@@ -26,6 +26,14 @@ function Dashboard() {
   const [stats, setStats] = useState({ totalInvested: 0, totalEarned: 0 });
   const navigate = useNavigate();
 
+  const getReferralLadder = () => {
+    const c = user?.currency || 'FBu';
+    if (c === 'RWF') return [15000, 30000, 60000, 150000, 300000];
+    if (c === 'KES') return [2000, 4000, 8000, 20000, 40000];
+    if (c === 'UGX') return [50000, 100000, 200000, 500000, 1000000];
+    return [50000, 100000, 200000, 500000, 1000000];
+  };
+
 
   useEffect(() => { document.title = "Dashboard | Tracova"; }, []);
 
@@ -582,7 +590,7 @@ function Dashboard() {
                          <div>
                             <h4 className="text-white font-black text-lg uppercase tracking-tight mb-1 sm:mb-2">Top Investor Rewards</h4>
                             <p className="text-green-100/70 text-xs leading-relaxed font-bold">
-                               Target users with <span className="text-white underline underline-offset-4 font-black">1,000,000 {user.currency}+</span>. 
+                               Target users with <span className="text-white underline underline-offset-4 font-black">{getReferralLadder()[getReferralLadder().length - 1].toLocaleString()} {user.currency}+</span>. 
                                Earn an <span className="text-yellow-400 font-black text-sm">INSTANT 10% BONUS</span> on every activation.
                             </p>
                          </div>
@@ -622,7 +630,7 @@ function Dashboard() {
                             </tr>
                          </thead>
                          <tbody className="divide-y divide-gray-50">
-                            {[500000, 1000000, 2000000, 5000000, 10000000].map(amt => (
+                            {getReferralLadder().map(amt => (
                                <tr key={amt} className="hover:bg-indigo-50/30 transition-colors group">
                                   <td className="p-6 font-bold text-gray-700">
                                      {amt.toLocaleString()} <span className="text-[10px] text-gray-400 font-bold ml-1">{user.currency}</span>
@@ -630,7 +638,6 @@ function Dashboard() {
                                   <td className="p-6 text-right font-black text-primary group-hover:scale-105 transition-transform origin-right">
                                      + {(amt * 0.1).toLocaleString()} <span className="text-[10px] text-green-800/40 font-bold ml-1">{user.currency}</span>
                                   </td>
-
                                </tr>
                             ))}
                          </tbody>
