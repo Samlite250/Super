@@ -148,15 +148,15 @@ function Dashboard() {
       
       {/* Hot Flash Sale Banner */}
       {hotPlansCount > 0 && (
-        <div className="bg-gradient-to-r from-amber-500 to-orange-600 text-white py-2 px-4 shadow-sm relative z-[60] overflow-hidden">
+        <div className="bg-gradient-to-r from-amber-500 to-orange-600 text-white py-1.5 sm:py-2 px-4 shadow-sm relative z-[60] overflow-hidden pr-24">
           <div className="absolute inset-0 bg-white/10 animate-pulse pointer-events-none"></div>
-          <div className="max-w-6xl mx-auto flex items-center justify-center gap-4 text-[10px] font-black uppercase tracking-[3px]">
-             <Zap size={14} className="fill-white animate-bounce" />
-             <span>Limited Time: Hot Flash Sales Available Now!</span>
-             <button onClick={() => navigate('/machines')} className="bg-white text-orange-600 px-3 py-1 rounded-full hover:bg-orange-50 transition-colors tracking-widest flex items-center gap-2">
-               View Now <ExternalLink size={10} />
+          <div className="max-w-6xl mx-auto flex items-center justify-start gap-2 sm:gap-4 text-[9px] sm:text-[10px] font-black uppercase tracking-wider sm:tracking-[3px] truncate">
+             <Zap size={14} className="fill-white animate-bounce shrink-0" />
+             <span className="truncate">Hot Flash Sales!</span>
+             <button onClick={() => navigate('/machines')} className="bg-white text-orange-600 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full hover:bg-orange-50 transition-colors tracking-widest flex items-center gap-1 shrink-0">
+               View <ExternalLink size={10} className="hidden sm:block" />
              </button>
-             <Zap size={14} className="fill-white animate-bounce" />
+             <Zap size={14} className="fill-white animate-bounce hidden sm:block shrink-0" />
           </div>
         </div>
       )}
