@@ -51,7 +51,11 @@ function AdminInvestments() {
       inv.User?.fullName?.toLowerCase().includes(search.toLowerCase()) ||
       inv.User?.email?.toLowerCase().includes(search.toLowerCase()) ||
       inv.Machine?.name?.toLowerCase().includes(search.toLowerCase());
-    const matchStatus = statusFilter === 'all' || inv.status === statusFilter;
+    const matchStatus = statusFilter === 'all' 
+      ? true 
+      : statusFilter === 'reinvest' 
+        ? inv.isReinvest === true 
+        : inv.status === statusFilter;
     const matchCountry = countryFilter === 'all' || inv.User?.country === countryFilter;
     return matchSearch && matchStatus && matchCountry;
   });
@@ -122,6 +126,7 @@ function AdminInvestments() {
             <option value="active">Active</option>
             <option value="completed">Completed</option>
             <option value="terminated">Terminated</option>
+            <option value="reinvest">Re-investments Only</option>
           </select>
         </div>
 
@@ -159,7 +164,12 @@ function AdminInvestments() {
                         </td>
                         <td className="p-6">
                           <p className="font-bold text-gray-800 text-sm">{inv.Machine?.name || '—'}</p>
-                          <p className="text-[10px] text-gray-400 font-bold">{inv.Machine?.durationDays}d duration</p>
+                          <div className="flex items-center gap-2 mt-1">
+                            <p className="text-[10px] text-gray-400 font-bold">{inv.Machine?.durationDays}d duration</p>
+                            {inv.isReinvest && (
+                              <span className="bg-secondary/10 text-secondary text-[8px] font-black uppercase px-1.5 py-0.5 rounded border border-secondary/20 tracking-tighter shadow-sm">Re-invest</span>
+                            )}
+                          </div>
                         </td>
                         <td className="p-6 text-right">
                           <p className="font-black text-primary text-lg tabular-nums">{parseFloat(inv.amount).toLocaleString()}</p>

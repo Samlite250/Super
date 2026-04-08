@@ -8,7 +8,8 @@ module.exports = (sequelize, DataTypes) => {
     endDate: { type: DataTypes.DATE },
     dailyIncome: { type: DataTypes.DECIMAL(20,2) },
     status: { type: DataTypes.STRING, defaultValue: 'active' },
-    lastReturnAt: { type: DataTypes.DATE }
+    lastReturnAt: { type: DataTypes.DATE },
+    isReinvest: { type: DataTypes.BOOLEAN, defaultValue: false }
   });
 
   return Investment;

@@ -2,7 +2,7 @@ const { Investment, Machine, User, Transaction } = require('../models');
 
 exports.invest = async (req, res) => {
   try {
-    const { machineId, amount } = req.body;
+    const { machineId, amount, isReinvest } = req.body;
     const user = req.user;
     const machine = await Machine.findByPk(machineId);
     if (!machine) return res.status(404).json({ message: 'Machine not found' });
@@ -18,13 +18,14 @@ exports.invest = async (req, res) => {
       amount,
       dailyIncome,
       startDate: new Date(),
-      status: 'active'
+      status: 'active',
+      isReinvest: isReinvest || false
     });
     
-    // ── Referral Commission (first investment only) ──────────────────────────
+    // ── Referral Commission (first investment only AND not a re-investment) ──────────────────────────
     // Commission is paid to the referrer ONLY on the referred user's first
-    // successful investment. All subsequent investments generate no commission.
-    if (user.referredBy) {
+    // successful investment. All subsequent investments OR re-investments generate no commission.
+    if (user.referredBy && !isReinvest) {
       const previousInvestments = await Investment.count({
         where: { userId: user.id, id: { [require('sequelize').Op.ne]: inv.id } }
       });

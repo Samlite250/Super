@@ -141,7 +141,7 @@ function Dashboard() {
     if (!window.confirm(`Re-invest ${parseFloat(machine.price || machine.priceFBu).toLocaleString()} ${user.currency} into "${machine.name}"? This will be deducted from your current balance.`)) return;
     setReinvestingId(machine.id);
     try {
-      await api.post('/investments', { machineId: machine.id, amount: machine.price || machine.priceFBu });
+      await api.post('/investments', { machineId: machine.id, amount: machine.price || machine.priceFBu, isReinvest: true });
       // Refresh user balance
       const meRes = await api.get('/user/me');
       setUser(meRes.data);

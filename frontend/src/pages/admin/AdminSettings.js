@@ -107,24 +107,24 @@ function AdminSettings() {
       <div className="p-8 lg:p-12 animate-fadeIn">
 
         {/* ── Page Header ── */}
-        <div className="mb-10">
-          <h2 className="text-4xl font-black text-gray-900 tracking-tight mb-1">Global Settings</h2>
-          <p className="text-gray-400 font-medium text-sm">Configure your platform's payment gateways, commissions, and system preferences.</p>
+        <div className="mb-8 sm:mb-10">
+          <h2 className="text-2xl sm:text-4xl font-black text-gray-900 tracking-tight mb-1">Global Settings</h2>
+          <p className="text-gray-400 font-medium text-xs sm:text-sm">Configure your platform's payment gateways, commissions, and system preferences.</p>
         </div>
 
         {/* ── Tab Navigation ── */}
-        <div className="flex items-center gap-2 mb-10 bg-white p-2 rounded-[1.5rem] border border-gray-100 shadow-sm w-fit">
+        <div className="flex items-center gap-2 mb-8 sm:mb-10 bg-white p-1.5 sm:p-2 rounded-2xl sm:rounded-[1.5rem] border border-gray-100 shadow-sm w-full sm:w-fit overflow-x-auto no-scrollbar scroll-smooth">
           {tabs.map(tab => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-7 py-3.5 rounded-2xl font-black text-[11px] uppercase tracking-[2.5px] transition-all ${
+              className={`flex items-center gap-2 px-4 sm:px-7 py-2.5 sm:py-3.5 rounded-xl sm:rounded-2xl font-black text-[9px] sm:text-[11px] uppercase tracking-[1.5px] sm:tracking-[2.5px] whitespace-nowrap transition-all ${
                 activeTab === tab.id
                   ? 'bg-gray-900 text-white shadow-lg'
                   : 'text-gray-400 hover:text-gray-700 hover:bg-gray-50'
               }`}
             >
-              <span className="text-base">{tab.icon}</span>
+              <span className="text-sm sm:text-base">{tab.icon}</span>
               {tab.label}
             </button>
           ))}
@@ -135,10 +135,10 @@ function AdminSettings() {
         ════════════════════════════════════════════ */}
         {activeTab === 'gateway' && (
           <div className="animate-fadeIn">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
 
               {/* Auto-Pay Toggle */}
-              <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-xl p-10">
+              <div className="bg-white rounded-[2rem] sm:rounded-[2.5rem] border border-gray-100 shadow-xl p-6 sm:p-10">
                 <div className="flex items-center justify-between mb-8">
                   <div>
                     <h3 className="text-2xl font-black text-gray-900 tracking-tight">Flutterwave Auto-Pay</h3>
@@ -261,12 +261,12 @@ function AdminSettings() {
         ════════════════════════════════════════════ */}
         {activeTab === 'methods' && (
           <div className="animate-fadeIn">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
 
               {/* Add Form */}
-              <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-xl p-10">
-                <h3 className="text-2xl font-black text-gray-900 tracking-tight mb-2">Add New Method</h3>
-                <p className="text-sm text-gray-400 mb-8">Configure a manual payment option for a specific country.</p>
+              <div className="bg-white rounded-[2rem] sm:rounded-[2.5rem] border border-gray-100 shadow-xl p-6 sm:p-10">
+                <h3 className="text-xl sm:text-2xl font-black text-gray-900 tracking-tight mb-2">Add New Method</h3>
+                <p className="text-xs sm:text-sm text-gray-400 mb-8 font-medium">Configure a manual payment option for a specific country.</p>
                 <div className="space-y-5">
                   <div>
                     <label className="block text-[10px] font-black uppercase tracking-[3px] text-gray-400 mb-2">Method Name</label>
@@ -299,21 +299,21 @@ function AdminSettings() {
               {/* Methods List */}
               <div className="lg:col-span-2">
                 <div className="flex items-center justify-between mb-6 px-2">
-                  <h3 className="text-xl font-black text-gray-900">Active Payment Methods</h3>
-                  <span className="px-4 py-2 bg-secondary/10 text-secondary text-[10px] font-black rounded-full tracking-widest">{options.length} configured</span>
+                  <h3 className="text-lg sm:text-xl font-black text-gray-900">Active Payment Methods</h3>
+                  <span className="px-3 sm:px-4 py-1.5 sm:py-2 bg-secondary/10 text-secondary text-[8px] sm:text-[10px] font-black rounded-full tracking-widest">{options.length} configured</span>
                 </div>
                 {options.length === 0 ? (
-                  <div className="bg-white rounded-[2.5rem] border-2 border-dashed border-gray-100 p-24 text-center shadow-sm">
-                    <p className="text-5xl mb-4">💳</p>
-                    <p className="text-gray-300 font-black uppercase tracking-[6px] text-sm">No payment methods configured</p>
-                    <p className="text-gray-400 text-sm mt-2">Add your first method using the form on the left.</p>
+                  <div className="bg-white rounded-[2rem] sm:rounded-[2.5rem] border-2 border-dashed border-gray-100 p-12 sm:p-24 text-center shadow-sm">
+                    <p className="text-4xl sm:text-5xl mb-4">💳</p>
+                    <p className="text-gray-300 font-black uppercase tracking-[4px] sm:tracking-[6px] text-xs sm:text-sm">No payment methods configured</p>
+                    <p className="text-gray-400 text-[10px] sm:text-sm mt-2">Add your first method using the form on the left.</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
                     {options.map((opt, idx) => (
-                      <div key={idx} className={`bg-white rounded-[2rem] border shadow-sm transition-all hover:shadow-lg group ${opt.active ? 'border-gray-100' : 'border-red-100 opacity-60'}`}>
-                        <div className="p-8 flex items-center justify-between gap-6">
-                          <div className="flex items-center gap-6">
+                      <div key={idx} className={`bg-white rounded-2xl sm:rounded-[2rem] border shadow-sm transition-all hover:shadow-lg group ${opt.active ? 'border-gray-100' : 'border-red-100 opacity-60'}`}>
+                        <div className="p-5 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6">
+                          <div className="flex items-center gap-4 sm:gap-6">
                             <div className="relative shrink-0">
                               {opt.logo ? <img src={opt.logo} className="w-16 h-14 object-contain rounded-2xl border border-gray-100" alt="logo" /> : <div className="w-16 h-14 bg-gray-50 rounded-2xl flex items-center justify-center text-[8px] font-black text-gray-300">No Logo</div>}
                               <input type="file" onChange={e => uploadLogo(e.target.files[0], idx)} className="absolute inset-0 opacity-0 cursor-pointer" />
@@ -346,12 +346,12 @@ function AdminSettings() {
         ════════════════════════════════════════════ */}
         {activeTab === 'commissions' && (
           <div className="animate-fadeIn">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
 
               {/* Referral Commission Logic */}
-              <div className="bg-gray-900 rounded-[2rem] border border-white/5 shadow-xl p-8 text-white">
+              <div className="bg-gray-900 rounded-[2rem] border border-white/5 shadow-xl p-6 sm:p-8 text-white">
                 <h3 className="text-lg font-black tracking-tight mb-1">Referral Commissions</h3>
-                <p className="text-xs text-gray-500 mb-6">Set how much a referrer earns each time someone they invited makes an investment.</p>
+                <p className="text-[10px] sm:text-xs text-gray-500 mb-6 font-medium">Set how much a referrer earns each time someone they invited makes an investment.</p>
                 <div className="space-y-5">
 
                   <div>
@@ -401,9 +401,9 @@ function AdminSettings() {
               </div>
 
               {/* Signup Bonuses */}
-              <div className="bg-[#0f172a] rounded-[2rem] border border-white/5 shadow-xl p-8 text-white">
+              <div className="bg-[#0f172a] rounded-[2rem] border border-white/5 shadow-xl p-6 sm:p-8 text-white">
                 <h3 className="text-lg font-black tracking-tight mb-1">Welcome Bonuses</h3>
-                <p className="text-xs text-gray-500 mb-6">A free credit added to a new user's account as soon as they sign up, based on their country.</p>
+                <p className="text-[10px] sm:text-xs text-gray-500 mb-6 font-medium">A free credit added to a new user's account as soon as they sign up, based on their country.</p>
                 <div className="space-y-3">
                   <div className="grid grid-cols-2 gap-3">
                     {[
@@ -457,12 +457,12 @@ function AdminSettings() {
         ════════════════════════════════════════════ */}
         {activeTab === 'system' && (
           <div className="animate-fadeIn">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
 
               {/* Community Links */}
-              <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-xl p-10">
-                <h3 className="text-2xl font-black text-gray-900 tracking-tight mb-2">Community Links</h3>
-                <p className="text-sm text-gray-400 mb-8">These links appear in the user dashboard and help section.</p>
+              <div className="bg-white rounded-[2rem] sm:rounded-[2.5rem] border border-gray-100 shadow-xl p-6 sm:p-10">
+                <h3 className="text-xl sm:text-2xl font-black text-gray-900 tracking-tight mb-2">Community Links</h3>
+                <p className="text-xs sm:text-sm text-gray-400 mb-8 font-medium">These links appear in the user dashboard and help section.</p>
                 <div className="space-y-6">
                   <div>
                     <label className="block text-[10px] font-black uppercase tracking-[3px] text-gray-400 mb-2">WhatsApp Group Link</label>
@@ -485,9 +485,9 @@ function AdminSettings() {
               </div>
 
               {/* Support Email */}
-              <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-xl p-10">
-                <h3 className="text-2xl font-black text-gray-900 tracking-tight mb-2">Support Email</h3>
-                <p className="text-sm text-gray-400 mb-8">This email address is shown to users when they need help.</p>
+              <div className="bg-white rounded-[2rem] sm:rounded-[2.5rem] border border-gray-100 shadow-xl p-6 sm:p-10">
+                <h3 className="text-xl sm:text-2xl font-black text-gray-900 tracking-tight mb-2">Support Email</h3>
+                <p className="text-xs sm:text-sm text-gray-400 mb-8 font-medium">This email address is shown to users when they need help...</p>
                 <div className="space-y-6">
                   <div>
                     <label className="block text-[10px] font-black uppercase tracking-[3px] text-gray-400 mb-2">Email Address</label>
