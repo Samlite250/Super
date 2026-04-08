@@ -466,16 +466,16 @@ function AdminSettings() {
                 <div className="space-y-6">
                   <div>
                     <label className="block text-[10px] font-black uppercase tracking-[3px] text-gray-400 mb-2">WhatsApp Group Link</label>
-                    <div className="flex items-center gap-3 bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 focus-within:border-primary transition-all">
-                      <span className="text-xl">💬</span>
-                      <input placeholder="https://chat.whatsapp.com/..." value={socialLinks.whatsapp} onChange={e => setSocialLinks({ ...socialLinks, whatsapp: e.target.value })} className="flex-1 bg-transparent text-sm font-mono text-gray-700 outline-none" />
+                    <div className="flex items-center gap-3 bg-green-50/50 border border-green-100 rounded-2x l px-5 py-4 focus-within:border-green-500 focus-within:bg-white transition-all group">
+                      <span className="text-xl group-focus-within:scale-110 transition-transform">🟢</span>
+                      <input placeholder="https://chat.whatsapp.com/..." value={socialLinks.whatsapp} onChange={e => setSocialLinks({ ...socialLinks, whatsapp: e.target.value })} className="flex-1 bg-transparent text-sm font-mono text-green-900 placeholder:text-green-200 outline-none" />
                     </div>
                   </div>
                   <div>
                     <label className="block text-[10px] font-black uppercase tracking-[3px] text-gray-400 mb-2">Telegram Group Link</label>
-                    <div className="flex items-center gap-3 bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 focus-within:border-secondary transition-all">
-                      <span className="text-xl">✈️</span>
-                      <input placeholder="https://t.me/..." value={socialLinks.telegram} onChange={e => setSocialLinks({ ...socialLinks, telegram: e.target.value })} className="flex-1 bg-transparent text-sm font-mono text-gray-700 outline-none" />
+                    <div className="flex items-center gap-3 bg-blue-50/50 border border-blue-100 rounded-2xl px-5 py-4 focus-within:border-blue-500 focus-within:bg-white transition-all group">
+                      <span className="text-xl group-focus-within:scale-110 transition-transform">🔵</span>
+                      <input placeholder="https://t.me/..." value={socialLinks.telegram} onChange={e => setSocialLinks({ ...socialLinks, telegram: e.target.value })} className="flex-1 bg-transparent text-sm font-mono text-blue-900 placeholder:text-blue-200 outline-none" />
                     </div>
                   </div>
                   <button onClick={saveSocialLinks} disabled={savingSocial} className="w-full py-5 bg-gray-900 text-white rounded-2xl font-black text-[11px] uppercase tracking-[3px] hover:bg-black transition-all shadow-xl disabled:opacity-50">
