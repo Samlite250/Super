@@ -55,13 +55,8 @@ exports.approve = async (req, res) => {
 
     const user = withdrawal.User;
     
-    // Check balance
+    // Balance is already deducted at request stage
     const netAmount = parseFloat(withdrawal.amount);
-    const totalDeduct = netAmount + parseFloat(withdrawal.fee);
-    
-    if (parseFloat(user.balance) < totalDeduct) {
-      return res.status(400).json({ message: 'User has insufficient balance.' });
-    }
 
     if (autoDispatch) {
       try {
