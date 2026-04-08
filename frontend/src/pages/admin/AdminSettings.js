@@ -15,6 +15,7 @@ function AdminSettings() {
     high_threshold: '500000',
     high_bonus: '5'
   });
+  const [flutterwaveConfig, setFlutterwaveConfig] = useState({ publicKey: '', secretKey: '', encryptionKey: '' });
   const [autoDepositEnabled, setAutoDepositEnabled] = useState(true);
   const [cryptoWallets, setCryptoWallets] = useState({ trc20: '', enabled: false });
   const [loading, setLoading] = useState(true);
@@ -48,6 +49,11 @@ function AdminSettings() {
             high_threshold: s.referral_high_capital_threshold || '500000',
             high_bonus: s.referral_high_capital_bonus || '5'
           });
+          setFlutterwaveConfig({
+            publicKey: s.flutterwave_public_key || '',
+            secretKey: s.flutterwave_secret_key || '',
+            encryptionKey: s.flutterwave_encryption_key || ''
+          });
           setRewards({
             Burundi: s.signup_bonus_Burundi || '0',
             Rwanda: s.signup_bonus_Rwanda || '0',
@@ -78,6 +84,22 @@ function AdminSettings() {
       alert('Referral reward configuration success!');
     } catch (err) {
       alert('Referral update failed');
+    } finally {
+      setSavingSocial(false);
+    }
+  };
+
+  const saveFlutterwaveConfig = async () => {
+    try {
+      setSavingSocial(true);
+      await Promise.all([
+        api.post('/settings', { key: 'flutterwave_public_key', value: flutterwaveConfig.publicKey }),
+        api.post('/settings', { key: 'flutterwave_secret_key', value: flutterwaveConfig.secretKey }),
+        api.post('/settings', { key: 'flutterwave_encryption_key', value: flutterwaveConfig.encryptionKey })
+      ]);
+      alert('Flutterwave API credentials active!');
+    } catch (err) {
+      alert('Failed to save API keys');
     } finally {
       setSavingSocial(false);
     }
@@ -251,6 +273,24 @@ function AdminSettings() {
                   <p className={`mt-4 text-[10px] font-black uppercase tracking-widest text-center py-2 rounded-xl ${autoDepositEnabled ? 'text-primary bg-primary/10' : 'text-red-500 bg-red-50'}`}>
                      {autoDepositEnabled ? 'ONLINE — Payments are automated' : 'OFFLINE — Manual approval required'}
                   </p>
+
+                  <div className="mt-8 pt-8 border-t border-gray-100 space-y-4">
+                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Flutterwave API Credentials</p>
+                     
+                     <div className="space-y-2">
+                        <label className="text-[9px] font-black uppercase tracking-widest text-gray-400 ml-1">Public Key</label>
+                        <input type="text" value={flutterwaveConfig.publicKey} onChange={e => setFlutterwaveConfig({...flutterwaveConfig, publicKey: e.target.value})} placeholder="FLWPUBK_TEST-..." className="w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-gray-900 text-xs outline-none focus:border-secondary font-mono" />
+                     </div>
+                     <div className="space-y-2">
+                        <label className="text-[9px] font-black uppercase tracking-widest text-gray-400 ml-1">Secret Key</label>
+                        <input type="password" value={flutterwaveConfig.secretKey} onChange={e => setFlutterwaveConfig({...flutterwaveConfig, secretKey: e.target.value})} placeholder="FLWSECK_TEST-..." className="w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-gray-900 text-xs outline-none focus:border-secondary font-mono" />
+                     </div>
+                     <div className="space-y-2">
+                        <label className="text-[9px] font-black uppercase tracking-widest text-gray-400 ml-1">Encryption Key / Hash</label>
+                        <input type="password" value={flutterwaveConfig.encryptionKey} onChange={e => setFlutterwaveConfig({...flutterwaveConfig, encryptionKey: e.target.value})} placeholder="Secret Hash..." className="w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-gray-900 text-xs outline-none focus:border-secondary font-mono" />
+                     </div>
+                     <button onClick={saveFlutterwaveConfig} disabled={savingSocial} className="w-full mt-4 py-4 bg-gray-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-[3px] hover:bg-black transition-all">Connect API</button>
+                  </div>
               </div>
 
               {/* Add Payment Method */}
