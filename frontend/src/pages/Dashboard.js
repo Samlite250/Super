@@ -210,22 +210,15 @@ function Dashboard() {
         </div>
       )}
 
-      {/* ── Re-invest Banner (shows when balance >= cheapest plan) ── */}
+      {/* ── Re-invest Notification Banner (Sleek Text Only) ── */}
       {affordablePlans.length > 0 && (
-        <div className="bg-gradient-to-r from-primary to-green-600 text-white py-2 px-4 relative z-[59] shadow-md">
-          <div className="max-w-6xl mx-auto flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3 truncate">
-              <TrendingUp size={15} className="shrink-0 animate-pulse" />
-              <span className="text-[10px] font-black uppercase tracking-[2px] truncate">
-                Your balance can fund {affordablePlans.length} plan{affordablePlans.length > 1 ? 's' : ''} — Re-invest your earnings!
-              </span>
-            </div>
-            <button
-              onClick={() => setShowReinvestModal(true)}
-              className="shrink-0 bg-white text-primary px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[2px] hover:bg-green-50 transition-all shadow-sm"
-            >
-              Re-invest Now
-            </button>
+        <div className="bg-gradient-to-r from-primary/90 to-green-700 text-white py-2 px-4 relative z-[59] shadow-inner text-center">
+          <div className="max-w-6xl mx-auto flex items-center justify-center gap-3">
+            <TrendingUp size={14} className="animate-pulse" />
+            <span className="text-[10px] font-black uppercase tracking-[2px]">
+              Smart Portfolio Tip: You have enough earnings to activate {affordablePlans.length} new plan{affordablePlans.length > 1 ? 's' : ''}!
+            </span>
+            <TrendingUp size={14} className="animate-pulse" />
           </div>
         </div>
       )}
@@ -570,6 +563,14 @@ function Dashboard() {
                       >
                         <Banknote size={18} /> {t('deposit')}
                       </button>
+                      {affordablePlans.length > 0 && (
+                        <button
+                          onClick={() => setShowReinvestModal(true)}
+                          className="w-full bg-amber-500 hover:bg-amber-600 text-white py-3.5 rounded-xl font-black text-[12px] uppercase tracking-[2px] shadow-[0_4px_14px_0_rgba(245,158,11,0.4)] transition-all flex items-center justify-center gap-2 animate-bounce-subtle"
+                        >
+                          <Coins size={18} className="fill-white" /> RE-INVEST
+                        </button>
+                      )}
                       <button
                         onClick={() => navigate('/withdraw')}
                         className="w-full bg-primary hover:bg-green-700 text-white py-3 rounded-xl font-bold shadow-[0_4px_14px_0_rgba(31,139,76,0.39)] transition-all flex items-center justify-center gap-2"
