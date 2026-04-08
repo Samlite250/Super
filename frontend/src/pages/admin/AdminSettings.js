@@ -467,14 +467,18 @@ function AdminSettings() {
                   <div>
                     <label className="block text-[10px] font-black uppercase tracking-[3px] text-gray-400 mb-2">WhatsApp Group Link</label>
                     <div className="flex items-center gap-3 bg-green-50/50 border border-green-100 rounded-2xl px-5 py-4 focus-within:border-green-500 focus-within:bg-white transition-all group">
-                      <span className="text-xl group-focus-within:scale-110 transition-transform">🟢</span>
+                      <svg viewBox="0 0 24 24" className="w-5 h-5 text-green-500 group-focus-within:scale-110 transition-transform" fill="currentColor">
+                        <path d="M12.031 6.172c-2.32 0-4.591.905-6.231 2.545-3.435 3.435-3.435 9.023 0 12.458l-1.127 4.116 4.215-1.107c1.012.548 2.146.837 3.3.837 4.853 0 8.8-3.947 8.8-8.801 0-2.333-.907-4.526-2.556-6.175-1.648-1.649-3.791-2.573-6.201-2.573zm5.823 12.338c-.241.677-1.393 1.233-1.895 1.34-1.37.291-3.235-.291-5.188-2.316-2.071-2.152-3.411-4.743-3.411-6.113 0-1.168.411-1.748.869-2.128.459-.38.837-.474 1.107-.474.269 0 .54 0 .777.013.241.013.565-.091.884.675.32 0 .61.761.643.83.033.069.055.149.011.237-.044.091-.066.149-.131.226-.066.077-.138.172-.198.24-.06.069-.12.144-.051.261.069.117.306.505.657.818.455.405.836.531 1.056.643.221.112.351.096.483-.055.132-.15.567-.66.717-.887.151-.227.3-.189.506-.113.207.076 1.314.619 1.54 0 .227.113.377.171.433.284.055.114.055.66-.186 1.337z"/>
+                      </svg>
                       <input placeholder="https://chat.whatsapp.com/..." value={socialLinks.whatsapp} onChange={e => setSocialLinks({ ...socialLinks, whatsapp: e.target.value })} className="flex-1 bg-transparent text-sm font-mono text-green-900 placeholder:text-green-200 outline-none" />
                     </div>
                   </div>
                   <div>
                     <label className="block text-[10px] font-black uppercase tracking-[3px] text-gray-400 mb-2">Telegram Group Link</label>
                     <div className="flex items-center gap-3 bg-blue-50/50 border border-blue-100 rounded-2xl px-5 py-4 focus-within:border-blue-500 focus-within:bg-white transition-all group">
-                      <span className="text-xl group-focus-within:scale-110 transition-transform">🔵</span>
+                      <svg viewBox="0 0 24 24" className="w-5 h-5 text-blue-500 group-focus-within:scale-110 transition-transform" fill="currentColor">
+                        <path d="M11.944 0C5.356 0 0 5.356 0 11.944c0 6.589 5.356 11.944 11.944 11.944 6.589 0 11.944-5.355 11.944-11.944C23.888 5.356 18.533 0 11.944 0zm5.889 8.281l-1.921 9.062c-.144.646-.527.804-1.067.502l-2.923-2.154-1.41 1.357c-.156.156-.288.288-.588.288l.209-2.977 5.418-4.896c.235-.21-.051-.326-.366-.117L8.47 14.17l-2.883-.901c-.627-.196-.64-.627.13-.925l11.267-4.342c.523-.19.98.125.849.304l.001.001z"/>
+                      </svg>
                       <input placeholder="https://t.me/..." value={socialLinks.telegram} onChange={e => setSocialLinks({ ...socialLinks, telegram: e.target.value })} className="flex-1 bg-transparent text-sm font-mono text-blue-900 placeholder:text-blue-200 outline-none" />
                     </div>
                   </div>
