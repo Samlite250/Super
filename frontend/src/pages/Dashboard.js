@@ -38,10 +38,11 @@ function Dashboard() {
     if (rawLadder) {
       try { return rawLadder.split(',').map(s => parseFloat(s.trim())).filter(n => !isNaN(n)); } catch (e) {}
     }
-    if (c === 'RWF') return [350000, 600000, 900000, 1200000, 1500000];
-    if (c === 'KES') return [50000, 80000, 110000, 150000, 200000];
-    if (c === 'UGX') return [500000, 800000, 1100000, 1500000, 2000000];
-    return [500000, 800000, 1100000, 1500000, 2000000];
+    if (c === 'RWF') return [150000, 200000, 300000, 400000, 500000, 700000, 900000, 1100000, 1300000, 1500000];
+    if (c === 'KES') return [36132, 43229, 50325, 57421, 64518, 71614, 78711, 85807, 92904, 100000];
+    if (c === 'UGX') return [600000, 800000, 1200000, 1600000, 2000000, 2800000, 3600000, 4400000, 5200000, 6000000];
+    if (c === 'FBu' || c === 'BIF') return [500000, 600000, 700000, 800000, 900000, 1000000, 1200000, 1500000, 1700000, 2000000];
+    return [450000, 600000, 900000, 1200000, 1500000, 2100000, 2700000, 3300000, 3900000, 4500000];
   };
 
   const referralCommissionRate = systemSettings['referral_reward_percentage']
@@ -653,7 +654,7 @@ function Dashboard() {
                                      {amt.toLocaleString()} <span className="text-[10px] text-gray-400 font-bold ml-1">{user.currency}</span>
                                   </td>
                                   <td className="p-6 text-right font-black text-primary group-hover:scale-105 transition-transform origin-right">
-                                     + {(amt * 0.1).toLocaleString()} <span className="text-[10px] text-green-800/40 font-bold ml-1">{user.currency}</span>
+                                     + {(amt * (parseFloat(systemSettings['referral_reward_percentage']) / 100 || 0.1)).toLocaleString()} <span className="text-[10px] text-green-800/40 font-bold ml-1">{user.currency}</span>
                                   </td>
                                </tr>
                             ))}
