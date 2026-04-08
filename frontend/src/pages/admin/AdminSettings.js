@@ -350,61 +350,101 @@ function AdminSettings() {
 
               {/* Referral Commission Logic */}
               <div className="bg-gray-900 rounded-[2rem] border border-white/5 shadow-xl p-8 text-white">
-                <h3 className="text-lg font-black tracking-tight mb-1">Referral Commission Logic</h3>
-                <p className="text-xs text-gray-500 mb-6">Define how much referrers earn when their downline invests.</p>
-                <div className="space-y-4">
-                  <div className="grid grid-cols-3 gap-4">
-                    <div>
-                      <label className="block text-[9px] font-black uppercase tracking-[2px] text-gray-500 mb-1.5">Base Reward (%)</label>
-                      <input type="number" value={referralSettings.reward_percentage} onChange={e => setReferralSettings({ ...referralSettings, reward_percentage: e.target.value })} className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm outline-none focus:border-secondary/60 font-mono transition-all" />
-                    </div>
-                    <div>
-                      <label className="block text-[9px] font-black uppercase tracking-[2px] text-gray-500 mb-1.5">Hi-Cap Threshold</label>
-                      <input type="number" value={referralSettings.high_threshold} onChange={e => setReferralSettings({ ...referralSettings, high_threshold: e.target.value })} className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm outline-none focus:border-secondary/60 font-mono transition-all" />
-                    </div>
-                    <div>
-                      <label className="block text-[9px] font-black uppercase tracking-[2px] text-gray-500 mb-1.5">Hi-Cap Bonus (+%)</label>
-                      <input type="number" value={referralSettings.high_bonus} onChange={e => setReferralSettings({ ...referralSettings, high_bonus: e.target.value })} className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm outline-none focus:border-secondary/60 font-mono transition-all" />
+                <h3 className="text-lg font-black tracking-tight mb-1">Referral Commissions</h3>
+                <p className="text-xs text-gray-500 mb-6">Set how much a referrer earns each time someone they invited makes an investment.</p>
+                <div className="space-y-5">
+
+                  <div>
+                    <label className="block text-xs font-bold text-gray-300 mb-1.5">
+                      Base reward percentage
+                    </label>
+                    <p className="text-[10px] text-gray-600 mb-2">The standard commission rate paid to the referrer on every investment by their downline.</p>
+                    <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-3">
+                      <input type="number" value={referralSettings.reward_percentage} onChange={e => setReferralSettings({ ...referralSettings, reward_percentage: e.target.value })} className="flex-1 bg-transparent text-white text-sm outline-none font-mono" />
+                      <span className="text-gray-500 text-sm font-black">%</span>
                     </div>
                   </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-gray-300 mb-1.5">
+                      High-value investment threshold
+                    </label>
+                    <p className="text-[10px] text-gray-600 mb-2">If a referred user's investment exceeds this amount, the bonus commission rate applies instead.</p>
+                    <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-3">
+                      <input type="number" value={referralSettings.high_threshold} onChange={e => setReferralSettings({ ...referralSettings, high_threshold: e.target.value })} className="flex-1 bg-transparent text-white text-sm outline-none font-mono" />
+                      <span className="text-gray-500 text-xs font-black">FBu</span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-gray-300 mb-1.5">
+                      Bonus commission for high-value investors
+                    </label>
+                    <p className="text-[10px] text-gray-600 mb-2">An additional percentage added on top of the base rate when the threshold above is crossed.</p>
+                    <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-3">
+                      <span className="text-gray-500 text-sm font-black">+</span>
+                      <input type="number" value={referralSettings.high_bonus} onChange={e => setReferralSettings({ ...referralSettings, high_bonus: e.target.value })} className="flex-1 bg-transparent text-white text-sm outline-none font-mono" />
+                      <span className="text-gray-500 text-sm font-black">%</span>
+                    </div>
+                  </div>
+
                   <div className="bg-white/5 rounded-xl border border-white/5 p-4">
-                    <p className="text-[10px] text-gray-500 leading-relaxed">
-                      Referrers earn <span className="text-secondary font-black">{referralSettings.reward_percentage}%</span> of the investment. If investment exceeds <span className="text-secondary font-black">{Number(referralSettings.high_threshold).toLocaleString()}</span>, an extra <span className="text-secondary font-black">+{referralSettings.high_bonus}%</span> bonus applies.
+                    <p className="text-[10px] text-gray-400 leading-relaxed">
+                      Summary: Referrers earn <span className="text-secondary font-bold">{referralSettings.reward_percentage}%</span> on all investments. When a referred user invests more than <span className="text-secondary font-bold">{Number(referralSettings.high_threshold).toLocaleString()} FBu</span>, an extra <span className="text-secondary font-bold">+{referralSettings.high_bonus}%</span> is added to their commission.
                     </p>
                   </div>
+
                   <button onClick={saveReferralSettings} disabled={savingSocial} className="w-full py-4 bg-secondary text-white rounded-xl font-black text-[11px] uppercase tracking-[3px] hover:bg-blue-400 transition-all shadow-lg disabled:opacity-50">
-                    {savingSocial ? 'Saving...' : 'Update Commission Config'}
+                    {savingSocial ? 'Saving...' : 'Save Commission Settings'}
                   </button>
                 </div>
               </div>
 
               {/* Signup Bonuses */}
               <div className="bg-[#0f172a] rounded-[2rem] border border-white/5 shadow-xl p-8 text-white">
-                <h3 className="text-lg font-black tracking-tight mb-1">Signup Bonuses</h3>
-                <p className="text-xs text-gray-500 mb-6">Welcome credit given to new users upon registration.</p>
+                <h3 className="text-lg font-black tracking-tight mb-1">Welcome Bonuses</h3>
+                <p className="text-xs text-gray-500 mb-6">A free credit added to a new user's account as soon as they sign up, based on their country.</p>
                 <div className="space-y-3">
                   <div className="grid grid-cols-2 gap-3">
-                    {['Burundi', 'Rwanda', 'Uganda', 'Kenya'].map(country => (
-                      <div key={country} className="flex items-center gap-3 bg-white/5 px-4 py-3 rounded-xl border border-white/10">
-                        <span className="text-lg shrink-0">
-                          {country === 'Burundi' ? '🇧🇮' : country === 'Rwanda' ? '🇷🇼' : country === 'Uganda' ? '🇺🇬' : '🇰🇪'}
-                        </span>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-[9px] font-black uppercase tracking-[2px] text-gray-400 mb-1">{country}</p>
-                          <input type="number" value={rewards[country]} onChange={e => setRewards({ ...rewards, [country]: e.target.value })} className="w-full px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-white text-xs outline-none focus:border-primary/60 font-mono" />
+                    {[
+                      { country: 'Burundi', flag: '🇧🇮' },
+                      { country: 'Rwanda',  flag: '🇷🇼' },
+                      { country: 'Uganda',  flag: '🇺🇬' },
+                      { country: 'Kenya',   flag: '🇰🇪' },
+                    ].map(({ country, flag }) => (
+                      <div key={country} className="bg-white/5 px-4 py-3 rounded-xl border border-white/10">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="text-base">{flag}</span>
+                          <label className="text-xs font-bold text-gray-300">{country}</label>
                         </div>
+                        <input
+                          type="number"
+                          value={rewards[country]}
+                          onChange={e => setRewards({ ...rewards, [country]: e.target.value })}
+                          className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-xs outline-none focus:border-primary/60 font-mono"
+                          placeholder="Amount in FBu"
+                        />
                       </div>
                     ))}
                   </div>
-                  <div className="flex items-center gap-3 bg-primary/10 px-4 py-3 rounded-xl border border-primary/20">
-                    <span className="text-lg shrink-0">🌍</span>
-                    <div className="flex-1">
-                      <p className="text-[9px] font-black uppercase tracking-[2px] text-primary mb-1">Global Referral Bonus</p>
-                      <input type="number" value={rewards.referral} onChange={e => setRewards({ ...rewards, referral: e.target.value })} className="w-full px-3 py-1.5 bg-primary/10 border border-primary/20 rounded-lg text-primary text-xs outline-none focus:border-primary font-mono font-bold" />
+
+                  <div className="bg-primary/10 px-4 py-4 rounded-xl border border-primary/20">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-base">🌍</span>
+                      <label className="text-xs font-bold text-primary">Referral bonus (all countries)</label>
                     </div>
+                    <p className="text-[10px] text-gray-500 mb-2">Paid to the referrer when the new user registers using their referral link.</p>
+                    <input
+                      type="number"
+                      value={rewards.referral}
+                      onChange={e => setRewards({ ...rewards, referral: e.target.value })}
+                      className="w-full px-3 py-2 bg-primary/10 border border-primary/20 rounded-lg text-primary text-xs outline-none focus:border-primary font-mono font-bold"
+                      placeholder="Amount in FBu"
+                    />
                   </div>
+
                   <button onClick={saveRewards} disabled={savingSocial} className="w-full py-4 bg-primary text-gray-900 rounded-xl font-black text-[11px] uppercase tracking-[3px] hover:bg-green-400 transition-all shadow-lg disabled:opacity-50">
-                    {savingSocial ? 'Saving...' : 'Save All Bonuses'}
+                    {savingSocial ? 'Saving...' : 'Save Bonus Settings'}
                   </button>
                 </div>
               </div>
