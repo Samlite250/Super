@@ -21,43 +21,54 @@ exports.invest = async (req, res) => {
       status: 'active'
     });
     
-    // Referral High-Commission Reward (if amount > threshold)
+    // ── Referral Commission (first investment only) ──────────────────────────
+    // Commission is paid to the referrer ONLY on the referred user's first
+    // successful investment. All subsequent investments generate no commission.
     if (user.referredBy) {
-      const { Setting } = require('../models');
-      const thresholdRes = await Setting.findByPk('referral_high_capital_threshold');
-      const threshold = thresholdRes ? parseFloat(thresholdRes.value) : 500000;
-      
-      const isHighCapital = parseFloat(amount) >= threshold;
-      
-      const referrer = await User.findByPk(user.referredBy);
-      if (referrer) {
-        // Fetch dynamic commission rates
-        const baseRateRes = await Setting.findByPk('referral_reward_percentage');
-        const baseRate = baseRateRes ? parseFloat(baseRateRes.value) : 10; // Default 10%
-        
-        const highBonusRes = await Setting.findByPk('referral_high_capital_bonus');
-        const highBonus = highBonusRes ? parseFloat(highBonusRes.value) : 5; // Default 5% extra
-        
-        const finalRate = (isHighCapital ? (baseRate + highBonus) : baseRate) / 100;
-        const rewardAmount = parseFloat(amount) * finalRate;
-        
-        referrer.balance = parseFloat(referrer.balance) + rewardAmount;
-        await referrer.save();
+      const previousInvestments = await Investment.count({
+        where: { userId: user.id, id: { [require('sequelize').Op.ne]: inv.id } }
+      });
 
-        await Transaction.create({
-          userId: referrer.id,
-          type: 'referral_bonus',
-          amount: rewardAmount,
-          description: `${isHighCapital ? 'High-Yield' : 'Standard'} Commission for ${user.username}'s activation of ${amount} ${user.currency}`
-        });
-        
-        // Also log in Referral table if exists
-        const { Referral } = require('../models');
-        await Referral.create({
-          referrerId: referrer.id,
-          referredId: user.id,
-          commission: rewardAmount
-        }).catch(() => {}); // Catch-all for schema drift
+      if (previousInvestments === 0) {
+        // This IS the first investment — calculate and pay the commission
+        const { Setting } = require('../models');
+        const thresholdRes = await Setting.findByPk('referral_high_capital_threshold');
+        const threshold = thresholdRes ? parseFloat(thresholdRes.value) : 500000;
+
+        const isHighCapital = parseFloat(amount) >= threshold;
+
+        const referrer = await User.findByPk(user.referredBy);
+        if (referrer) {
+          const baseRateRes = await Setting.findByPk('referral_reward_percentage');
+          const baseRate = baseRateRes ? parseFloat(baseRateRes.value) : 10;
+
+          const highBonusRes = await Setting.findByPk('referral_high_capital_bonus');
+          const highBonus = highBonusRes ? parseFloat(highBonusRes.value) : 5;
+
+          const finalRate = (isHighCapital ? (baseRate + highBonus) : baseRate) / 100;
+          const rewardAmount = parseFloat(amount) * finalRate;
+
+          referrer.balance = parseFloat(referrer.balance) + rewardAmount;
+          await referrer.save();
+
+          await Transaction.create({
+            userId: referrer.id,
+            type: 'referral_bonus',
+            amount: rewardAmount,
+            description: `${isHighCapital ? 'High-Yield' : 'Standard'} First-Deposit Commission for ${user.username}'s first activation of ${amount} ${user.currency}`
+          });
+
+          // Log in Referral table
+          const { Referral } = require('../models');
+          await Referral.create({
+            referrerId: referrer.id,
+            referredId: user.id,
+            commission: rewardAmount
+          }).catch(() => {});
+        }
+      } else {
+        // Not the first investment — skip commission silently
+        console.log(`[REFERRAL] Skipping commission for ${user.username} — not their first investment.`);
       }
     }
 
