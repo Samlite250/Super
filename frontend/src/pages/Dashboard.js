@@ -25,6 +25,9 @@ function Dashboard() {
   const [hotPlansCount, setHotPlansCount] = useState(0);
   const [stats, setStats] = useState({ totalInvested: 0, totalEarned: 0 });
   const [systemSettings, setSystemSettings] = useState({});
+  const [allMachines, setAllMachines] = useState([]);
+  const [showReinvestModal, setShowReinvestModal] = useState(false);
+  const [reinvestingId, setReinvestingId] = useState(null);
   const navigate = useNavigate();
 
   const getReferralLadder = () => {
@@ -81,10 +84,12 @@ function Dashboard() {
         fetchSilently('/settings', setSystemSettings);
         fetchSilently('/settings/social-links', (data) => setSocialLinks(data || { whatsapp: '', telegram: '' }));
 
-        // Machines (for hot popup check)
+        // Machines (for hot popup + reinvest)
         try {
           const machinesRes = await api.get('/machines');
-          const hot = (machinesRes.data || []).filter(m => m.type === 'hot');
+          const allM = machinesRes.data || [];
+          setAllMachines(allM.sort((a, b) => parseFloat(a.priceFBu || a.price) - parseFloat(b.priceFBu || b.price)));
+          const hot = allM.filter(m => m.type === 'hot');
           setHotPlansCount(hot.length);
           if (hot.length > 0 && !sessionStorage.getItem('hotOfferSeen')) {
             setShowHotPopup(true);
@@ -131,6 +136,26 @@ function Dashboard() {
     localStorage.removeItem('token');
     navigate('/');
   };
+
+  const handleReinvest = async (machine) => {
+    if (!window.confirm(`Re-invest ${parseFloat(machine.price || machine.priceFBu).toLocaleString()} ${user.currency} into "${machine.name}"? This will be deducted from your current balance.`)) return;
+    setReinvestingId(machine.id);
+    try {
+      await api.post('/investments', { machineId: machine.id, amount: machine.price || machine.priceFBu });
+      // Refresh user balance
+      const meRes = await api.get('/user/me');
+      setUser(meRes.data);
+      alert(`✅ Re-investment successful! "${machine.name}" is now active and generating returns.`);
+      setShowReinvestModal(false);
+    } catch (err) {
+      alert(err.response?.data?.message || 'Re-investment failed. Please try again.');
+    } finally {
+      setReinvestingId(null);
+    }
+  };
+
+  // Plans the user can currently afford
+  const affordablePlans = allMachines.filter(m => parseFloat(user?.balance || 0) >= parseFloat(m.price || m.priceFBu));
 
   const handlePasswordChange = async (e) => {
     e.preventDefault();
@@ -185,6 +210,26 @@ function Dashboard() {
         </div>
       )}
 
+      {/* ── Re-invest Banner (shows when balance >= cheapest plan) ── */}
+      {affordablePlans.length > 0 && (
+        <div className="bg-gradient-to-r from-primary to-green-600 text-white py-2 px-4 relative z-[59] shadow-md">
+          <div className="max-w-6xl mx-auto flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3 truncate">
+              <TrendingUp size={15} className="shrink-0 animate-pulse" />
+              <span className="text-[10px] font-black uppercase tracking-[2px] truncate">
+                Your balance can fund {affordablePlans.length} plan{affordablePlans.length > 1 ? 's' : ''} — Re-invest your earnings!
+              </span>
+            </div>
+            <button
+              onClick={() => setShowReinvestModal(true)}
+              className="shrink-0 bg-white text-primary px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[2px] hover:bg-green-50 transition-all shadow-sm"
+            >
+              Re-invest Now
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Motivational Popup Modal */}
       <AnimatePresence>
         {showHotPopup && (
@@ -222,6 +267,76 @@ function Dashboard() {
           </div>
         )}
 
+      </AnimatePresence>
+
+      {/* ── Re-invest Modal ── */}
+      <AnimatePresence>
+        {showReinvestModal && (
+          <div className="fixed inset-0 z-[110] flex items-end sm:items-center justify-center p-0 sm:p-6 bg-black/80 backdrop-blur-sm" onClick={() => setShowReinvestModal(false)}>
+            <motion.div
+              initial={{ opacity: 0, y: 60 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 60 }}
+              onClick={e => e.stopPropagation()}
+              className="bg-white w-full sm:max-w-lg rounded-t-[2.5rem] sm:rounded-[2.5rem] shadow-2xl overflow-hidden"
+            >
+              {/* Modal Header */}
+              <div className="bg-primary px-8 pt-8 pb-6 text-white relative">
+                <button onClick={() => setShowReinvestModal(false)} className="absolute top-5 right-5 w-8 h-8 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-all">✕</button>
+                <div className="flex items-center gap-3 mb-2">
+                  <TrendingUp size={22} />
+                  <h2 className="text-xl font-black tracking-tight">Re-invest Earnings</h2>
+                </div>
+                <p className="text-white/70 text-xs font-medium">Your available balance: <span className="text-white font-black">{parseFloat(user.balance).toLocaleString()} {user.currency}</span></p>
+                <p className="text-white/60 text-[10px] mt-1">Select a plan below to activate using your current balance.</p>
+              </div>
+
+              {/* Plans List */}
+              <div className="p-6 space-y-3 max-h-[60vh] overflow-y-auto">
+                {affordablePlans.length === 0 ? (
+                  <div className="text-center py-12">
+                    <p className="text-gray-400 text-sm font-bold">No plans available for your current balance.</p>
+                  </div>
+                ) : (
+                  affordablePlans.map(m => {
+                    const price = parseFloat(m.price || m.priceFBu);
+                    const dailyReturn = (price * parseFloat(m.dailyPercent)) / 100;
+                    const totalReturn = price + (dailyReturn * parseInt(m.durationDays, 10));
+                    const canAfford = parseFloat(user.balance) >= price;
+                    return (
+                      <div key={m.id} className="flex items-center justify-between gap-4 p-5 bg-gray-50 rounded-2xl border border-gray-100 hover:border-primary/30 hover:shadow-md transition-all">
+                        <div className="flex-1 min-w-0">
+                          <p className="font-black text-gray-900 text-sm truncate">{m.name}</p>
+                          <div className="flex items-center gap-3 mt-1 flex-wrap">
+                            <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">{m.dailyPercent}% / day</span>
+                            <span className="text-[10px] font-bold text-gray-500">{m.durationDays} days</span>
+                            <span className="text-[10px] font-bold text-gray-400">→ {totalReturn.toLocaleString()} {user.currency}</span>
+                          </div>
+                          <p className="text-[11px] font-black text-gray-700 mt-1.5">Cost: {price.toLocaleString()} {user.currency}</p>
+                        </div>
+                        <button
+                          disabled={!canAfford || reinvestingId === m.id}
+                          onClick={() => handleReinvest(m)}
+                          className={`shrink-0 px-5 py-3 rounded-xl font-black text-[10px] uppercase tracking-[2px] transition-all ${
+                            reinvestingId === m.id
+                              ? 'bg-gray-200 text-gray-400 cursor-wait'
+                              : 'bg-primary text-white hover:bg-green-700 shadow-md shadow-green-500/20 active:scale-95'
+                          }`}
+                        >
+                          {reinvestingId === m.id ? '...' : 'Activate'}
+                        </button>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+
+              <div className="px-6 pb-6">
+                <button onClick={() => setShowReinvestModal(false)} className="w-full py-3.5 border-2 border-gray-100 text-gray-400 rounded-2xl font-black text-[10px] uppercase tracking-[3px] hover:border-gray-200 hover:text-gray-600 transition-all">Close</button>
+              </div>
+            </motion.div>
+          </div>
+        )}
       </AnimatePresence>
 
       {/* Premium Header */}
