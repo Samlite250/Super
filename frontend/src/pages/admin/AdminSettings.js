@@ -466,7 +466,7 @@ function AdminSettings() {
                 <div className="space-y-6">
                   <div>
                     <label className="block text-[10px] font-black uppercase tracking-[3px] text-gray-400 mb-2">WhatsApp Group Link</label>
-                    <div className="flex items-center gap-3 bg-green-50/50 border border-green-100 rounded-2x l px-5 py-4 focus-within:border-green-500 focus-within:bg-white transition-all group">
+                    <div className="flex items-center gap-3 bg-green-50/50 border border-green-100 rounded-2xl px-5 py-4 focus-within:border-green-500 focus-within:bg-white transition-all group">
                       <span className="text-xl group-focus-within:scale-110 transition-transform">🟢</span>
                       <input placeholder="https://chat.whatsapp.com/..." value={socialLinks.whatsapp} onChange={e => setSocialLinks({ ...socialLinks, whatsapp: e.target.value })} className="flex-1 bg-transparent text-sm font-mono text-green-900 placeholder:text-green-200 outline-none" />
                     </div>
