@@ -117,7 +117,7 @@ router.get('/regional-activity', authenticate, authorizeAdmin, async (req, res) 
         { model: Deposit, attributes: ['id', 'amount', 'status'] },
         { model: Withdrawal, attributes: ['id', 'amount', 'status'] },
         { model: Investment, attributes: ['id', 'amount', 'status'] },
-        { model: Referral, attributes: ['id', 'commission'] },
+        { model: Referral, as: 'ReferralsAsReferrer', attributes: ['id', 'commission'] },
         { model: User, as: 'upline', attributes: ['id', 'username', 'fullName'] },
         { model: User, as: 'downline', attributes: ['id'] }
       ]
@@ -151,8 +151,8 @@ router.get('/regional-activity', authenticate, authorizeAdmin, async (req, res) 
         report[country].investors.push({ ...user.get({ plain: true }), totalActivity: total });
       }
 
-      if ((user.Referrals && user.Referrals.length > 0) || (user.downline && user.downline.length > 0)) {
-        const total = user.Referrals ? user.Referrals.reduce((sum, r) => sum + parseFloat(r.commission), 0) : 0;
+      if ((user.ReferralsAsReferrer && user.ReferralsAsReferrer.length > 0) || (user.downline && user.downline.length > 0)) {
+        const total = user.ReferralsAsReferrer ? user.ReferralsAsReferrer.reduce((sum, r) => sum + parseFloat(r.commission), 0) : 0;
         report[country].referrers.push({ ...user.get({ plain: true }), totalActivity: total });
       }
     });
