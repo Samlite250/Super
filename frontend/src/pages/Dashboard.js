@@ -563,14 +563,14 @@ function Dashboard() {
                       >
                         <Banknote size={18} /> {t('deposit')}
                       </button>
-                      {affordablePlans.length > 0 && (
-                        <button
-                          onClick={() => setShowReinvestModal(true)}
-                          className="w-full bg-amber-500 hover:bg-amber-600 text-white py-3.5 rounded-xl font-black text-[12px] uppercase tracking-[2px] shadow-[0_4px_14px_0_rgba(245,158,11,0.4)] transition-all flex items-center justify-center gap-2 animate-bounce-subtle"
-                        >
-                          <Coins size={18} className="fill-white" /> RE-INVEST
-                        </button>
-                      )}
+                      {/* Standard Re-invest Button */}
+                      <button
+                        onClick={() => setShowReinvestModal(true)}
+                        className={`w-full bg-amber-500 hover:bg-amber-600 text-white py-3.5 rounded-xl font-black text-[12px] uppercase tracking-[2px] shadow-[0_4px_14px_0_rgba(245,158,11,0.4)] transition-all flex items-center justify-center gap-2 ${affordablePlans.length > 0 ? 'animate-bounce-subtle' : ''}`}
+                      >
+                        <Coins size={18} className="fill-white" /> {t('reinvest')}
+                      </button>
+
                       <button
                         onClick={() => navigate('/withdraw')}
                         className="w-full bg-primary hover:bg-green-700 text-white py-3 rounded-xl font-bold shadow-[0_4px_14px_0_rgba(31,139,76,0.39)] transition-all flex items-center justify-center gap-2"
