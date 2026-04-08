@@ -563,10 +563,10 @@ function Dashboard() {
                       >
                         <Banknote size={18} /> {t('deposit')}
                       </button>
-                      {/* Standard Re-invest Button */}
+                      {/* Redesigned Re-invest Button - Indigo Gradient for better balance */}
                       <button
                         onClick={() => setShowReinvestModal(true)}
-                        className={`w-full bg-amber-500 hover:bg-amber-600 text-white py-3.5 rounded-xl font-black text-[12px] uppercase tracking-[2px] shadow-[0_4px_14px_0_rgba(245,158,11,0.4)] transition-all flex items-center justify-center gap-2 ${affordablePlans.length > 0 ? 'animate-bounce-subtle' : ''}`}
+                        className={`w-full bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white py-3.5 rounded-xl font-black text-[12px] uppercase tracking-[2px] shadow-[0_4px_14px_0_rgba(79,70,229,0.3)] transition-all flex items-center justify-center gap-2 ${affordablePlans.length > 0 ? 'animate-bounce-subtle' : ''}`}
                       >
                         <Coins size={18} className="fill-white" /> {t('reinvest')}
                       </button>
