@@ -249,225 +249,222 @@ function AdminSettings() {
   return (
     <AdminLayout>
       <div className="p-8 lg:p-12 animate-fadeIn">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-8">
-           <div>
-              <h2 className="text-4xl font-black text-gray-900 tracking-tight mb-2">Settings</h2>
-              <p className="text-gray-500 font-medium">Manage payment methods, bonuses, contact links and system options.</p>
-           </div>
+        <div className="mb-12">
+          <h2 className="text-4xl font-black text-gray-900 tracking-tight mb-2">Global Settings</h2>
+          <p className="text-gray-500 font-medium">Manage payment gateways, bonuses, community links and system configuration.</p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-           <div className="lg:col-span-1 space-y-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-              {/* Gateway Toggle */}
-              <div className="bg-white p-10 rounded-[4rem] shadow-2xl border border-gray-100">
-                  <h3 className="text-xl font-black text-gray-900 mb-8 flex items-center gap-4">
-                     <span className="text-2xl">⚡</span> Auto-Payment Gateway
-                  </h3>
-                  <div className="flex items-center justify-between p-6 bg-gray-50 rounded-[2.5rem] border border-gray-100">
-                     <p className="text-[11px] font-black text-gray-900 uppercase tracking-[3px]">Flutterwave Auto-Pay</p>
-                     <button onClick={toggleAutoDeposit} disabled={savingSocial} className={`w-16 h-8 rounded-full relative transition-all ${autoDepositEnabled ? 'bg-primary' : 'bg-gray-300'}`}>
-                        <div className={`absolute top-1 w-6 h-6 bg-white rounded-full shadow-lg transition-all ${autoDepositEnabled ? 'left-9' : 'left-1'}`}></div>
-                     </button>
-                  </div>
-                  <p className={`mt-4 text-[10px] font-black uppercase tracking-widest text-center py-2 rounded-xl ${autoDepositEnabled ? 'text-primary bg-primary/10' : 'text-red-500 bg-red-50'}`}>
-                     {autoDepositEnabled ? 'ONLINE — Payments are automated' : 'OFFLINE — Manual approval required'}
-                  </p>
+          {/* ── COLUMN 1: Gateway & Community ── */}
+          <div className="space-y-8">
 
-                  <div className="mt-8 pt-8 border-t border-gray-100 space-y-4">
-                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Flutterwave API Credentials</p>
-                     
-                     <div className="space-y-2">
-                        <label className="text-[9px] font-black uppercase tracking-widest text-gray-400 ml-1">Public Key</label>
-                        <input type="text" value={flutterwaveConfig.publicKey} onChange={e => setFlutterwaveConfig({...flutterwaveConfig, publicKey: e.target.value})} placeholder="FLWPUBK_TEST-..." className="w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-gray-900 text-xs outline-none focus:border-secondary font-mono" />
-                     </div>
-                     <div className="space-y-2">
-                        <label className="text-[9px] font-black uppercase tracking-widest text-gray-400 ml-1">Secret Key</label>
-                        <input type="password" value={flutterwaveConfig.secretKey} onChange={e => setFlutterwaveConfig({...flutterwaveConfig, secretKey: e.target.value})} placeholder="FLWSECK_TEST-..." className="w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-gray-900 text-xs outline-none focus:border-secondary font-mono" />
-                     </div>
-                     <div className="space-y-2">
-                        <label className="text-[9px] font-black uppercase tracking-widest text-gray-400 ml-1">Encryption Key / Hash</label>
-                        <input type="password" value={flutterwaveConfig.encryptionKey} onChange={e => setFlutterwaveConfig({...flutterwaveConfig, encryptionKey: e.target.value})} placeholder="Secret Hash..." className="w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-gray-900 text-xs outline-none focus:border-secondary font-mono" />
-                     </div>
-                     <button onClick={saveFlutterwaveConfig} disabled={savingSocial} className="w-full mt-4 py-4 bg-gray-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-[3px] hover:bg-black transition-all">Connect API</button>
-                  </div>
-              </div>
-
-              {/* Add Payment Method */}
-              <div className="bg-white p-10 rounded-[4rem] shadow-2xl border border-gray-100">
-                 <h3 className="text-xl font-black text-gray-900 mb-8 flex items-center gap-4">
-                    <span className="text-2xl text-secondary">💳</span> Add Payment Method
-                 </h3>
-                 <div className="space-y-6">
-                    <input placeholder="Payment Method Name (e.g. MTN MoMo)" value={newOpt.name} onChange={e => setNewOpt({ ...newOpt, name: e.target.value })} className="w-full px-7 py-5 bg-gray-50 border border-gray-100 rounded-[2rem] font-black text-gray-900 outline-none" />
-                    <input placeholder="Type (e.g. Mobile Money)" value={newOpt.type} onChange={e => setNewOpt({ ...newOpt, type: e.target.value })} className="w-full px-7 py-5 bg-gray-50 border border-gray-100 rounded-[2rem] font-black text-gray-900 outline-none" />
-                    <input placeholder="Account Number / Phone" value={newOpt.account} onChange={e => setNewOpt({ ...newOpt, account: e.target.value })} className="w-full px-7 py-5 bg-gray-50 border border-gray-100 rounded-[2rem] font-black font-mono text-sm outline-none" />
-                    <button onClick={addOption} disabled={saving} className="w-full py-6 bg-gray-950 text-white rounded-[2.5rem] font-black text-[12px] uppercase tracking-[5px] shadow-3xl hover:bg-black transition-all">Add Payment Method</button>
-                 </div>
-              </div>
-
-              {/* Crypto Wallet */}
-              <div className="bg-gray-900 p-10 rounded-[4rem] shadow-2xl border border-white/5 text-white">
-                  <h3 className="text-xl font-black mb-2 flex items-center gap-4">
-                     <span className="text-2xl">₮</span> USDT (TRC-20) Wallet
-                  </h3>
-                  <p className="text-gray-500 text-xs font-bold mb-8">Users can deposit crypto to this address. You verify the transaction hash and approve manually.</p>
-                  <div className="space-y-5">
-                    <div className="flex items-center justify-between p-5 bg-white/5 rounded-2xl border border-white/10">
-                      <div>
-                        <p className="text-[10px] font-black text-secondary uppercase tracking-widest mb-1">Enable Crypto Payments</p>
-                        <p className="text-[10px] text-gray-500 font-medium">Show USDT option to users on deposit page</p>
-                      </div>
-                      <button onClick={() => setCryptoWallets(w => ({...w, enabled: !w.enabled}))} className={`w-14 h-7 rounded-full relative transition-all ${cryptoWallets.enabled ? 'bg-secondary' : 'bg-white/10'}`}>
-                        <div className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow-lg transition-all ${cryptoWallets.enabled ? 'left-8' : 'left-1'}`}></div>
-                      </button>
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">TRC-20 Wallet Address</label>
-                      <input
-                        type="text"
-                        placeholder="TXxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-                        value={cryptoWallets.trc20}
-                        onChange={e => setCryptoWallets(w => ({...w, trc20: e.target.value}))}
-                        className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl text-white text-xs outline-none focus:border-secondary/50 font-mono tracking-wide"
-                      />
-                      {cryptoWallets.trc20 && (
-                        <div className="flex justify-center pt-2">
-                          <img
-                            src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(cryptoWallets.trc20)}&bgcolor=1f2937&color=ffffff&margin=10`}
-                            alt="QR Code"
-                            className="rounded-2xl border border-white/10"
-                          />
-                        </div>
-                      )}
-                    </div>
-                    <button onClick={saveCryptoWallets} disabled={savingSocial} className="w-full py-4 bg-secondary text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-blue-400 transition-all">Save Crypto Settings</button>
-                  </div>
-              </div>
-              {/* Referral Dynamics */}
-              <div className="bg-[#1e293b] p-10 rounded-[4rem] shadow-2xl border border-white/10 text-white">
-                  <h3 className="text-xl font-black mb-8 flex items-center gap-4 text-secondary">
-                     <span className="text-2xl">👥</span> Referral Rewards
-                  </h3>
-                  <div className="space-y-4">
-                     <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest opacity-60 ml-1">Base Reward (%)</label>
-                        <input 
-                           type="number" 
-                           value={referralSettings.reward_percentage} 
-                           onChange={e => setReferralSettings({ ...referralSettings, reward_percentage: e.target.value })} 
-                           className="w-full px-5 py-3.5 bg-white/5 border border-white/10 rounded-2xl text-white text-xs outline-none focus:border-secondary/50 font-mono" 
-                        />
-                     </div>
-                     <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest opacity-60 ml-1">High Capital Threshold</label>
-                        <input 
-                           type="number" 
-                           value={referralSettings.high_threshold} 
-                           onChange={e => setReferralSettings({ ...referralSettings, high_threshold: e.target.value })} 
-                           className="w-full px-5 py-3.5 bg-white/5 border border-white/10 rounded-2xl text-white text-xs outline-none focus:border-secondary/50 font-mono" 
-                        />
-                     </div>
-                     <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest opacity-60 ml-1">High Capital Bonus (+%)</label>
-                        <input 
-                           type="number" 
-                           value={referralSettings.high_bonus} 
-                           onChange={e => setReferralSettings({ ...referralSettings, high_bonus: e.target.value })} 
-                           className="w-full px-5 py-3.5 bg-white/5 border border-white/10 rounded-2xl text-white text-xs outline-none focus:border-secondary/50 font-mono" 
-                        />
-                     </div>
-                     <button onClick={saveReferralSettings} disabled={savingSocial} className="w-full py-5 bg-secondary text-white rounded-[2rem] font-black text-[11px] uppercase tracking-[4px] shadow-3xl hover:bg-blue-400 transition-all mt-4">Update Referral Dynamics</button>
-                  </div>
-              </div>
-
-              <div className="bg-[#0f172a] p-10 rounded-[4rem] shadow-2xl border border-white/10 text-white">
-
-                  <h3 className="text-xl font-black mb-8 flex items-center gap-4">
-                     <span className="text-2xl text-yellow-400">🎁</span> Signup Bonuses
-                  </h3>
-                  <div className="space-y-4">
-                     {['Burundi', 'Rwanda', 'Uganda', 'Kenya'].map(country => (
-                        <div key={country} className="space-y-2">
-                           <label className="text-[10px] font-black uppercase tracking-widest opacity-60 ml-1">{country} Signup Bonus</label>
-                           <input 
-                              type="number" 
-                              value={rewards[country]} 
-                              onChange={e => setRewards({ ...rewards, [country]: e.target.value })} 
-                              className="w-full px-5 py-3.5 bg-white/5 border border-white/10 rounded-2xl text-white text-xs outline-none focus:border-primary/50 font-mono" 
-                           />
-                        </div>
-                     ))}
-                     <div className="pt-4 border-t border-white/10 mt-4 space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">Referral Bonus (All Countries)</label>
-                        <input 
-                           type="number" 
-                           value={rewards.referral} 
-                           onChange={e => setRewards({ ...rewards, referral: e.target.value })} 
-                           className="w-full px-5 py-3.5 bg-primary/10 border border-primary/20 rounded-2xl text-primary text-xs outline-none focus:border-primary/50 font-mono font-bold" 
-                        />
-                     </div>
-                     <button onClick={saveRewards} disabled={savingSocial} className="w-full py-5 bg-primary text-gray-900 rounded-[2rem] font-black text-[11px] uppercase tracking-[4px] shadow-3xl hover:bg-green-400 transition-all mt-4">Save Bonuses</button>
-                  </div>
-              </div>
-
-              {/* Community & Support */}
-               <div className="bg-primary px-8 py-10 rounded-[3.5rem] border border-white/20 shadow-3xl text-white">
-                <div className="space-y-6">
-                    <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest opacity-60 ml-1">WhatsApp Group Link</label>
-                        <input placeholder="https://chat.whatsapp.com/..." value={socialLinks.whatsapp} onChange={e => setSocialLinks({ ...socialLinks, whatsapp: e.target.value })} className="w-full px-5 py-3.5 bg-white/10 border border-white/10 rounded-2xl text-white text-xs outline-none focus:border-white/30 transition-all font-mono" />
-                    </div>
-                    <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest opacity-60 ml-1">Telegram Group Link</label>
-                        <input placeholder="https://t.me/..." value={socialLinks.telegram} onChange={e => setSocialLinks({ ...socialLinks, telegram: e.target.value })} className="w-full px-5 py-3.5 bg-white/10 border border-white/10 rounded-2xl text-white text-xs outline-none focus:border-white/30 transition-all font-mono" />
-                    </div>
-                    <button onClick={saveSocialLinks} className="w-full py-4 bg-white text-primary rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-gray-100 active:scale-95 transition-all mt-4">Save Links</button>
-                    
-                    <div className="pt-8 border-t border-white/10 mt-4">
-                       <label className="text-[10px] font-black uppercase tracking-widest opacity-60 ml-1 mb-2 block">Support Email Address</label>
-                       <input placeholder="support@example.com" value={supportEmail} onChange={e => setSupportEmail(e.target.value)} className="w-full px-5 py-3.5 bg-white/10 border border-white/10 rounded-2xl text-white text-xs outline-none mb-3 font-mono" />
-                       <button onClick={updateSupportEmail} className="w-full py-4 bg-yellow-400 text-yellow-900 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-yellow-300 active:scale-95 transition-all">Update Email</button>
-                    </div>
+            {/* Auto-Payment Gateway + Flutterwave Keys */}
+            <div className="bg-white p-8 rounded-[3rem] shadow-xl border border-gray-100">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 rounded-2xl bg-yellow-50 flex items-center justify-center text-lg border border-yellow-100">⚡</div>
+                <div>
+                  <h3 className="text-base font-black text-gray-900">Auto-Payment Gateway</h3>
+                  <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Flutterwave Integration</p>
                 </div>
               </div>
-           </div>
-
-           {/* Payment Methods List */}
-           <div className="lg:col-span-2 space-y-8">
-              <div className="flex items-center justify-between px-8">
-                 <h2 className="text-[11px] font-black text-gray-400 uppercase tracking-[6px]">Active Payment Methods</h2>
-                 <span className="text-[10px] bg-secondary/10 text-secondary px-4 py-2 rounded-full font-black">{options.length} Methods</span>
+              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 mb-3">
+                <p className="text-[11px] font-black text-gray-900 uppercase tracking-[2px]">Flutterwave Auto-Pay</p>
+                <button onClick={toggleAutoDeposit} disabled={savingSocial} className={`w-14 h-7 rounded-full relative transition-all ${autoDepositEnabled ? 'bg-primary' : 'bg-gray-200'}`}>
+                  <div className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow-md transition-all ${autoDepositEnabled ? 'left-8' : 'left-1'}`}></div>
+                </button>
               </div>
-              <div className="grid grid-cols-1 gap-6">
+              <p className={`text-[9px] font-black uppercase tracking-widest text-center py-2 rounded-xl mb-6 ${autoDepositEnabled ? 'text-primary bg-primary/10' : 'text-red-500 bg-red-50'}`}>
+                {autoDepositEnabled ? '● ONLINE — Payments automated' : '● OFFLINE — Manual approval required'}
+              </p>
+              <div className="space-y-3 pt-4 border-t border-gray-100">
+                <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">API Credentials</p>
+                <div className="space-y-1">
+                  <label className="text-[9px] font-black uppercase tracking-widest text-gray-400 ml-1">Public Key</label>
+                  <input type="text" value={flutterwaveConfig.publicKey} onChange={e => setFlutterwaveConfig({...flutterwaveConfig, publicKey: e.target.value})} placeholder="FLWPUBK_TEST-..." className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl text-gray-900 text-xs outline-none focus:border-secondary font-mono" />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[9px] font-black uppercase tracking-widest text-gray-400 ml-1">Secret Key</label>
+                  <input type="password" value={flutterwaveConfig.secretKey} onChange={e => setFlutterwaveConfig({...flutterwaveConfig, secretKey: e.target.value})} placeholder="FLWSECK_TEST-..." className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl text-gray-900 text-xs outline-none focus:border-secondary font-mono" />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[9px] font-black uppercase tracking-widest text-gray-400 ml-1">Encryption Key</label>
+                  <input type="password" value={flutterwaveConfig.encryptionKey} onChange={e => setFlutterwaveConfig({...flutterwaveConfig, encryptionKey: e.target.value})} placeholder="Secret Hash..." className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl text-gray-900 text-xs outline-none focus:border-secondary font-mono" />
+                </div>
+                <button onClick={saveFlutterwaveConfig} disabled={savingSocial} className="w-full py-3.5 bg-gray-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-[3px] hover:bg-black transition-all">Connect API</button>
+              </div>
+            </div>
+
+            {/* Community & Support */}
+            <div className="bg-primary p-8 rounded-[3rem] shadow-xl text-white">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center text-lg">💬</div>
+                <div>
+                  <h3 className="text-base font-black">Community & Support</h3>
+                  <p className="text-[10px] text-white/60 font-bold uppercase tracking-widest">Links & Contact</p>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div className="space-y-1">
+                  <label className="text-[9px] font-black uppercase tracking-widest opacity-60 ml-1">WhatsApp Group</label>
+                  <input placeholder="https://chat.whatsapp.com/..." value={socialLinks.whatsapp} onChange={e => setSocialLinks({ ...socialLinks, whatsapp: e.target.value })} className="w-full px-4 py-3 bg-white/10 border border-white/10 rounded-2xl text-white text-xs outline-none focus:border-white/30 font-mono" />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[9px] font-black uppercase tracking-widest opacity-60 ml-1">Telegram Group</label>
+                  <input placeholder="https://t.me/..." value={socialLinks.telegram} onChange={e => setSocialLinks({ ...socialLinks, telegram: e.target.value })} className="w-full px-4 py-3 bg-white/10 border border-white/10 rounded-2xl text-white text-xs outline-none focus:border-white/30 font-mono" />
+                </div>
+                <button onClick={saveSocialLinks} className="w-full py-3.5 bg-white text-primary rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-gray-100 transition-all">Save Links</button>
+                <div className="pt-4 border-t border-white/10 space-y-2">
+                  <label className="text-[9px] font-black uppercase tracking-widest opacity-60 ml-1 block">Support Email</label>
+                  <input placeholder="support@example.com" value={supportEmail} onChange={e => setSupportEmail(e.target.value)} className="w-full px-4 py-3 bg-white/10 border border-white/10 rounded-2xl text-white text-xs outline-none font-mono" />
+                  <button onClick={updateSupportEmail} className="w-full py-3.5 bg-yellow-400 text-yellow-900 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-yellow-300 transition-all">Update Email</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ── COLUMN 2: Payment Methods ── */}
+          <div className="space-y-8">
+            {/* Add Payment Method */}
+            <div className="bg-white p-8 rounded-[3rem] shadow-xl border border-gray-100">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 rounded-2xl bg-blue-50 flex items-center justify-center text-lg border border-blue-100">💳</div>
+                <div>
+                  <h3 className="text-base font-black text-gray-900">Add Payment Method</h3>
+                  <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Manual Gateway Setup</p>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <input placeholder="Payment Method Name (e.g. MTN MoMo)" value={newOpt.name} onChange={e => setNewOpt({ ...newOpt, name: e.target.value })} className="w-full px-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl font-black text-gray-900 outline-none text-sm" />
+                <input placeholder="Type (e.g. Mobile Money)" value={newOpt.type} onChange={e => setNewOpt({ ...newOpt, type: e.target.value })} className="w-full px-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl font-black text-gray-900 outline-none text-sm" />
+                <input placeholder="Account Number / Phone" value={newOpt.account} onChange={e => setNewOpt({ ...newOpt, account: e.target.value })} className="w-full px-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl font-mono text-sm outline-none" />
+                <button onClick={addOption} disabled={saving} className="w-full py-4 bg-gray-950 text-white rounded-2xl font-black text-[11px] uppercase tracking-[4px] hover:bg-black transition-all shadow-xl">Add Payment Method</button>
+              </div>
+            </div>
+
+            {/* Active Methods List */}
+            <div className="bg-white rounded-[3rem] shadow-xl border border-gray-100 overflow-hidden">
+              <div className="flex items-center justify-between px-7 py-5 border-b border-gray-50">
+                <p className="text-[10px] font-black text-gray-400 uppercase tracking-[5px]">Active Methods</p>
+                <span className="text-[10px] bg-secondary/10 text-secondary px-3 py-1.5 rounded-full font-black">{options.length}</span>
+              </div>
+              <div className="p-5 space-y-3 max-h-[520px] overflow-y-auto">
                 {options.map((opt, idx) => (
-                  <div key={idx} className={`bg-white p-8 rounded-[3.5rem] shadow-sm border transition-all hover:shadow-xl group ${opt.active ? 'border-gray-100' : 'border-red-100 opacity-60'}`}>
-                    <div className="flex items-center justify-between gap-10">
-                      <div className="flex items-center gap-6 flex-1">
+                  <div key={idx} className={`p-4 rounded-2xl border transition-all hover:shadow-md ${opt.active ? 'border-gray-100 bg-gray-50/50' : 'border-red-100 opacity-60 bg-red-50/20'}`}>
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-3 flex-1 min-w-0">
                         <div className="relative shrink-0">
-                           {opt.logo ? <img src={opt.logo} className="w-20 h-16 object-contain rounded-2xl" alt="logo" /> : <div className="w-20 h-16 bg-gray-50 rounded-2xl flex items-center justify-center text-[8px] font-black text-gray-300 tracking-widest">No Logo</div>}
-                           <input type="file" onChange={e => uploadLogo(e.target.files[0], idx)} className="absolute inset-0 opacity-0 cursor-pointer" />
+                          {opt.logo ? <img src={opt.logo} className="w-12 h-10 object-contain rounded-xl" alt="logo" /> : <div className="w-12 h-10 bg-white rounded-xl flex items-center justify-center text-[7px] font-black text-gray-300 border border-gray-100">Logo</div>}
+                          <input type="file" onChange={e => uploadLogo(e.target.files[0], idx)} className="absolute inset-0 opacity-0 cursor-pointer" />
                         </div>
-                        <div className="flex-1">
-                          <h4 className="font-black text-gray-900 text-2xl uppercase tracking-tight">{opt.name}</h4>
-                          <p className="text-[10px] font-black text-secondary tracking-[3px] mt-1">{opt.type}</p>
-                          <p className="text-xs font-mono text-gray-400 mt-2">{opt.account}</p>
+                        <div className="min-w-0 flex-1">
+                          <h4 className="font-black text-gray-900 text-sm uppercase truncate">{opt.name}</h4>
+                          <p className="text-[9px] font-black text-secondary tracking-[2px]">{opt.type}</p>
+                          <p className="text-[9px] font-mono text-gray-400 truncate">{opt.account}</p>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <button onClick={() => toggleActive(idx)} className="p-3 bg-gray-50 rounded-xl text-gray-400 hover:bg-gray-100" title={opt.active ? 'Deactivate' : 'Activate'}>🔌</button>
-                        <button onClick={() => deleteOption(idx)} className="p-3 bg-red-50 rounded-xl text-red-500 hover:bg-red-100" title="Delete">🗑️</button>
+                      <div className="flex gap-1.5 shrink-0">
+                        <button onClick={() => toggleActive(idx)} className="p-2 bg-white rounded-xl text-gray-400 hover:bg-gray-100 border border-gray-100 text-xs">🔌</button>
+                        <button onClick={() => deleteOption(idx)} className="p-2 bg-red-50 rounded-xl text-red-400 hover:bg-red-100 border border-red-100 text-xs">🗑️</button>
                       </div>
                     </div>
                   </div>
                 ))}
                 {options.length === 0 && (
-                  <div className="bg-white rounded-[3rem] border-2 border-dashed border-gray-100 p-20 text-center">
-                    <p className="text-gray-300 font-black uppercase tracking-[6px] text-sm">No payment methods configured</p>
+                  <div className="rounded-2xl border-2 border-dashed border-gray-100 p-10 text-center">
+                    <p className="text-gray-300 font-black uppercase tracking-[4px] text-xs">No payment methods yet</p>
                   </div>
                 )}
               </div>
-           </div>
+            </div>
+          </div>
+
+          {/* ── COLUMN 3: Crypto, Referral, Bonuses ── */}
+          <div className="space-y-8">
+
+            {/* Crypto Wallet */}
+            <div className="bg-gray-900 p-8 rounded-[3rem] shadow-xl border border-white/5 text-white">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 rounded-2xl bg-secondary/20 flex items-center justify-center text-lg border border-secondary/10">₮</div>
+                <div>
+                  <h3 className="text-base font-black">USDT (TRC-20)</h3>
+                  <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Crypto Wallet</p>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/10">
+                  <div>
+                    <p className="text-[10px] font-black text-secondary uppercase tracking-widest">Enable Crypto</p>
+                    <p className="text-[9px] text-gray-500 font-medium mt-0.5">Show USDT on deposit page</p>
+                  </div>
+                  <button onClick={() => setCryptoWallets(w => ({...w, enabled: !w.enabled}))} className={`w-12 h-6 rounded-full relative transition-all ${cryptoWallets.enabled ? 'bg-secondary' : 'bg-white/10'}`}>
+                    <div className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow-md transition-all ${cryptoWallets.enabled ? 'left-7' : 'left-1'}`}></div>
+                  </button>
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[9px] font-black uppercase tracking-widest text-gray-400 ml-1">TRC-20 Wallet Address</label>
+                  <input type="text" placeholder="TXxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" value={cryptoWallets.trc20} onChange={e => setCryptoWallets(w => ({...w, trc20: e.target.value}))} className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white text-xs outline-none focus:border-secondary/50 font-mono" />
+                  {cryptoWallets.trc20 && (
+                    <div className="flex justify-center pt-2">
+                      <img src={`https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(cryptoWallets.trc20)}&bgcolor=111827&color=ffffff&margin=10`} alt="QR Code" className="rounded-xl border border-white/10" />
+                    </div>
+                  )}
+                </div>
+                <button onClick={saveCryptoWallets} disabled={savingSocial} className="w-full py-3.5 bg-secondary text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-blue-400 transition-all">Save Crypto Settings</button>
+              </div>
+            </div>
+
+            {/* Referral Dynamics */}
+            <div className="bg-[#1e293b] p-8 rounded-[3rem] shadow-xl border border-white/10 text-white">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 rounded-2xl bg-secondary/20 flex items-center justify-center text-lg border border-secondary/10">👥</div>
+                <div>
+                  <h3 className="text-base font-black text-secondary">Referral Rewards</h3>
+                  <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Commission Config</p>
+                </div>
+              </div>
+              <div className="space-y-3">
+                <div className="space-y-1">
+                  <label className="text-[9px] font-black uppercase tracking-widest opacity-60 ml-1">Base Reward (%)</label>
+                  <input type="number" value={referralSettings.reward_percentage} onChange={e => setReferralSettings({ ...referralSettings, reward_percentage: e.target.value })} className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white text-xs outline-none focus:border-secondary/50 font-mono" />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[9px] font-black uppercase tracking-widest opacity-60 ml-1">High Capital Threshold</label>
+                  <input type="number" value={referralSettings.high_threshold} onChange={e => setReferralSettings({ ...referralSettings, high_threshold: e.target.value })} className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white text-xs outline-none focus:border-secondary/50 font-mono" />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[9px] font-black uppercase tracking-widest opacity-60 ml-1">High Capital Bonus (+%)</label>
+                  <input type="number" value={referralSettings.high_bonus} onChange={e => setReferralSettings({ ...referralSettings, high_bonus: e.target.value })} className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white text-xs outline-none focus:border-secondary/50 font-mono" />
+                </div>
+                <button onClick={saveReferralSettings} disabled={savingSocial} className="w-full py-4 bg-secondary text-white rounded-2xl font-black text-[10px] uppercase tracking-[3px] hover:bg-blue-400 transition-all">Update Referral Dynamics</button>
+              </div>
+            </div>
+
+            {/* Signup Bonuses */}
+            <div className="bg-[#0f172a] p-8 rounded-[3rem] shadow-xl border border-white/10 text-white">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 rounded-2xl bg-yellow-500/20 flex items-center justify-center text-lg border border-yellow-500/10">🎁</div>
+                <div>
+                  <h3 className="text-base font-black text-yellow-400">Signup Bonuses</h3>
+                  <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Per Country Config</p>
+                </div>
+              </div>
+              <div className="space-y-3">
+                {['Burundi', 'Rwanda', 'Uganda', 'Kenya'].map(country => (
+                  <div key={country} className="space-y-1">
+                    <label className="text-[9px] font-black uppercase tracking-widest opacity-60 ml-1">{country}</label>
+                    <input type="number" value={rewards[country]} onChange={e => setRewards({ ...rewards, [country]: e.target.value })} className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white text-xs outline-none focus:border-primary/50 font-mono" />
+                  </div>
+                ))}
+                <div className="pt-3 border-t border-white/10 space-y-1">
+                  <label className="text-[9px] font-black uppercase tracking-widest text-primary ml-1">Referral Bonus (Global)</label>
+                  <input type="number" value={rewards.referral} onChange={e => setRewards({ ...rewards, referral: e.target.value })} className="w-full px-4 py-3 bg-primary/10 border border-primary/20 rounded-2xl text-primary text-xs outline-none focus:border-primary/50 font-mono font-bold" />
+                </div>
+                <button onClick={saveRewards} disabled={savingSocial} className="w-full py-4 bg-primary text-gray-900 rounded-2xl font-black text-[10px] uppercase tracking-[3px] hover:bg-green-400 transition-all">Save Bonuses</button>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </AdminLayout>
