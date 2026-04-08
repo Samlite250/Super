@@ -246,3 +246,35 @@ exports.setCryptoWallets = async (req, res) => {
     res.status(500).json({ error: 'Failed to save crypto wallets' });
   }
 };
+
+// ─── Seed Default Settings ───────────────────────────────────────────────────
+exports.seedDefaults = async (req, res) => {
+  try {
+    const defaults = [
+      { key: 'referral_reward_percentage', value: '10' },
+      { key: 'referral_high_capital_threshold', value: '500000' },
+      { key: 'referral_high_capital_bonus', value: '5' },
+      { key: 'referral_bonus', value: '0' },
+      { key: 'referral_ladder_Burundi', value: '500000,800000,1100000,1500000,2000000' },
+      { key: 'referral_ladder_Rwanda', value: '350000,600000,900000,1200000,1500000' },
+      { key: 'referral_ladder_Uganda', value: '500000,800000,1100000,1500000,2000000' },
+      { key: 'referral_ladder_Kenya', value: '50000,80000,110000,150000,200000' },
+      { key: 'referral_ladder_Global', value: '500000,800000,1100000,1500000,2000000' },
+    ];
+    const results = [];
+    for (const d of defaults) {
+      const existing = await Setting.findByPk(d.key);
+      if (!existing) {
+        await Setting.create(d);
+        results.push({ key: d.key, status: 'created' });
+      } else {
+        results.push({ key: d.key, status: 'already exists', current: existing.value });
+      }
+    }
+    res.json({ message: 'Settings defaults seeded', results });
+  } catch (err) {
+    console.error('[SETTINGS] seedDefaults error:', err.message);
+    res.status(500).json({ message: 'Seed failed: ' + err.message });
+  }
+};
+

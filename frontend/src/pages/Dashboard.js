@@ -3,7 +3,7 @@ import api from '../services/api';
 import { useLanguage } from '../context/LanguageContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Tractor, X, ExternalLink, Zap, Award } from 'lucide-react';
+import { Tractor, X, ExternalLink, Zap, Award, LayoutDashboard, Wallet, Users, History, Settings, Banknote, Smartphone, Coins, TrendingUp, Globe, Sprout, AtSign, Gem } from 'lucide-react';
 
 
 function Dashboard() {
@@ -24,7 +24,29 @@ function Dashboard() {
   const [showHotPopup, setShowHotPopup] = useState(false);
   const [hotPlansCount, setHotPlansCount] = useState(0);
   const [stats, setStats] = useState({ totalInvested: 0, totalEarned: 0 });
+  const [systemSettings, setSystemSettings] = useState({});
   const navigate = useNavigate();
+
+  const getReferralLadder = () => {
+    const c = user?.currency || 'FBu';
+    let rawLadder = '';
+    if (c === 'RWF') rawLadder = systemSettings['referral_ladder_Rwanda'];
+    else if (c === 'KES') rawLadder = systemSettings['referral_ladder_Kenya'];
+    else if (c === 'UGX') rawLadder = systemSettings['referral_ladder_Uganda'];
+    else if (c === 'FBu' || c === 'BIF') rawLadder = systemSettings['referral_ladder_Burundi'];
+    else rawLadder = systemSettings['referral_ladder_Global'];
+    if (rawLadder) {
+      try { return rawLadder.split(',').map(s => parseFloat(s.trim())).filter(n => !isNaN(n)); } catch (e) {}
+    }
+    if (c === 'RWF') return [350000, 600000, 900000, 1200000, 1500000];
+    if (c === 'KES') return [50000, 80000, 110000, 150000, 200000];
+    if (c === 'UGX') return [500000, 800000, 1100000, 1500000, 2000000];
+    return [500000, 800000, 1100000, 1500000, 2000000];
+  };
+
+  const referralCommissionRate = systemSettings['referral_reward_percentage']
+    ? parseFloat(systemSettings['referral_reward_percentage']) / 100
+    : 0.1;
 
 
   useEffect(() => { document.title = "Dashboard | Tracova"; }, []);
@@ -55,6 +77,7 @@ function Dashboard() {
         fetchSilently('/user/history', setHistory);
         fetchSilently('/investments/me', setInvestments);
         fetchSilently('/referrals/me', setReferrals);
+        fetchSilently('/settings', setSystemSettings);
         fetchSilently('/settings/social-links', (data) => setSocialLinks(data || { whatsapp: '', telegram: '' }));
 
         // Machines (for hot popup check)
@@ -148,15 +171,15 @@ function Dashboard() {
       
       {/* Hot Flash Sale Banner */}
       {hotPlansCount > 0 && (
-        <div className="bg-gradient-to-r from-amber-500 to-orange-600 text-white py-2 px-4 shadow-sm relative z-[60] overflow-hidden">
+        <div className="bg-gradient-to-r from-amber-500 to-orange-600 text-white py-1.5 sm:py-2 px-4 shadow-sm relative z-[60] overflow-hidden pr-24">
           <div className="absolute inset-0 bg-white/10 animate-pulse pointer-events-none"></div>
-          <div className="max-w-6xl mx-auto flex items-center justify-center gap-4 text-[10px] font-black uppercase tracking-[3px]">
-             <Zap size={14} className="fill-white animate-bounce" />
-             <span>Limited Time: Hot Flash Sales Available Now!</span>
-             <button onClick={() => navigate('/machines')} className="bg-white text-orange-600 px-3 py-1 rounded-full hover:bg-orange-50 transition-colors tracking-widest flex items-center gap-2">
-               View Now <ExternalLink size={10} />
+          <div className="max-w-6xl mx-auto flex items-center justify-start gap-2 sm:gap-4 text-[9px] sm:text-[10px] font-black uppercase tracking-wider sm:tracking-[3px] truncate">
+             <Zap size={14} className="fill-white animate-bounce shrink-0" />
+             <span className="truncate">Hot Flash Sales!</span>
+             <button onClick={() => navigate('/machines')} className="bg-white text-orange-600 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full hover:bg-orange-50 transition-colors tracking-widest flex items-center gap-1 shrink-0">
+               View <ExternalLink size={10} className="hidden sm:block" />
              </button>
-             <Zap size={14} className="fill-white animate-bounce" />
+             <Zap size={14} className="fill-white animate-bounce hidden sm:block shrink-0" />
           </div>
         </div>
       )}
@@ -332,7 +355,7 @@ function Dashboard() {
             transition={{ delay: 0.1 }}
             className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4"
           >
-            <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center text-2xl text-primary">💰</div>
+            <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center text-primary"><Coins size={24} /></div>
             <div>
               <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Available Balance</p>
               <p className="text-xl font-black text-gray-900">{Math.max(0, parseFloat(user.balance)).toLocaleString()} <span className="text-sm text-gray-500 font-bold">{user.currency}</span></p>
@@ -344,7 +367,7 @@ function Dashboard() {
             transition={{ delay: 0.2 }}
             className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4"
           >
-            <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-2xl text-blue-500">📈</div>
+            <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-500"><TrendingUp size={24} /></div>
             <div>
               <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Active Assets</p>
               <p className="text-xl font-black text-gray-900">{investments.length} <span className="text-sm text-gray-500 font-bold">Plans</span></p>
@@ -356,7 +379,7 @@ function Dashboard() {
             transition={{ delay: 0.3 }}
             className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4"
           >
-            <div className="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center text-2xl text-purple-500">👥</div>
+            <div className="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center text-purple-500"><Users size={24} /></div>
             <div>
               <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Your Network</p>
               <p className="text-xl font-black text-gray-900">{referrals.length} <span className="text-sm text-gray-500 font-bold">Referrals</span></p>
@@ -368,7 +391,7 @@ function Dashboard() {
             transition={{ delay: 0.4 }}
             className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4"
           >
-            <div className="w-12 h-12 rounded-xl bg-yellow-50 flex items-center justify-center text-2xl text-yellow-500">🌍</div>
+            <div className="w-12 h-12 rounded-xl bg-yellow-50 flex items-center justify-center text-yellow-500"><Globe size={24} /></div>
             <div>
               <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Account Region</p>
               <p className="text-xl font-black text-gray-900">{user.country}</p>
@@ -380,23 +403,23 @@ function Dashboard() {
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
           <div className="flex overflow-x-auto border-b border-gray-100 hide-scrollbar">
             {[
-              { id: 'overview', label: `📊 ${t('dashboard')}`, key: 'dashboard' },
-              { id: 'investments', label: `🚜 ${t('myAssets')}`, key: 'myAssets' },
-              { id: 'wallet', label: `💳 ${t('wallet')}`, key: 'wallet' },
-              { id: 'referrals', label: `👥 ${t('myTeam')}`, key: 'myTeam' },
-              { id: 'history', label: `📜 ${t('history')}`, key: 'history' },
-              { id: 'settings', label: `⚙️ ${t('settings')}`, key: 'settings' }
+              { id: 'overview', icon: <LayoutDashboard size={14} />, label: t('dashboard'), key: 'dashboard' },
+              { id: 'investments', icon: <Tractor size={14} />, label: t('myAssets'), key: 'myAssets' },
+              { id: 'wallet', icon: <Wallet size={14} />, label: t('wallet'), key: 'wallet' },
+              { id: 'referrals', icon: <Users size={14} />, label: t('myTeam'), key: 'myTeam' },
+              { id: 'history', icon: <History size={14} />, label: t('history'), key: 'history' },
+              { id: 'settings', icon: <Settings size={14} />, label: t('settings'), key: 'settings' }
             ].map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex-1 min-w-[140px] px-6 py-4 font-bold text-[10px] uppercase tracking-widest transition-colors whitespace-nowrap ${
+                className={`flex-1 min-w-[140px] px-6 py-4 font-bold text-[10px] uppercase tracking-widest transition-colors whitespace-nowrap flex items-center justify-center gap-2 ${
                   activeTab === tab.id 
                     ? 'border-b-2 border-primary text-primary bg-green-50/30' 
                     : 'text-gray-500 hover:text-gray-800 hover:bg-gray-50'
                 }`}
               >
-                {tab.label}
+                {tab.icon} {tab.label}
               </button>
             ))}
           </div>
@@ -429,19 +452,19 @@ function Dashboard() {
                         onClick={() => navigate('/deposit')}
                         className="w-full bg-white hover:bg-blue-50 text-secondary border-2 border-secondary/20 py-3 rounded-xl font-bold shadow-sm transition-all flex items-center justify-center gap-2"
                       >
-                        💵 {t('deposit')}
+                        <Banknote size={18} /> {t('deposit')}
                       </button>
                       <button
                         onClick={() => navigate('/withdraw')}
                         className="w-full bg-primary hover:bg-green-700 text-white py-3 rounded-xl font-bold shadow-[0_4px_14px_0_rgba(31,139,76,0.39)] transition-all flex items-center justify-center gap-2"
                       >
-                        📱 {t('withdraw')}
+                        <Smartphone size={18} /> {t('withdraw')}
                       </button>
                       <button
                         onClick={() => navigate('/machines')}
                         className="w-full bg-gray-900 hover:bg-black text-white py-3 rounded-xl font-bold shadow-md transition-all flex items-center justify-center gap-2"
                       >
-                        🚜 Explore Plans
+                        <Tractor size={18} /> Explore Plans
                       </button>
                     </div>
                   </div>
@@ -477,7 +500,9 @@ function Dashboard() {
                 {(socialLinks.whatsapp || socialLinks.telegram) && (
                   <div className="mt-8 bg-white p-6 md:p-8 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6 transition-all hover:shadow-md">
                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-xl shadow-inner italic font-serif text-gray-400">@</div>
+                        <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-400 shadow-inner">
+                           <AtSign size={24} />
+                        </div>
                         <div>
                           <h3 className="text-lg font-black text-gray-900 tracking-tight">Community Hub</h3>
                           <p className="text-[11px] text-gray-400 font-bold uppercase tracking-widest">Connect with official registry streams</p>
@@ -508,7 +533,7 @@ function Dashboard() {
 
                 {investments.length === 0 ? (
                   <div className="bg-gray-50 border border-gray-200 border-dashed rounded-2xl p-10 text-center">
-                    <div className="text-5xl mb-4">🌱</div>
+                    <div className="flex justify-center text-green-200 mb-4"><Sprout size={48} /></div>
                     <h3 className="text-lg font-bold text-gray-800 mb-2">No active assets</h3>
                     <p className="text-gray-500 text-sm mb-6 max-w-sm mx-auto">You haven't purchased any investment plans yet.</p>
                   </div>
@@ -582,8 +607,8 @@ function Dashboard() {
                          <div>
                             <h4 className="text-white font-black text-lg uppercase tracking-tight mb-1 sm:mb-2">Top Investor Rewards</h4>
                             <p className="text-green-100/70 text-xs leading-relaxed font-bold">
-                               Target users with <span className="text-white underline underline-offset-4 font-black">1,000,000 {user.currency}+</span>. 
-                               Earn an <span className="text-yellow-400 font-black text-sm">INSTANT 10% BONUS</span> on every activation.
+                               Target users with <span className="text-white underline underline-offset-4 font-black">{(getReferralLadder()[getReferralLadder().length - 1] || 0).toLocaleString()} {user?.currency}+</span>. 
+                               Earn an <span className="text-yellow-400 font-black text-sm">INSTANT {systemSettings['referral_reward_percentage'] || '10'}% BONUS</span> on every activation.
                             </p>
                          </div>
                       </div>
@@ -597,9 +622,9 @@ function Dashboard() {
                         <span className="text-[10px] sm:text-[11px] font-mono text-gray-500 truncate px-4 sm:px-6 flex-1">.../reg?ref={user.referralCode}</span>
                         <button 
                           onClick={copyReferralLink}
-                          className="bg-gray-950 text-white px-5 sm:px-8 py-3.5 sm:py-4 rounded-xl font-black text-[9px] sm:text-[11px] uppercase tracking-widest active:scale-95 transition-all shadow-xl hover:bg-black whitespace-nowrap"
+                          className="bg-gray-950 text-white px-5 sm:px-8 py-3.5 sm:py-4 rounded-xl font-black text-[9px] sm:text-[11px] uppercase tracking-widest active:scale-95 transition-all shadow-xl hover:bg-black whitespace-nowrap flex items-center gap-1"
                         >
-                          {copySuccess ? '✓ COPIED' : 'COPY LINK'}
+                          {copySuccess ? <><X size={12} className="rotate-45" /> COPIED</> : 'COPY LINK'}
                         </button>
                      </div>
                    </div>
@@ -610,7 +635,7 @@ function Dashboard() {
                 <div className="bg-white rounded-[2rem] sm:rounded-[2.5rem] border border-gray-100 shadow-xl overflow-hidden mb-12">
                    <div className="bg-primary text-white p-6 sm:p-8">
                       <h3 className="text-base sm:text-lg font-black tracking-tight mb-1 uppercase">Commission Scale</h3>
-                      <p className="text-white/60 text-[10px] uppercase font-bold tracking-[3px]">Earn 10% instant bonus on every capital deployment</p>
+                      <p className="text-white/60 text-[10px] uppercase font-bold tracking-[3px]">Earn {systemSettings['referral_reward_percentage'] || '10'}% instant bonus on every capital deployment</p>
                    </div>
 
                    <div className="overflow-x-auto">
@@ -622,7 +647,7 @@ function Dashboard() {
                             </tr>
                          </thead>
                          <tbody className="divide-y divide-gray-50">
-                            {[500000, 1000000, 2000000, 5000000, 10000000].map(amt => (
+                            {getReferralLadder().map(amt => (
                                <tr key={amt} className="hover:bg-indigo-50/30 transition-colors group">
                                   <td className="p-6 font-bold text-gray-700">
                                      {amt.toLocaleString()} <span className="text-[10px] text-gray-400 font-bold ml-1">{user.currency}</span>
@@ -630,7 +655,6 @@ function Dashboard() {
                                   <td className="p-6 text-right font-black text-primary group-hover:scale-105 transition-transform origin-right">
                                      + {(amt * 0.1).toLocaleString()} <span className="text-[10px] text-green-800/40 font-bold ml-1">{user.currency}</span>
                                   </td>
-
                                </tr>
                             ))}
                          </tbody>

@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import AdminLayout from '../components/AdminLayout';
 import api from '../services/api';
 import { toast } from 'react-hot-toast';
+import { Sprout, Zap } from 'lucide-react';
 
 function AdminSettings() {
   const [settings, setSettings] = useState({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [seeding, setSeeding] = useState(false);
 
   useEffect(() => {
     fetchSettings();
@@ -20,6 +22,19 @@ function AdminSettings() {
       toast.error('Failed to load system settings');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const seedDefaults = async () => {
+    setSeeding(true);
+    try {
+      const res = await api.post('/settings/seed-defaults');
+      toast.success(`Defaults seeded: ${res.data.results.filter(r => r.status === 'created').length} new keys created`);
+      fetchSettings();
+    } catch (err) {
+      toast.error('Seed failed');
+    } finally {
+      setSeeding(false);
     }
   };
 
@@ -55,6 +70,16 @@ function AdminSettings() {
         { key: 'signup_bonus_Kenya', label: 'Kenya Signup Bonus', type: 'number' },
         { key: 'signup_bonus_Global', label: 'Global Signup Bonus', type: 'number' },
         { key: 'withdrawal_fee_percent', label: 'Withdrawal Fee (%)', type: 'number' },
+      ]
+    },
+    {
+      title: 'Marketing Commission Tables',
+      items: [
+        { key: 'referral_ladder_Burundi', label: 'Burundi Display Ladder', type: 'text', help: 'Comma separated targets (e.g. 500000,800000,2000000)' },
+        { key: 'referral_ladder_Rwanda', label: 'Rwanda Display Ladder', type: 'text', help: 'Comma separated targets' },
+        { key: 'referral_ladder_Uganda', label: 'Uganda Display Ladder', type: 'text', help: 'Comma separated targets' },
+        { key: 'referral_ladder_Kenya', label: 'Kenya Display Ladder', type: 'text', help: 'Comma separated targets' },
+        { key: 'referral_ladder_Global', label: 'Global Display Ladder', type: 'text', help: 'Comma separated default targets' }
       ]
     },
     {
@@ -112,9 +137,28 @@ function AdminSettings() {
           ))}
         </div>
 
-        <div className="mt-12 p-8 bg-amber-50 rounded-[2.5rem] border border-amber-100">
+        <div className="mt-8 p-8 bg-green-50 rounded-[2.5rem] border border-green-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+           <div className="flex gap-4 flex-1">
+             <div className="text-2xl text-green-600"><Sprout /></div>
+             <div>
+               <h4 className="font-black text-green-900 mb-1">Seed Default Referral Ladders</h4>
+               <p className="text-sm text-green-800 font-medium leading-relaxed">
+                 First-time setup only. Click to populate all country referral ladder defaults into the database. Existing values will NOT be overwritten.
+               </p>
+             </div>
+           </div>
+           <button
+             onClick={seedDefaults}
+             disabled={seeding}
+             className="bg-green-800 hover:bg-green-900 text-white px-8 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all active:scale-95 shadow-lg disabled:opacity-50 whitespace-nowrap shrink-0 flex items-center gap-2"
+           >
+             {seeding ? 'Seeding...' : <><Sprout size={16} /> Seed Defaults</>}
+           </button>
+        </div>
+
+        <div className="mt-6 p-8 bg-amber-50 rounded-[2.5rem] border border-amber-100">
            <div className="flex gap-4">
-             <div className="text-2xl">⚡</div>
+             <div className="text-2xl text-amber-600"><Zap /></div>
              <div>
                <h4 className="font-black text-amber-900 mb-1">Administrative Note</h4>
                <p className="text-sm text-amber-800 font-medium leading-relaxed">

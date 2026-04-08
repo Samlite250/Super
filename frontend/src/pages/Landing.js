@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Lock, Smartphone, Tractor, TrendingUp } from 'lucide-react';
 
 function Landing() {
   const navigate = useNavigate();
@@ -111,10 +112,10 @@ function Landing() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
-              { num: '01', title: 'Register', desc: 'Create your secure account in less than a minute.', icon: '🔐' },
-              { num: '02', title: 'Fund Wallet', desc: 'Deposit funds instantly via local mobile money.', icon: '📲' },
-              { num: '03', title: 'Reserve Asset', desc: 'Select a highly-vetted agricultural equipment plan.', icon: '🚜' },
-              { num: '04', title: 'Earn Daily', desc: 'Collect automated daily returns and withdraw anytime.', icon: '📈' }
+              { num: '01', title: 'Register', desc: 'Create your secure account in less than a minute.', icon: <Lock /> },
+              { num: '02', title: 'Fund Wallet', desc: 'Deposit funds instantly via local mobile money.', icon: <Smartphone /> },
+              { num: '03', title: 'Reserve Asset', desc: 'Select a highly-vetted agricultural equipment plan.', icon: <Tractor /> },
+              { num: '04', title: 'Earn Daily', desc: 'Collect automated daily returns and withdraw anytime.', icon: <TrendingUp /> }
             ].map((step, idx) => (
               <div key={idx} className="bg-gray-50 p-8 rounded-3xl border border-gray-100 hover:shadow-xl hover:border-green-200 transition-all duration-300 group">
                 <div className="text-4xl mb-6 bg-white w-16 h-16 rounded-2xl flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">

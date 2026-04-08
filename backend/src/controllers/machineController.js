@@ -115,21 +115,30 @@ exports.list = async (req, res) => {
 
       const rwLadder = [5000, 10000, 20000, 50000, 100000, 150000, 200000, 300000, 400000, 500000, 700000, 900000, 1100000, 1300000, 1500000];
       const keLadder = [650, 7746, 14843, 21939, 29036, 36132, 43229, 50325, 57421, 64518, 71614, 78711, 85807, 92904, 100000];
+      const globalPlanNames = [
+        'Tractor X200', 'Plow Deluxe', 'Harvester Pro', 'Mini Cultivator',
+        'Seeder M1', 'Miller 250', 'Irrigation Machine', 'Crop Duster',
+        'Harvest Titan', 'Pro Seeder 900', 'Mega Agro Combine',
+        'Deep Well Driller', 'Soil Nutrient Lab', 'Autonomous Crop Rover', 'Silo Storage Unit'
+      ];
 
-      machines.forEach((m, idx) => {
+      machines.forEach((m) => {
         let convertedPrice;
         const mCountry = m.country || m.getDataValue('country') || 'Global';
 
         if (mCountry !== 'Global') {
           convertedPrice = m.priceFBu; // exact local price set by admin
-        } else if (userCurrency === 'RWF' && rwLadder[idx]) {
-          convertedPrice = rwLadder[idx];
-        } else if (userCurrency === 'KES' && keLadder[idx]) {
-          convertedPrice = keLadder[idx];
-        } else if (rate) {
-          convertedPrice = (parseFloat(m.priceFBu) / parseFloat(rate.rateToFBu)).toFixed(2);
         } else {
-          convertedPrice = m.priceFBu;
+          const gIdx = globalPlanNames.indexOf(m.name);
+          if (userCurrency === 'RWF' && gIdx !== -1 && rwLadder[gIdx]) {
+            convertedPrice = rwLadder[gIdx];
+          } else if (userCurrency === 'KES' && gIdx !== -1 && keLadder[gIdx]) {
+            convertedPrice = keLadder[gIdx];
+          } else if (rate) {
+            convertedPrice = (parseFloat(m.priceFBu) / parseFloat(rate.rateToFBu)).toFixed(2);
+          } else {
+            convertedPrice = m.priceFBu;
+          }
         }
 
         m.setDataValue('price', convertedPrice);

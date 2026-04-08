@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import api, { IMAGE_BASE_URL } from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Zap, Flame, Shield, TrendingUp, Clock, Award } from 'lucide-react';
+import { Zap, Flame, Shield, TrendingUp, Clock, Award, Tractor, AlertTriangle, Timer } from 'lucide-react';
 
 function Machines() {
   const [machines, setMachines] = useState([]);
@@ -110,7 +110,7 @@ function Machines() {
         
         {error && (
           <div className="bg-red-50 border-[1px] border-red-500 text-red-800 p-4 rounded-xl mb-8 text-sm md:text-base font-medium shadow-sm flex items-center gap-2">
-            <span className="text-xl">⚠️</span>
+            <AlertTriangle className="text-red-500" />
             <p>{error}</p>
           </div>
         )}
@@ -126,9 +126,9 @@ function Machines() {
               </button>
               <button
                 onClick={() => setViewType('hot')}
-                className={`px-8 py-3 rounded-xl font-bold text-sm transition-all duration-300 relative ${viewType === 'hot' ? 'bg-amber-500 text-white shadow-lg shadow-amber-100' : 'text-gray-400 hover:text-amber-600'}`}
+                className={`px-8 py-3 rounded-xl font-bold text-sm transition-all duration-300 relative flex items-center gap-2 ${viewType === 'hot' ? 'bg-amber-500 text-white shadow-lg shadow-amber-100' : 'text-gray-400 hover:text-amber-600'}`}
               >
-                Flash Sales 🔥
+                Flash Sales <Flame size={14} fill={viewType === 'hot' ? "white" : "currentColor"} />
                 {hotPlans.length > 0 && viewType !== 'hot' && (
                   <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white animate-pulse"></span>
                 )}
@@ -139,7 +139,7 @@ function Machines() {
 
         {machines.length === 0 && !error ? (
           <div className="bg-white p-10 rounded-2xl shadow-sm border border-gray-100 text-center">
-            <span className="text-6xl mb-4 block">🚜</span>
+            <div className="flex justify-center text-gray-200 mb-4"><Tractor size={64} /></div>
             <h3 className="text-xl font-bold text-gray-800 mb-2">No Packages Available</h3>
             <p className="text-gray-500">All our agricultural investment packages are currently filled. Please check back later for new opportunities!</p>
           </div>
@@ -149,11 +149,11 @@ function Machines() {
               <div className="animate-fadeIn">
                 <div className="flex items-center gap-3 mb-6">
                    <div className="w-1.5 h-8 bg-orange-500 rounded-full"></div>
-                   <h2 className="text-2xl font-black text-gray-900 tracking-tight">Active <span className="text-orange-600 uppercase">Hot Sales</span> 🔥</h2>
+                   <h2 className="text-2xl font-black text-gray-900 tracking-tight">Active <span className="text-orange-600 uppercase">Hot Sales</span> <Flame className="inline-block text-orange-500" fill="currentColor" /></h2>
                 </div>
                 {hotPlans.length === 0 ? (
                   <div className="bg-white p-16 rounded-3xl border border-dashed border-gray-200 text-center">
-                    <p className="text-4xl mb-4">⏳</p>
+                    <div className="flex justify-center text-gray-300 mb-4"><Timer size={48} /></div>
                     <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">No active hot plans at the moment</p>
                   </div>
                 ) : (

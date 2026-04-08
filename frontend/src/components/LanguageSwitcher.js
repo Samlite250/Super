@@ -5,17 +5,17 @@ const LanguageSwitcher = () => {
   const { language, setLanguage } = useLanguage();
 
   return (
-    <div className="fixed top-2 right-2 z-[1000] flex items-center bg-gray-900/80 backdrop-blur-md border border-white/10 rounded-xl p-1 shadow-2xl scale-90 sm:scale-100 transition-all origin-top-right">
+    <div className="fixed top-2 right-2 sm:top-3 sm:right-4 z-[9999] flex items-center gap-2">
       <button 
         onClick={() => setLanguage('en')}
-        className={`px-3 py-1.5 rounded-lg text-[10px] font-black tracking-tighter transition-all ${language === 'en' ? 'bg-primary text-white shadow-lg' : 'text-gray-400 hover:text-gray-200'}`}
+        className={`text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all ${language === 'en' ? 'text-white drop-shadow-md border-b-2 border-white' : 'text-white/60 hover:text-white'}`}
       >
         EN
       </button>
-      <div className="w-[1px] h-3 bg-white/10 mx-1"></div>
+      <span className="text-white/40 text-[10px]">|</span>
       <button 
         onClick={() => setLanguage('fr')}
-        className={`px-3 py-1.5 rounded-lg text-[10px] font-black tracking-tighter transition-all ${language === 'fr' ? 'bg-primary text-white shadow-lg' : 'text-gray-400 hover:text-gray-200'}`}
+        className={`text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all ${language === 'fr' ? 'text-white drop-shadow-md border-b-2 border-white' : 'text-white/60 hover:text-white'}`}
       >
         FR
       </button>
