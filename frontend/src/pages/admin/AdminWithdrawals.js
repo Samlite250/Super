@@ -81,7 +81,8 @@ function AdminWithdrawals() {
 
   if (loading) return <div className="min-h-screen flex items-center justify-center bg-gray-50"><div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-secondary"></div></div>;
 
-  const countries = [...new Set(withdrawals.map(w => w.User?.country).filter(Boolean))];
+  const countries = ['All', ...new Set(withdrawals.map(w => w.User?.country).filter(Boolean))];
+  const filteredWithdrawals = withdrawals.filter(w => !exportRegion || exportRegion === 'All' || w.User?.country === exportRegion);
 
   return (
     <AdminLayout>
@@ -93,11 +94,10 @@ function AdminWithdrawals() {
            </div>
            <div className="flex flex-wrap items-center gap-4">
               <select value={exportRegion} onChange={(e) => setExportRegion(e.target.value)} className="bg-white border border-gray-100 px-4 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest outline-none">
-                <option value="">All Regions</option>
-                {countries.map(c => <option key={c} value={c}>{c.toUpperCase()}</option>)}
+                {countries.map(c => <option key={c} value={c}>{c === 'All' ? '🌍 All Regions' : c.toUpperCase()}</option>)}
               </select>
               <button onClick={handleExport} disabled={isExporting} className="bg-green-500 text-white px-6 py-3 rounded-2xl text-[9px] font-black uppercase tracking-widest shadow-lg">Export CSV</button>
-              <button onClick={() => window.open(`/admin/withdrawals/manifest/${exportRegion}`, '_blank')} className="bg-gray-900 text-white px-6 py-3 rounded-2xl text-[9px] font-black uppercase tracking-widest border border-white/10">Print Manifest</button>
+              <button onClick={() => window.open(`/admin/withdrawals/manifest/${exportRegion === 'All' ? '' : exportRegion}`, '_blank')} className="bg-gray-900 text-white px-6 py-3 rounded-2xl text-[9px] font-black uppercase tracking-widest border border-white/10">Print Manifest</button>
            </div>
         </div>
 
@@ -118,7 +118,7 @@ function AdminWithdrawals() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
-                {withdrawals.map(w => (
+                {filteredWithdrawals.map(w => (
                   <tr key={w.id} className="hover:bg-gray-50/50 group">
                     <td className="p-8 font-mono text-xs font-black text-gray-300">#WF-{w.id.toString().padStart(4, '0')}</td>
                     <td className="p-8">

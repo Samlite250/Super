@@ -8,6 +8,7 @@ function AdminInvestments() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [countryFilter, setCountryFilter] = useState('all');
   const navigate = useNavigate();
 
   useEffect(() => { document.title = 'Package Manager | Admin'; }, []);
@@ -51,8 +52,11 @@ function AdminInvestments() {
       inv.User?.email?.toLowerCase().includes(search.toLowerCase()) ||
       inv.Machine?.name?.toLowerCase().includes(search.toLowerCase());
     const matchStatus = statusFilter === 'all' || inv.status === statusFilter;
-    return matchSearch && matchStatus;
+    const matchCountry = countryFilter === 'all' || inv.User?.country === countryFilter;
+    return matchSearch && matchStatus && matchCountry;
   });
+
+  const uniqueCountries = ['all', ...new Set(investments.map(i => i.User?.country).filter(Boolean))];
 
   const activeCount = investments.filter(i => i.status === 'active').length;
   const totalVolume = investments.filter(i => i.status === 'active').reduce((s, i) => s + parseFloat(i.amount || 0), 0);
@@ -110,6 +114,9 @@ function AdminInvestments() {
 
         <div className="bg-white rounded-[2rem] p-6 mb-6 shadow-sm border border-gray-100 flex flex-col sm:flex-row gap-4">
           <input type="text" placeholder="Search by user, email or package..." value={search} onChange={e => setSearch(e.target.value)} className="flex-1 px-5 py-3 bg-gray-50 border border-gray-200 rounded-2xl font-bold text-sm outline-none focus:border-secondary" />
+          <select value={countryFilter} onChange={e => setCountryFilter(e.target.value)} className="px-5 py-3 bg-gray-50 border border-gray-200 rounded-2xl font-black text-sm outline-none focus:border-secondary">
+            {uniqueCountries.map(c => <option key={c} value={c}>{c === 'all' ? 'All Countries' : c}</option>)}
+          </select>
           <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="px-5 py-3 bg-gray-50 border border-gray-200 rounded-2xl font-black text-sm outline-none focus:border-secondary">
             <option value="all">All Statuses</option>
             <option value="active">Active</option>

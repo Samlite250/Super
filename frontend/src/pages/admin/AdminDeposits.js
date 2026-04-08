@@ -12,6 +12,7 @@ function AdminDeposits() {
   const [paymentProcedures, setPaymentProcedures] = useState({});
   const [editingProcedure, setEditingProcedure] = useState(null);
   const [procedureForm, setProcedureForm] = useState({ country: '', method: '', instructions: '', accountDetails: '' });
+  const [filterCountry, setFilterCountry] = useState('All');
   const navigate = useNavigate();
 
   useEffect(() => { document.title = "Deposits Management | Admin"; }, []);
@@ -122,9 +123,12 @@ function AdminDeposits() {
     );
   }
 
-  const pending = deposits.filter(d => d.status === 'pending');
-  const approved = deposits.filter(d => d.status === 'approved');
-  const rejected = deposits.filter(d => d.status === 'rejected');
+  const uniqueCountries = ['All', ...new Set(deposits.map(d => d.User?.country).filter(Boolean))];
+  const filteredDeposits = deposits.filter(d => filterCountry === 'All' || d.User?.country === filterCountry);
+
+  const pending = filteredDeposits.filter(d => d.status === 'pending');
+  const approved = filteredDeposits.filter(d => d.status === 'approved');
+  const rejected = filteredDeposits.filter(d => d.status === 'rejected');
 
   return (
     <AdminLayout>
@@ -136,23 +140,34 @@ function AdminDeposits() {
               <h2 className="text-4xl font-black text-gray-900 tracking-tight mb-2">Deposits Management</h2>
               <p className="text-gray-500 font-medium">Review funding requests and manage country payment gateways.</p>
            </div>
-           <div className="flex bg-white p-2 rounded-[1.5rem] border border-gray-100 shadow-2xl shadow-black/5">
-              <button
-                 onClick={() => setShowGateways(false)}
-                 className={`px-8 py-3.5 rounded-2xl font-black text-[10px] uppercase tracking-[3px] transition-all ${
-                   !showGateways ? 'bg-primary text-white shadow-xl shadow-green-500/20' : 'text-gray-400 hover:text-primary'
-                 }`}
-              >
-                 📦 Deposits Log
-              </button>
-              <button
-                 onClick={() => setShowGateways(true)}
-                 className={`px-8 py-3.5 rounded-2xl font-black text-[10px] uppercase tracking-[3px] transition-all ${
-                   showGateways ? 'bg-secondary text-white shadow-xl shadow-blue-500/20' : 'text-gray-400 hover:text-secondary'
-                 }`}
-              >
-                 ⚙️ Country Gateways
-              </button>
+           <div className="flex flex-col items-end gap-3">
+               <div className="flex bg-white p-2 rounded-[1.5rem] border border-gray-100 shadow-2xl shadow-black/5">
+                  <button
+                     onClick={() => setShowGateways(false)}
+                     className={`px-8 py-3.5 rounded-2xl font-black text-[10px] uppercase tracking-[3px] transition-all ${
+                       !showGateways ? 'bg-primary text-white shadow-xl shadow-green-500/20' : 'text-gray-400 hover:text-primary'
+                     }`}
+                  >
+                     📦 Deposits Log
+                  </button>
+                  <button
+                     onClick={() => setShowGateways(true)}
+                     className={`px-8 py-3.5 rounded-2xl font-black text-[10px] uppercase tracking-[3px] transition-all ${
+                       showGateways ? 'bg-secondary text-white shadow-xl shadow-blue-500/20' : 'text-gray-400 hover:text-secondary'
+                     }`}
+                  >
+                     ⚙️ Country Gateways
+                  </button>
+               </div>
+               {!showGateways && uniqueCountries.length > 1 && (
+                 <select 
+                   value={filterCountry}
+                   onChange={(e) => setFilterCountry(e.target.value)}
+                   className="px-6 py-3 rounded-2xl bg-white border border-gray-100 font-black text-[10px] uppercase tracking-[2px] text-gray-600 outline-none hover:border-secondary transition-all cursor-pointer shadow-sm"
+                 >
+                   {uniqueCountries.map(c => <option key={c} value={c}>{c === 'All' ? '🌍 All Regions' : c}</option>)}
+                 </select>
+               )}
            </div>
         </div>
 
@@ -277,7 +292,7 @@ function AdminDeposits() {
                        </tr>
                      </thead>
                      <tbody className="divide-y divide-gray-50">
-                       {deposits.map(d => (
+                       {filteredDeposits.map(d => (
                          <tr key={d.id} className="hover:bg-gray-50/50 transition-colors group">
                            <td className="p-8 font-mono text-xs font-black text-gray-300 group-hover:text-secondary transition-colors uppercase tracking-widest">#{d.id.toString().padStart(6, '0')}</td>
                            <td className="p-8">

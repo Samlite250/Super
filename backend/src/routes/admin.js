@@ -108,61 +108,7 @@ router.post('/users/:id/reset-password', authenticate, authorizeAdmin, async (re
   }
 });
 
-// Regional Activity Report
-router.get('/regional-activity', authenticate, authorizeAdmin, async (req, res) => {
-  try {
-    const users = await User.findAll({
-      attributes: ['id', 'fullName', 'username', 'country', 'balance', 'currency'],
-      include: [
-        { model: Deposit, attributes: ['id', 'amount', 'status'] },
-        { model: Withdrawal, attributes: ['id', 'amount', 'status'] },
-        { model: Investment, attributes: ['id', 'amount', 'status'] },
-        { model: Referral, as: 'ReferralsAsReferrer', attributes: ['id', 'commission'] },
-        { model: User, as: 'upline', attributes: ['id', 'username', 'fullName'] },
-        { model: User, as: 'downline', attributes: ['id'] }
-      ]
-    });
 
-    const report = {};
-
-    users.forEach(user => {
-      const country = user.country || 'Global';
-      if (!report[country]) {
-        report[country] = {
-          depositors: [],
-          withdrawers: [],
-          investors: [],
-          referrers: []
-        };
-      }
-
-      if (user.Deposits && user.Deposits.length > 0) {
-        const total = user.Deposits.reduce((sum, d) => sum + parseFloat(d.amount), 0);
-        report[country].depositors.push({ ...user.get({ plain: true }), totalActivity: total });
-      }
-
-      if (user.Withdrawals && user.Withdrawals.length > 0) {
-        const total = user.Withdrawals.reduce((sum, w) => sum + parseFloat(w.amount), 0);
-        report[country].withdrawers.push({ ...user.get({ plain: true }), totalActivity: total });
-      }
-
-      if (user.Investments && user.Investments.length > 0) {
-        const total = user.Investments.reduce((sum, i) => sum + parseFloat(i.amount), 0);
-        report[country].investors.push({ ...user.get({ plain: true }), totalActivity: total });
-      }
-
-      if ((user.ReferralsAsReferrer && user.ReferralsAsReferrer.length > 0) || (user.downline && user.downline.length > 0)) {
-        const total = user.ReferralsAsReferrer ? user.ReferralsAsReferrer.reduce((sum, r) => sum + parseFloat(r.commission), 0) : 0;
-        report[country].referrers.push({ ...user.get({ plain: true }), totalActivity: total });
-      }
-    });
-
-    res.json(report);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Server error' });
-  }
-});
 
 router.post('/gateways', authenticate, authorizeAdmin, async (req, res) => {
   try {
